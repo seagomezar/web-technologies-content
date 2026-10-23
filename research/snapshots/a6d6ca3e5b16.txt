@@ -1,0 +1,116 @@
+Thomas Steiner
+Dad-of-3 and (fully remote)
+Developer Relations Engineer
+on the
+Chrome
+team at
+Google
+. I
+🧡
+the Web! My pronouns are he/him.
+Latest Blog Posts
+Getting my TOTP data out of Twilio's Authy app thanks to the GDPR
+17 Oct 2026
+Refueling an EV be like
+08 Oct 2026
+Guest blog post on Cross-Origin Storage in Transformers.js
+24 Jun 2026
+Your MP3s from Google Drive in Music Assistant on Home Assistant
+30 May 2026
+A polyfill for the HTML switch element
+12 Jan 2026
+Using the Web Monetization API for fun and profit
+07 Nov 2025
+Running Node.js in a Hugging Face Space
+03 Nov 2025
+Prompt API color sensitivity
+09 Sep 2025
+For all that's holy, can you just leverage the Web, please?
+03 Sep 2025
+What a diff'rence a semicolon makes
+26 Jul 2025
+More blog posts in
+the archive
+.
+Search
+Tags
+AdWords
+AI
+AMP
+API
+Apple
+Audio
+Automation
+Bluetooth
+Browser Extensions
+Chrome
+Clipboard
+Cloud
+Command Line
+Compression
+Conference
+Cross-Origin Storage
+CSS
+Dark Mode
+Debugging
+DevTools
+Electric Vehicles
+Erasmus
+Favicon
+Firefox
+Gaming
+Hardware
+HID
+Home Automation
+Hosting
+HTML
+HTTP
+iOS
+Java
+JavaScript
+JSON
+Life
+Linux
+Machine Learning
+macOS
+Media
+Microsoft Edge
+Mini Apps
+Mobile
+Music
+Networking
+Node.js
+Open Source
+Payments
+Performance
+PHP
+Podcast
+Political
+Polyfill
+Privacy
+Project Fugu
+PWA
+Python
+Research
+REST
+Retro
+RSS
+Ruby
+Safari
+Security
+Semantic Web
+SEO
+Service Workers
+Solar Energy
+SVG
+Technical
+Transformers.js
+Unicode
+Video
+VoIP
+W3C
+Web Standards
+WebAssembly
+WebView
+WiFi
+Work

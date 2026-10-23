@@ -1,0 +1,8 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Cross-origin policy probe</title><link rel="stylesheet" href="../i18n.css"><script defer src="../locale-data.js"></script><script defer src="../i18n.js"></script><link rel="icon" href="data:,"><link rel="stylesheet" href="assets/lab.css"></head><body style="padding:20px"><h2>Second-origin passport</h2><pre id="result"></pre><script>
+const policy=document.permissionsPolicy||document.featurePolicy;
+let allowed='Policy inspection is not exposed';
+try{allowed=policy?.allowsFeature('language-model')??allowed;}catch(e){allowed=e.message;}
+const report={kind:'ai-policy-probe',origin:location.origin,secureContext:isSecureContext,languageModelExposed:'LanguageModel' in self,languageModelPolicyAllowed:allowed,inferenceRequested:false};
+document.querySelector('#result').textContent=JSON.stringify(report,null,2);
+if(parent!==self&&document.referrer){try{parent.postMessage(report,new URL(document.referrer).origin);}catch(e){/* A referrer-free iframe still shows its own report. */}}
+</script></body></html>

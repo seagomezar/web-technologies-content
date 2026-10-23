@@ -1,0 +1,97 @@
+{
+  "checked_at": "2026-10-23T12:41:43.973039+00:00",
+  "status": "requirements_satisfied_with_documented_environment_limits",
+  "checks": [
+    {
+      "requirement": "Review every CSV topic",
+      "status": "proved",
+      "evidence": "research/row-review.json and output/spreadsheet/reviewed-topics.csv"
+    },
+    {
+      "requirement": "Account for every archive link",
+      "status": "proved",
+      "evidence": "research/source-audit.json and research/link-inventory.md; access limitations are explicit"
+    },
+    {
+      "requirement": "Read the Google documentation linked by the archive",
+      "status": "proved",
+      "evidence": "Four guide body exports plus linked public Chrome documentation; reused and inaccessible links classified"
+    },
+    {
+      "requirement": "Ground proposals in current website coverage",
+      "status": "proved",
+      "evidence": "Live homepage, page two, full small-model article, full BrowserDJ article, with editorial comparison in topic-review.md"
+    },
+    {
+      "requirement": "Offer an actionable content shortlist",
+      "status": "proved",
+      "evidence": "index.html, content-manifest.json, research/topic-review.md"
+    },
+    {
+      "requirement": "At least three creative HTML demos per proposal",
+      "status": "proved",
+      "evidence": "21 distinct HTML pages, seven topic-specific scripts, actual UI interactions in review/verification.json"
+    },
+    {
+      "requirement": "Use reciprocal CSV traceability",
+      "status": "proved",
+      "evidence": "Row judgments and proposal manifests checked in both directions"
+    },
+    {
+      "requirement": "Create sparse HTML slides after defining topics",
+      "status": "proved",
+      "evidence": "slides/index.html, slides/talk.js and slides/full-talk.js; one hands-on WebMCP deck is the stated working structure"
+    },
+    {
+      "requirement": "Read and follow the attached slide brief",
+      "status": "proved",
+      "evidence": "Attached brief was read first; structure/language/duration questions were asked separately; first-slide mockups were shown before expansion"
+    },
+    {
+      "requirement": "Recreate the organizer template in a replaceable stylesheet",
+      "status": "proved",
+      "evidence": "Visually inspected event PDF and title reference; theme.css owns verified palette, fonts, notched panel and track lockup; GDG logo extracted from the template"
+    },
+    {
+      "requirement": "16:9 scaling, window background, keyboard/clicker builds and reload state",
+      "status": "proved",
+      "evidence": "review/verification.json plus review/keyboard-verification.json; render bounds inspected for every fully built slide"
+    },
+    {
+      "requirement": "View Transitions crossfade with reduced-motion override",
+      "status": "proved",
+      "evidence": "slides/deck.css and browser verification of transition invocation with and without reduced motion"
+    },
+    {
+      "requirement": "HTML/CSS diagrams and incremental builds",
+      "status": "proved",
+      "evidence": "Editable HTML diagram cards, CSS animations, build state in URL and presenter script"
+    },
+    {
+      "requirement": "Local fonts and offline deck",
+      "status": "proved",
+      "evidence": "Actual offline file-URL browser check; licensed Google Sans 400/700 and Roboto Mono 300 assets included"
+    },
+    {
+      "requirement": "Second-window presenter with script, highlighted step, planned clock and next slide",
+      "status": "proved",
+      "evidence": "review/presenter.png, review/verification.json and review/offline-presenter.json"
+    },
+    {
+      "requirement": "Verify native WebMCP interactions and important demo behavior",
+      "status": "proved",
+      "evidence": "Real Canary registration, discovery and execution; 17 model-adapter workflows tested with explicit contract doubles"
+    }
+  ],
+  "working_defaults": {
+    "talk": "One hands-on WebMCP talk",
+    "language": "Spanish",
+    "minutes": 30,
+    "event_city": "Not supplied; configurable pill visibly marked as pending"
+  },
+  "verification_limits": [
+    "Private mailing-list bodies and JavaScript-only issue/commit bodies were not independently readable; the supplied email archive and accessible primary sources are distinguished.",
+    "No model weights were downloaded and model inference quality/performance was not validated; API adapter doubles are labeled as such.",
+    "No hosted website changes or publishing were requested or performed."
+  ]
+}

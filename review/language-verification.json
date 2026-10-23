@@ -1,0 +1,58 @@
+{
+  "checkedAt": "2026-10-23T13:18:03.469Z",
+  "languages": [
+    "en",
+    "es"
+  ],
+  "checks": [
+    {
+      "name": "Every proposal field, outline, and all 21 demo descriptions have authored Spanish translations",
+      "status": "pass"
+    },
+    {
+      "name": "en: gallery and all 21 demos load at desktop and mobile sizes with working language links",
+      "status": "pass"
+    },
+    {
+      "name": "en: route, review, select values, validation errors, evaluation metrics and second-origin navigation work",
+      "status": "pass"
+    },
+    {
+      "name": "en: all 16 slides fit, all notes match builds, presenter script and previews use the same language",
+      "status": "pass"
+    },
+    {
+      "name": "es: gallery and all 21 demos load at desktop and mobile sizes with working language links",
+      "status": "pass"
+    },
+    {
+      "name": "es: route, review, select values, validation errors, evaluation metrics and second-origin navigation work",
+      "status": "pass"
+    },
+    {
+      "name": "es: all 16 slides fit, all notes match builds, presenter script and previews use the same language",
+      "status": "pass"
+    },
+    {
+      "name": "en: all 17 native adapter workflows preserve contracts, stable select values and session cleanup",
+      "status": "pass"
+    },
+    {
+      "name": "es: all 17 native adapter workflows preserve contracts, stable select values and session cleanup",
+      "status": "pass"
+    },
+    {
+      "name": "Offline language switching preserves city, timing, slide and build without network requests",
+      "status": "pass"
+    },
+    {
+      "name": "Spanish setup, provenance, full review, URL inventory, 20 judgments and CSV exist",
+      "status": "pass"
+    }
+  ],
+  "limitations": [
+    "Native adapter checks use explicit contract doubles; model quality and language support are not inferred.",
+    "Original source documents, technical contracts, licenses and explicitly English model samples retain their declared language."
+  ],
+  "status": "passed"
+}

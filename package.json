@@ -1,0 +1,13 @@
+{
+  "name": "sebastian-gomez-web-ai-content-lab",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Source-reviewed content proposals, browser demos, and offline HTML talks",
+  "scripts": {
+    "serve": "python3 scripts/serve.py",
+    "test": "node scripts/verify.mjs"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.58.2"
+  }
+}

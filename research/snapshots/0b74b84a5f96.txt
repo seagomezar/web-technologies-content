@@ -1,0 +1,26 @@
+Más allá del código: Por qué el verdadero ownership define tu crecimiento en ingeniería
+Sebastian Gomez
+Oct 17, 2026
+En cualquier equipo de ingeniería, mover la aguja del desempeño hacia la derecha exige priorizar el Ownership y el conocimiento del dominio por encima del toil operativo. Analizamos cómo cultivarlo en el día a día.
+Continua Leyendo
+Modelos pequeños y buen diseño: la IA en el navegador
+Sebastian Gomez
+Sep 15, 2026
+Dejar un modelo de 2B frente a un prompt vacío suele terminar en respuestas vagas o alucinadas. Pero cuando el navegador asume el trabajo de soporte con RAG en memoria, WebGPU nativo y buen diseño, no necesitas un servidor en la nube.
+Continua Leyendo
+El Borde es Inevitable: Por Qué Construimos BrowserDJ AI con Gemma 4 y Google Antigravity
+Sebastian Gomez
+Sep 15, 2026
+Tarde o temprano, los modelos locales alcanzarán las capacidades de la nube. Construimos BrowserDJ AI como un instrumento procedural en el navegador usando Gemma 4, WebGPU y Google Antigravity. Conoce la arquitectura bajo el capó.
+Continua Leyendo
+Del Prompt al Graph Engineering: Cómo sobrevivir a la fatiga de términos en la era de la IA
+Sebastian Gomez
+Sep 01, 2026
+Prompt, Context, Harness, Loop y ahora Graph Engineering. Analizamos qué hay de verdad y qué hay de humo detrás de esta avalancha de términos, por qué deberías cambiar "engineering" por "patrón" y el filtro de 5 preguntas para no volverte loco.
+Continua Leyendo
+Cargar Más ...
+Sebastian Gomez
+My name is Sebastián Gómez, I am a Google Developer Expert in Web Technologies, I studied systems engineering and Computer Science and a master's degree in Systems Engineering from the National University of Colombia. He currently works at Twilio as an engineering manager. I am a professor and I also like to give talks around the world so contact me if you are looking for speakers or lecturers.
+Advertisements
+Recent Posts
+Categorías

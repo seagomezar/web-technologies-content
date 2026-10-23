@@ -1,0 +1,360 @@
+[
+  {
+    "id": "webmcp",
+    "rank": 1,
+    "color": "#c3ecf6",
+    "title": "Tu web también tiene herramientas",
+    "subtitle": "WebMCP: una interfaz compartida para personas y agentes",
+    "stage": "Plataforma experimental; publicar como laboratorio práctico",
+    "angle": "Convierte un sitio personal en un colaborador útil: un agente puede encontrar una charla, preparar una ruta de lectura y proponer una acción mientras el visitante ve cada cambio.",
+    "value": "Añade la interacción con agentes a tu trabajo sobre IA en el navegador. La ruta de lectura podría convertirse en una función real de tu sitio.",
+    "format": "Artículo de arquitectura + charla práctica de 30 minutos + lista reutilizable para diseñar herramientas",
+    "outline": [
+      "Empieza por el objetivo del visitante: encontrar tres lecturas antes de una charla.",
+      "Conecta una herramienta estructurada a la misma función que usa un botón.",
+      "Valida los argumentos, devuelve errores útiles y mantén visible el estado.",
+      "Explica consequentialHint y debugging sin tratar las anotaciones como autorización."
+    ],
+    "rows": [
+      14,
+      23,
+      27
+    ],
+    "sources": [
+      "https://developer.chrome.com/docs/ai/webmcp",
+      "https://github.com/GoogleChromeLabs/webmcp-extension",
+      "https://github.com/webmachinelearning/webmcp-types",
+      "https://github.com/webmachinelearning/webmcp/pull/253",
+      "https://github.com/webmachinelearning/webmcp/issues/176"
+    ],
+    "demos": [
+      {
+        "id": "reading-route",
+        "title": "Ruta de lectura",
+        "hook": "Construye una ruta de lectura personal con una herramienta de página con tipos definidos.",
+        "action": "Añade un artículo desde la consola de herramientas y elimínalo con la interfaz habitual.",
+        "lesson": "Un agente y una persona comparten el estado de la aplicación."
+      },
+      {
+        "id": "consent-cart",
+        "title": "El último clic",
+        "hook": "Un carrito de entradas donde una herramienta prepara la acción y una persona la completa.",
+        "action": "Prepara una solicitud de entradas, recházala y después prepara y confirma otra.",
+        "lesson": "Una anotación de consecuencias describe el comportamiento; el código de la aplicación sigue imponiendo la revisión."
+      },
+      {
+        "id": "tool-observatory",
+        "title": "Observatorio de herramientas",
+        "hook": "Inspecciona esquemas, anotaciones y registros de errores en una pequeña caja negra.",
+        "action": "Filtra las herramientas de depuración, ejecuta JSON válido y prueba argumentos mal formados.",
+        "lesson": "Las herramientas necesitan errores útiles, una audiencia clara y un comportamiento observable."
+      }
+    ]
+  },
+  {
+    "id": "lifecycle",
+    "rank": 2,
+    "color": "#ccf6c5",
+    "title": "La IA empieza antes del primer token",
+    "subtitle": "Ciclo de vida del modelo, alternativas sin IA y demos integrados",
+    "stage": "APIs actuales con restricciones de dispositivo y navegador",
+    "angle": "La función abarca todo el recorrido: detectar capacidades, decidir la descarga, mostrar el progreso, cancelar y ofrecer una interfaz útil cuando falta el modelo.",
+    "value": "Convierte la tesis de tu artículo sobre modelos pequeños en una guía para producción que se puede copiar y probar.",
+    "format": "Guía de implementación + galería de estados de error + utilidad reutilizable para el ciclo de vida",
+    "outline": [
+      "Detecta las APIs sin iniciar una descarga.",
+      "Solicita crear el modelo a partir de una acción del usuario.",
+      "Transmite respuestas, cancela y libera las sesiones.",
+      "Prueba la política entre orígenes y publica instrucciones de configuración precisas."
+    ],
+    "rows": [
+      16,
+      18,
+      19,
+      21,
+      24,
+      25,
+      26
+    ],
+    "sources": [
+      "https://developer.chrome.com/docs/ai/built-in-ai-dos-donts",
+      "https://developer.chrome.com/docs/ai/prompt-api",
+      "https://developer.chrome.com/docs/ai/session-management",
+      "https://github.com/webmachinelearning/proofreader-api/pull/14"
+    ],
+    "demos": [
+      {
+        "id": "model-concierge",
+        "title": "Recepción de modelos",
+        "hook": "Un tablero de salidas para las capacidades de IA local.",
+        "action": "Inspecciona el navegador real y prepara un modelo de forma explícita.",
+        "lesson": "La disponibilidad es una máquina de estados, no un booleano."
+      },
+      {
+        "id": "stream-garden",
+        "title": "Jardín de respuestas",
+        "hook": "Haz crecer una respuesta fragmento a fragmento y detenla con Cancelar.",
+        "action": "Ejecuta el ensayo identificado, cancélalo a mitad y prueba la transmisión nativa.",
+        "lesson": "La cancelación y la liberación de sesiones forman parte de la experiencia del usuario."
+      },
+      {
+        "id": "iframe-passport",
+        "title": "Pasaporte del iframe",
+        "hook": "Dos orígenes locales muestran si una función de IA integrada tiene permiso.",
+        "action": "Carga el marco del segundo origen con y sin delegación de language-model.",
+        "lesson": "Que una API funcione en la página principal no garantiza que funcione dentro de un marco."
+      }
+    ]
+  },
+  {
+    "id": "retrieval",
+    "rank": 3,
+    "color": "#ffe7a5",
+    "title": "Buscar por significado, responder con evidencia",
+    "subtitle": "SemanticEmbedder, recuperación y respuestas basadas en fuentes",
+    "stage": "Prueba para desarrolladores de SemanticEmbedder; configuración de Canary de escritorio",
+    "angle": "Amplía tu artículo de RAG en memoria con recuperación observable: compara palabras y significado, inspecciona los vecinos y muestra qué evidencia puede usar una respuesta.",
+    "value": "Una continuación concreta de tu artículo de RAG en el navegador. La búsqueda podría incorporarse al archivo de tu sitio.",
+    "format": "Artículo técnico en profundidad + cuaderno con búsqueda + ejemplos de evaluación de recuperación",
+    "outline": [
+      "Construye un índice en memoria con embeddings de tipo retrieval-document.",
+      "Genera embeddings de consultas con retrieval-query y compara con similitud coseno.",
+      "Mantén la coherencia del espacio de embeddings y reconstruye el índice cuando cambie el modelo.",
+      "Muestra los fragmentos de las fuentes y abstente de responder cuando la evidencia sea débil."
+    ],
+    "rows": [
+      12
+    ],
+    "sources": [
+      "https://docs.google.com/document/d/1ZB6MW8UDczm4V6ej5MorZWqFCYWwLhUs5HKxEdjP35c/edit",
+      "https://github.com/explainers-by-googlers/embedding-api"
+    ],
+    "demos": [
+      {
+        "id": "meaning-compass",
+        "title": "Brújula del significado",
+        "hook": "Busca en un pequeño archivo de artículos mediante una pregunta.",
+        "action": "Compara la referencia identificada de coincidencia de palabras con embeddings nativos reales.",
+        "lesson": "Usa las indicaciones de tarea de recuperación y muestra la clasificación."
+      },
+      {
+        "id": "duplicate-constellation",
+        "title": "Constelación de duplicados",
+        "hook": "Mueve un umbral de similitud y observa cómo se conectan las notas relacionadas.",
+        "action": "Añade una nota, compara palabras coincidentes y calcula similitudes semánticas nativas.",
+        "lesson": "La similitud es continua y los umbrales necesitan evidencia."
+      },
+      {
+        "id": "evidence-window",
+        "title": "Ventana de evidencia",
+        "hook": "Revisa los fragmentos que recibirá la respuesta antes de consultar al modelo.",
+        "action": "Recupera fuentes, elige el umbral de evidencia y solicita un borrador con citas.",
+        "lesson": "La calidad de la recuperación y la de la respuesta necesitan evaluaciones separadas."
+      }
+    ]
+  },
+  {
+    "id": "performance",
+    "rank": 4,
+    "color": "#f8d8d8",
+    "title": "Más rápido, ¿en qué parte?",
+    "subtitle": "Mide la inferencia local antes de prometer una mejora de velocidad",
+    "stage": "Gemma 4, MTP y las preferencias de rendimiento están en pruebas para desarrolladores",
+    "angle": "Separa la preparación del modelo, el primer fragmento, la generación total y la calidad. Reproduce el experimento antes de repetir el porcentaje de un anuncio.",
+    "value": "Añade mediciones reproducibles a las afirmaciones sobre BrowserDJ y los modelos locales, con un laboratorio de referencia para el sitio.",
+    "format": "Artículo de medición + resultados descargables + protocolo experimental",
+    "outline": [
+      "Registra el dispositivo, el navegador, los flags, el modo de muestreo y la entrada.",
+      "Separa la preparación, la espera hasta el primer fragmento y la generación total.",
+      "Compara configuraciones equivalentes reiniciando el navegador entre ellas.",
+      "Revisa la calidad y las medianas; no equipares la preferencia speed con MTP."
+    ],
+    "rows": [
+      10,
+      11,
+      13,
+      17,
+      20,
+      22,
+      25
+    ],
+    "sources": [
+      "https://docs.google.com/document/d/1g7bv9LHSqFWqeQUM2C6EQ5PiZ8UWTz8UibxnlD4ipDE/edit",
+      "https://docs.google.com/document/d/1rpaV4la7WtpLr4Ueb0NttJVETlVL_5a9TNHsrBMBkWk/edit",
+      "https://docs.google.com/document/d/1RnSlXRAy8ffdbehvCcH7msBwmTvsxHJJQiwcw374tMw/edit",
+      "https://developer.chrome.com/docs/ai/prompt-api"
+    ],
+    "demos": [
+      {
+        "id": "latency-lens",
+        "title": "Lupa de latencia",
+        "hook": "Una caja negra para la preparación del modelo, el primer fragmento y la respuesta completa.",
+        "action": "Ejecuta pruebas nativas reales, exporta JSON y compara configuraciones identificadas del navegador.",
+        "lesson": "Un único tiempo total no explica una experiencia más rápida."
+      },
+      {
+        "id": "preference-kitchen",
+        "title": "Cocina de preferencias",
+        "hook": "Un mezclador de opciones que explica las diferencias entre las recetas speed y capability.",
+        "action": "Prueba una receta speed incompatible, corrígela y ejecuta Summarizer nativo.",
+        "lesson": "El modelo experto speed tiene opciones restringidas y no usa MTP."
+      },
+      {
+        "id": "context-backpack",
+        "title": "Mochila de contexto",
+        "hook": "Organiza las notas dentro del presupuesto real de contexto de la sesión.",
+        "action": "Selecciona notas y mide su uso real del contexto cuando la API esté disponible.",
+        "lesson": "Consulta la capacidad de contexto en ejecución en lugar de fijar límites históricos."
+      }
+    ]
+  },
+  {
+    "id": "recipes",
+    "rank": 5,
+    "color": "#c3ecf6",
+    "title": "De APIs rígidas a recetas que puedes evaluar",
+    "subtitle": "Flujos de escritura sobre la API fundamental Prompt",
+    "stage": "Diseño de migración; la retirada sigue siendo una propuesta del archivo",
+    "angle": "Construye una pequeña capa de recetas con entradas explícitas, contratos de salida y evaluación. El autor conserva el control de los hechos y el estilo.",
+    "value": "Amplía tu artículo sobre patrones y jerga con un ejemplo práctico de cuándo se justifica una pequeña abstracción.",
+    "format": "Guía de migración + fichas de recetas + criterios de revisión de calidad",
+    "outline": [
+      "Describe la consulta del archivo como una propuesta, sin afirmar que la retirada se haya completado.",
+      "Compara APIs de tareas, constructores de prompts y recetas de la aplicación.",
+      "Separa los hechos de las preferencias de estilo.",
+      "Evalúa los borradores mediante comprobaciones observables y revisión humana."
+    ],
+    "rows": [
+      8,
+      9,
+      15
+    ],
+    "sources": [
+      "https://developer.chrome.com/docs/ai/task-api-polyfill",
+      "https://github.com/GoogleChromeLabs/web-ai-demos/tree/main/writer-rewriter-polyfills",
+      "https://github.com/GoogleChromeLabs/web-ai-demos/blob/main/built-in-ai-task-apis-polyfills/summarizer-prompt-builder.js",
+      "https://developer.chrome.com/docs/ai/prompt-api"
+    ],
+    "demos": [
+      {
+        "id": "voice-remix",
+        "title": "Mezcla de voz",
+        "hook": "Convierte una elección de estilo en una receta de escritura que se pueda inspeccionar.",
+        "action": "Ajusta el tono y la audiencia, inspecciona el prompt y genera un borrador nativo.",
+        "lesson": "El estilo definido por la aplicación es más claro cuando la receta está visible."
+      },
+      {
+        "id": "release-kitchen",
+        "title": "Cocina de novedades",
+        "hook": "Convierte tres cambios verificados en una nota de versión breve con comprobaciones.",
+        "action": "Edita los hechos, elige un formato, genera el borrador e inspecciona los identificadores que faltan.",
+        "lesson": "Un borrador fluido también debe contrastarse con los hechos de entrada."
+      },
+      {
+        "id": "recipe-arena",
+        "title": "Duelo de recetas",
+        "hook": "Compara un resumen de tarea y un prompt propio sobre la misma fuente.",
+        "action": "Ejecuta ambas opciones nativas y evalúa sus resultados.",
+        "lesson": "Evalúa las abstracciones con la misma tarea y evidencia."
+      }
+    ]
+  },
+  {
+    "id": "languages",
+    "rank": 6,
+    "color": "#ccf6c5",
+    "title": "Tu usuario no debería cambiar de idioma",
+    "subtitle": "Detección de idioma, traducción y corrección revisada",
+    "stage": "Detector y Translator documentados; Proofreader en prueba para desarrolladores",
+    "angle": "Una experiencia de soporte bilingüe que mantiene visible el mensaje original y deja al autor controlar la traducción y las correcciones.",
+    "value": "Conecta a tu audiencia hispanohablante con tu trabajo en productos de comunicación mediante un flujo útil.",
+    "format": "Artículo de ingeniería de producto + miniaplicaciones de soporte bilingüe",
+    "outline": [
+      "Conserva el texto original y haz de la traducción una acción explícita.",
+      "Detecta el idioma y muestra la incertidumbre en textos breves o mixtos.",
+      "Comprueba la disponibilidad del par de idiomas antes de prometer una traducción.",
+      "Mantén la corrección en inglés para la versión experta revisada y revisa los cambios."
+    ],
+    "rows": [
+      10,
+      18,
+      26
+    ],
+    "sources": [
+      "https://developer.chrome.com/docs/ai/language-detection",
+      "https://developer.chrome.com/docs/ai/translator-api",
+      "https://developer.chrome.com/docs/ai/proofreader-api",
+      "https://docs.google.com/document/d/1RnSlXRAy8ffdbehvCcH7msBwmTvsxHJJQiwcw374tMw/edit"
+    ],
+    "demos": [
+      {
+        "id": "bilingual-relay",
+        "title": "Relevo bilingüe",
+        "hook": "Una conversación de soporte en dos idiomas con el original siempre visible.",
+        "action": "Traduce un mensaje del español al inglés o invierte el par de idiomas.",
+        "lesson": "La traducción debe preservar el contexto y el control del autor."
+      },
+      {
+        "id": "language-radar",
+        "title": "Radar de idiomas",
+        "hook": "Un panel de estimaciones para mensajes que mezclan idiomas.",
+        "action": "Compara mensajes largos, cortos y mixtos con el detector nativo.",
+        "lesson": "La confianza necesita interpretación; no es una garantía."
+      },
+      {
+        "id": "proofread-review",
+        "title": "El bolígrafo rojo",
+        "hook": "Revisa las sugerencias del corrector local antes de aplicarlas.",
+        "action": "Corrige un texto en inglés, inspecciona la propuesta y acéptala o recházala.",
+        "lesson": "Las correcciones son decisión del autor."
+      }
+    ]
+  },
+  {
+    "id": "decisions",
+    "rank": 7,
+    "color": "#ffe7a5",
+    "title": "Un if semántico necesita una salida de emergencia",
+    "subtitle": "Decisiones estructuradas, abstención y evaluación",
+    "stage": "Exploración con Prompt API; no se afirma implementar Decisions API",
+    "angle": "Usa la intención de prototipar del archivo como pregunta: ¿cómo debe actuar una aplicación cuando el modelo no puede tomar una decisión categórica fiable?",
+    "value": "Añade a tu serie de patrones un ensayo basado en evidencia con comportamiento medible, sin anunciar una API cuyo contrato invocable no está verificado.",
+    "format": "Artículo exploratorio + panel de revisión de decisiones + pequeño conjunto de evaluación",
+    "outline": [
+      "Distingue una intención de prototipar de una API publicada.",
+      "Usa la salida estructurada de Prompt API para el experimento actual.",
+      "Separa el juicio del modelo de las reglas de negocio deterministas.",
+      "Evalúa las decisiones incorrectas y las abstenciones; no llames confianza calibrada a una puntuación del modelo."
+    ],
+    "rows": [
+      15
+    ],
+    "sources": [
+      "https://developer.chrome.com/docs/ai/prompt-api",
+      "https://developer.chrome.com/docs/ai/task-api-polyfill"
+    ],
+    "demos": [
+      {
+        "id": "issue-router",
+        "title": "Central de incidencias",
+        "hook": "Clasifica una incidencia de soporte con una vía explícita de revisión.",
+        "action": "Compara una referencia transparente por palabras clave con una decisión estructurada del modelo nativo.",
+        "lesson": "Abstenerse es una salida válida."
+      },
+      {
+        "id": "comment-airlock",
+        "title": "Esclusa de comentarios",
+        "hook": "Revisa una decisión de moderación sin publicar ni eliminar nada.",
+        "action": "Cambia el comentario y las reglas de escalado e inspecciona la clasificación propuesta.",
+        "lesson": "La recomendación del modelo y la acción de la aplicación son pasos separados."
+      },
+      {
+        "id": "abstention-lab",
+        "title": "Laboratorio de abstención",
+        "hook": "Compara cobertura y error con un conjunto etiquetado de mensajes ambiguos.",
+        "action": "Ajusta el umbral de diferencia entre palabras, inspecciona los errores y evalúa las decisiones nativas.",
+        "lesson": "Mide la cobertura selectiva y los errores aceptados sin inventar confianza."
+      }
+    ]
+  }
+]

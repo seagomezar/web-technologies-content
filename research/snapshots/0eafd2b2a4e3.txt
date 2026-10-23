@@ -1,0 +1,13 @@
+Home
+Docs
+AI in Chrome
+Built-in AI
+Join the early preview program
+Stay organized with collections
+Save and categorize content based on your preferences.
+We need your input to shape the APIs, determine if they fulfill your use cases,
+and inform our discussions with other browser vendors for standardization.
+Join the early preview program (EPP) to provide feedback on WebMCP, early-stage
+built-in AI ideas, and gain opportunities to test in-progress, unreleased
+APIs through local prototyping.
+Loading…

@@ -1,0 +1,147 @@
+{
+  "checkedAt": "2026-10-23T13:18:03.628Z",
+  "checks": [
+    {
+      "name": "Gallery exposes seven proposals and 21 distinct demo links",
+      "status": "pass"
+    },
+    {
+      "name": "All 21 HTML demos load without page exceptions or desktop overflow",
+      "status": "pass"
+    },
+    {
+      "name": "All 21 demos fit a 390px viewport",
+      "status": "pass"
+    },
+    {
+      "name": "Reading route shares state, prevents duplicates, removes items, and rejects unknown IDs",
+      "status": "pass"
+    },
+    {
+      "name": "Ticket staging requires review; rejection does not confirm; confirmation updates local state",
+      "status": "pass"
+    },
+    {
+      "name": "Tool observatory filters developer tools and distinguishes invalid JSON from application errors",
+      "status": "pass"
+    },
+    {
+      "name": "Streaming rehearsal cancels while preserving partial text and the rehearsal label",
+      "status": "pass"
+    },
+    {
+      "name": "Real second-origin iframe policy probe distinguishes denied and delegated language-model access",
+      "status": "pass"
+    },
+    {
+      "name": "Retrieval baselines rank notes, invalidate changed corpora, and abstain without evidence",
+      "status": "pass"
+    },
+    {
+      "name": "Performance, recipe, and decision controls reject invalid inputs and never invent measurements or actions",
+      "status": "pass"
+    },
+    {
+      "name": "17 native adapter workflows complete with contract doubles and release every session",
+      "status": "pass",
+      "detail": "This checks browser API contracts and application wiring; it does not validate actual inference quality."
+    },
+    {
+      "name": "Native retrieval passes the correct task hints; proofreading preserves the original until accepted",
+      "status": "pass"
+    },
+    {
+      "name": "Deck has a 30-minute script, clicker build navigation, and reload-persistent slide/build addresses",
+      "status": "pass"
+    },
+    {
+      "name": "Every fully built slide stays within its 16:9 frame",
+      "status": "pass"
+    },
+    {
+      "name": "Presenter sync highlights the current build, previews the next slide, and controls the planned clock without duplicate advances",
+      "status": "pass"
+    },
+    {
+      "name": "Slide frame scales to a portrait viewport while preserving 16:9",
+      "status": "pass"
+    },
+    {
+      "name": "Deck, local fonts, and keyboard navigation work from file URLs with the browser offline",
+      "status": "pass"
+    },
+    {
+      "name": "View Transitions crossfade is used when motion is allowed and skipped for reduced motion",
+      "status": "pass"
+    },
+    {
+      "name": "Native WebMCP registers, executes, and updates visible state in real Canary",
+      "status": "pass",
+      "detail": "Temporary test profile with experimental web platform features; no installed-profile settings changed."
+    },
+    {
+      "name": "Native WebMCP review waits for rejection or confirmation and exposes the debugging annotation",
+      "status": "pass",
+      "detail": "Fictional local tickets only; no real transaction or model invocation."
+    },
+    {
+      "name": "No uncaught page errors across the tested workflows",
+      "status": "pass"
+    },
+    {
+      "name": "Focused links and controls preserve normal keyboard activation",
+      "status": "pass"
+    }
+  ],
+  "limitations": [
+    "Contract-double tests verify adapter wiring and UI behavior, not model quality.",
+    "No model download, hosted inference, or remote agent execution is requested by this test suite."
+  ],
+  "browser": "155.0.8059.85",
+  "nativeAvailability": {
+    "LanguageModel": "unavailable",
+    "Summarizer": "unavailable",
+    "Translator": "downloadable",
+    "LanguageDetector": "unavailable",
+    "Proofreader": "not exposed",
+    "SemanticEmbedder": "not exposed"
+  },
+  "canary": "158.0.8119.0",
+  "nativeWebMCP": {
+    "registeredTools": [
+      {
+        "name": "add_to_route",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "articleId": {
+              "type": "string",
+              "enum": [
+                "models",
+                "browserdj",
+                "patterns",
+                "ownership"
+              ]
+            }
+          },
+          "required": [
+            "articleId"
+          ],
+          "additionalProperties": false
+        },
+        "annotations": {
+          "consequentialHint": false,
+          "debugging": false,
+          "readOnlyHint": false,
+          "untrustedContentHint": false
+        }
+      }
+    ],
+    "routeExecution": "{\"status\":\"added\",\"article\":\"Small models, thoughtful design\",\"route\":[\"models\"]}",
+    "reviewRejection": true,
+    "reviewConfirmation": true,
+    "debuggingAnnotation": true,
+    "actualModelInference": false
+  },
+  "status": "passed"
+}

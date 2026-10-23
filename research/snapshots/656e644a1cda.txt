@@ -1,0 +1,85 @@
+Built-in AI - Feedback on output quality
+El archivo no puede abrirse porque no tienes JavaScript habilitado en tu navegador. Habilítalo y vuelve a cargar el archivo.
+Built-in AI - Feedback on output quality
+The web platform team in Chrome is
+actively developing
+built-in AI
+capabilities, offering web developers a new way to approach common client-side AI tasks.
+This form is to share feedback on the output quality of the APIs and their underlying models.
+Acceder a Google
+para guardar el progreso.
+Más información
+* Indica que la pregunta es obligatoria
+Correo electrónico
+*
+Tu dirección de correo electrónico
+This feedback is for the following API:
+*
+Prompt API
+Summarization API
+Language detection API
+Writer API
+Rewriter API
+Translation API
+Proofreader API
+Otros:
+Type of feedback
+*
+Elegir
+Poor quality
+Irrelevant response
+Factual inaccuracy / hallucination
+Ethical concern
+Harmful content
+Technical issues (e.g. invalid JSON output, not following instructions)
+Performance issues
+Other
+Severity
+*
+Minor
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+Critical
+Frequency
+*
+Isolated incident
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+Consistently reproducible
+Input and parameters passed to the API that triggered the issue
+*
+Tu respuesta
+Output received
+*
+Tu respuesta
+Expected output
+Tu respuesta
+Extra context / details
+Specify any non default settings such as the temperature or topK for the Prompt API.
+Tu respuesta
+Enviar
+Borrar formulario
+Nunca envíes contraseñas a través de Formularios de Google.
+El formulario se creó en Google.com.
+Privacidad y condiciones
+Formularios
+Ayuda y comentarios
+Comunicarse con el propietario del formulario
+Ayudar a mejorar Formularios
+Denunciar

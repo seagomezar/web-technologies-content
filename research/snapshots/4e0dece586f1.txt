@@ -1,0 +1,29 @@
+Built-in AI - API readiness (2025/09)
+El archivo no puede abrirse porque no tienes JavaScript habilitado en tu navegador. Habilítalo y vuelve a cargar el archivo.
+Built-in AI - API readiness (2025/09)
+Thank you for putting the Built-in AI APIs through their paces.
+We're eager to hear your feedback on a few of our AI APIs available via an Origin Trial. Your experience using the
+Writer, Rewriter
+, and
+Prompt API (for the web)
+in real-world scenarios is invaluable as we prepare them for general release.
+Whether you've used these APIs in Origin Trials or experimented with them locally, please take a few minutes to complete this short survey.
+Your honest feedback will help us ensure these APIs are ready and meet your needs.
+This survey should take approximately 5 minutes to complete, or less if you're only familiar with a few of our APIs.
+Acceder a Google
+para guardar el progreso.
+Más información
+* Indica que la pregunta es obligatoria
+Correo electrónico
+*
+Tu dirección de correo electrónico
+Siguiente
+Borrar formulario
+Nunca envíes contraseñas a través de Formularios de Google.
+El formulario se creó en Google.com.
+Privacidad y condiciones
+Formularios
+Ayuda y comentarios
+Comunicarse con el propietario del formulario
+Ayudar a mejorar Formularios
+Denunciar

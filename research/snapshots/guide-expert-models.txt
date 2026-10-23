@@ -1,0 +1,123 @@
+CHROME
+	
+
+	Built-in AI Early Preview Program
+Summarizer & Proofreader Expert Models
+	Authors
+	Deepti BogadiMike Wasserman
+Kenji Baheux
+	Last-updated
+	Jun 2, 2026
+See changelog.
+	Intro
+Thanks for participating in our Early Preview Program for built-in AI capabilities (Google I/O 2026 talk). As always we are eager to hear your feedback about this program and our APIs.
+
+
+📣
+	Know of other folks who would love to join this program? Or perhaps you got access to this document from a friend? 
+
+
+Sign up to get the latest updates directly in your inbox.
+	
+
+This guide provides instructions for members of the Early Preview Program (EPP) to test the new smaller and faster expert models for the Summarizer API, and for the Proofreader APIs. These specialized models are designed to enhance performance and accuracy for their respective tasks.
+Initial Setup and Configuration
+To begin testing, ensure you are using Chrome Version 150+; use Chrome Canary to get nightly updates. You must manually enable the following experimental flags to access the expert models and their associated parameters:
+
+
+* Summarizer API: Enable chrome://flags/#summarizer-api-performance-preference
+   * Follow updates at https://chromestatus.com/feature/6309243756085248
+* Proofreader API: Enable chrome://flags/#proofreader-api
+   * Follow updates at https://chromestatus.com/feature/5164677291835392
+Expert Model for the Summarizer API
+Preference Parameter
+We have added a preference parameter to the options for Summarizer.create() function. This provides a standard mechanism for developers to indicate whether they prioritize fast execution or comprehensive capabilities. 
+
+
+The preference parameter addresses a fundamental tradeoff that exists across all client-side machine learning tasks. As such, it may eventually apply to other APIs in the built-in AI ecosystem.
+Preference Parameter Options
+Preference value
+	Description
+	"auto"
+	(Default) Implementation-defined balance. 
+
+
+The browser may dynamically adjust internal processing based on environment, system constraints, or context.
+	"speed"
+	Prioritizes low latency and fast execution. 
+
+
+This may limit summarization capability, potentially resulting in less nuanced extraction. NOTE: incompatible options will yield unavailable and reject create() calls. 
+
+
+With this preference, only a subset of the options are currently supported:
+* outputLanguage: ”en”
+* type: ”tldr” or ”key-points”
+* length: “short” or “medium”
+* (NOTE) format: ”markdown” output will match that of ”plain-text”
+
+
+The quality may vary depending on the type of content. We’d love your feedback on which content is working well (e.g. reviews), and what other type of content we ought to prioritize (e.g. chat logs).
+	"capability"
+	Prioritizes comprehensiveness and coherence. 
+
+
+This focuses on capturing subtle context and highly refined summaries, which may require longer processing times.
+	Example usage
+The examples below show how the preference parameter can be used in different scenarios. For details on the Summarizer API itself, refer to full developer documentation.
+
+
+// Make a summarizer with "speed" preference, with { type: "key-points", format: "markdown", length: "short" } defaults.
+const quickKeyPointsSummarizer = await Summarizer.create({preference: "speed", outputLanguage: "en"});
+const keyPoints = await quickKeyPointsSummarizer.summarize(myText);
+
+
+// Make a summarizer with "capability" preference, using context to draft Spanish headlines with { format: "markdown", length: "short" } defaults.
+const advancedHeadlineSummarizer = await Summarizer.create({preference: "capability", type: "headline", outputLanguage: "es", sharedContext: myContext});
+const headline = await advancedHeadlineSummarizer.summarize(myText);
+Expert model for the Proofreader API
+The Proofreader API doesn’t expose any preference parameter. It always uses an expert model and is currently limited to English.
+Example usage
+The example below shows basic usage of the Proofreader API, now powered by an expert model. For additional details, refer to the full developer documentation.
+
+
+// Create a Proofreader session, and use it to proofread a piece of text.
+const proofreader = await Proofreader.create();
+const result = await proofreader.proofread(myText);
+console.log(result.correctedInput);
+console.log(result.corrections);
+Testing and Feedback
+We encourage you to test the Summarizer API with both "speed" and "capability" preferences to validate how the different model tiers perform under various real-world scenarios, and we are looking forward to your feedback on the Proofreader API with this new expert model.
+
+
+We also have two Chrome demos that may help with your testing:
+* Summarizer API performance Benchmark (source)
+* Proofreader API (source)
+
+
+Please provide feedback through the following channels:
+
+
+* Technical Issues: File bug reports for any quality or implementation issues.
+   * Summarizer: https://issues.chromium.org/issues/new?component=1617227
+   * Proofreader: https://issues.chromium.org/issues/new?component=1827469&template=2244689
+* API feedback: For feedback on the API’s ergonomics, consider filing issues on the relevant repository within the W3C web machine learning working group.
+   * Summarizer: https://github.com/webmachinelearning/writing-assistance-apis/issues
+   * Proofreader: https://github.com/webmachinelearning/proofreader-api/issues 
+* Other feedback: For other questions or issues, reach out directly by sending an email to the mailing list owners (chrome-ai-dev-preview+owners@chromium.org). We’ll do our best to be as responsive as possible or update existing documents when more appropriate.
+Appendix
+FAQ
+Participation in the Early Preview Program
+Opt-out and unsubscribe
+To opt-out from the Early Preview Program, simply send an email to:
+* chrome-ai-dev-preview+unsubscribe@chromium.org.
+Opt-in
+If you know someone who would like to join the program, ask them to complete the sign-up form at:
+* goo.gle/chrome-ai-dev-preview-join
+Other updates
+Links to all previous updates and surveys we’ve sent can be found in The Context Index also available via goo.gle/chrome-ai-dev-preview-index
+Changelog
+Date
+	Changes
+	Jun 2, 2026
+	* First version.

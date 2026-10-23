@@ -1,0 +1,373 @@
+Conversation
+beaufortfrancois
+commented
+Aug 21, 2026
+•
+edited by pr-preview
+Bot
+Loading
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+Copy link
+Copy Markdown
+Collaborator
+Following the
+WebML CG resolution
+, this PR adds a
+debugging
+boolean member to the
+ToolAnnotations
+dictionary to provide a way for web apps and frameworks to register tools intended specifically for developer tooling and inspection (e.g., Chrome DevTools AI assistance, testing frameworks) so that general-purpose/end-user agents can filter them out.
+Note that I went with
+debugging
+rather than
+debuggingHint
+because it is a definitive categorization flag identifying the tool's intended domain/audience (developer/debugging tools vs. user-facing tools) rather than a behavioral hint about how the tool executes.
+Fixes
+#207
+Preview
+|
+Diff
+Sorry, something went wrong.
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+❤️
+4
+mathiasbynens, jackfranklin, AnmolVerma404, and dylanlangston reacted with heart emoji
+All reactions
+❤️
+4 reactions
+beaufortfrancois
+requested a review
+  from
+domfarolino
+August 21, 2026 09:39
+beaufortfrancois
+mentioned this pull request
+Aug 21, 2026
+Support developer tooling
+#207
+Closed
+Add debugging member to ToolAnnotations
+c768a6b
+beaufortfrancois
+force-pushed
+the
+debugging-member
+branch
+    from
+5c05290
+to
+c768a6b
+Compare
+September 11, 2026 11:19
+beaufortfrancois
+commented
+Sep 11, 2026
+Copy link
+Copy Markdown
+Collaborator
+Author
+FYI I have a WIP Chromium CL at
+https://chromium-review.googlesource.com/c/chromium/src/+/8398587
+All reactions
+Sorry, something went wrong.
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+anssiko
+added
+  the
+Agenda+
+label
+Sep 14, 2026
+markafoltz
+self-requested a review
+September 16, 2026 21:24
+markafoltz
+approved these changes
+Sep 16, 2026
+View reviewed changes
+markafoltz
+commented
+Sep 16, 2026
+Copy link
+Copy Markdown
+Collaborator
+PR LGTM.
+One question that comes to mind is whether a tool marked as
+debugging
+must not set
+consequentialHint
+.    Those two categories seem mutually exclusive, as debugging should not have irreversible, real-world side effects.
+All reactions
+Sorry, something went wrong.
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+domfarolino
+approved these changes
+Sep 17, 2026
+View reviewed changes
+Hide details
+View details
+domfarolino
+merged commit
+8a82bb7
+into
+webmachinelearning
+:
+main
+Sep 17, 2026
+2 checks passed
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+github-actions
+Bot
+added a commit
+      that referenced
+      this pull request
+Sep 17, 2026
+Add debugging member to ToolAnnotations (
+#253
+)
+…
+fd86b7a
+SHA:
+8a82bb7
+Reason: push, by domfarolino
+
+Co-authored-by: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
+beaufortfrancois
+mentioned this pull request
+Sep 17, 2026
+feat: add debugging to ToolAnnotations
+webmachinelearning/webmcp-types#11
+Merged
+chromium-wpt-export-bot
+mentioned this pull request
+Sep 17, 2026
+[WebMCP] Add debugging member in ToolAnnotations
+web-platform-tests/wpt#62767
+Merged
+chromium-wpt-export-bot
+pushed a commit
+        to web-platform-tests/wpt
+      that referenced
+      this pull request
+Sep 18, 2026
+[WebMCP] Add debugging member in ToolAnnotations
+…
+ce60310
+When a tool is registered with `debugging: true`, this annotation
+indicates that the tool is intended for debugging and developer
+tooling rather than end-user interactions.
+
+Spec PR:
+webmachinelearning/webmcp#253
+Bug: 489045948
+Change-Id: Ie80de3eccd61e9b8420a32e2deb4ab3e89301dee
+beckysiegel
+pushed a commit
+        to chromium/chromium
+      that referenced
+      this pull request
+Sep 18, 2026
+[WebMCP] Add debugging member in ToolAnnotations
+…
+4ba301a
+When a tool is registered with `debugging: true`, this annotation
+indicates that the tool is intended for debugging and developer
+tooling rather than end-user interactions.
+
+Spec PR:
+webmachinelearning/webmcp#253
+Bug: 489045948
+Change-Id: Ie80de3eccd61e9b8420a32e2deb4ab3e89301dee
+Reviewed-on:
+https://chromium-review.googlesource.com/c/chromium/src/+/8398587
+Reviewed-by: Philip Pfaffe <pfaffe@chromium.org>
+Commit-Queue: Fr <beaufort.francois@gmail.com>
+Cr-Commit-Position: refs/heads/main@{#1700568}
+chromium-wpt-export-bot
+pushed a commit
+        to web-platform-tests/wpt
+      that referenced
+      this pull request
+Sep 18, 2026
+[WebMCP] Add debugging member in ToolAnnotations
+…
+fa6b41c
+When a tool is registered with `debugging: true`, this annotation
+indicates that the tool is intended for debugging and developer
+tooling rather than end-user interactions.
+
+Spec PR:
+webmachinelearning/webmcp#253
+Bug: 489045948
+Change-Id: Ie80de3eccd61e9b8420a32e2deb4ab3e89301dee
+Reviewed-on:
+https://chromium-review.googlesource.com/c/chromium/src/+/8398587
+Reviewed-by: Philip Pfaffe <pfaffe@chromium.org>
+Commit-Queue: Fr <beaufort.francois@gmail.com>
+Cr-Commit-Position: refs/heads/main@{#1700568}
+chromium-wpt-export-bot
+pushed a commit
+        to web-platform-tests/wpt
+      that referenced
+      this pull request
+Sep 18, 2026
+[WebMCP] Add debugging member in ToolAnnotations
+…
+2699eaa
+When a tool is registered with `debugging: true`, this annotation
+indicates that the tool is intended for debugging and developer
+tooling rather than end-user interactions.
+
+Spec PR:
+webmachinelearning/webmcp#253
+Bug: 489045948
+Change-Id: Ie80de3eccd61e9b8420a32e2deb4ab3e89301dee
+Reviewed-on:
+https://chromium-review.googlesource.com/c/chromium/src/+/8398587
+Reviewed-by: Philip Pfaffe <pfaffe@chromium.org>
+Commit-Queue: Fr <beaufort.francois@gmail.com>
+Cr-Commit-Position: refs/heads/main@{#1700568}
+webmaxru
+mentioned this pull request
+Sep 22, 2026
+WebMCP skill update
+webmaxru/web-ai-agent-skills#64
+Closed
+lando-worker
+Bot
+pushed a commit
+        to mozilla-firefox/firefox
+      that referenced
+      this pull request
+Sep 23, 2026
+Bug 2073348 [wpt PR 62767] - [WebMCP] Add debugging member in ToolAnn…
+…
+33bc18e
+…otations, a=testonly
+
+Automatic update from web-platform-tests
+[WebMCP] Add debugging member in ToolAnnotations
+
+When a tool is registered with `debugging: true`, this annotation
+indicates that the tool is intended for debugging and developer
+tooling rather than end-user interactions.
+
+Spec PR:
+webmachinelearning/webmcp#253
+Bug: 489045948
+Change-Id: Ie80de3eccd61e9b8420a32e2deb4ab3e89301dee
+Reviewed-on:
+https://chromium-review.googlesource.com/c/chromium/src/+/8398587
+Reviewed-by: Philip Pfaffe <pfaffe@chromium.org>
+Commit-Queue: Fr <beaufort.francois@gmail.com>
+Cr-Commit-Position: refs/heads/main@{#1700568}
+
+--
+
+wpt-commits: 2699eaa2e5f906eda4d7443f7080c3de19e62365
+wpt-pr: 62767
+obetomuniz
+mentioned this pull request
+Sep 23, 2026
+feat(webmcp): support debugging tool annotations
+obetomuniz/web-ai-sdk#265
+Closed
+11 tasks
+beaufortfrancois
+mentioned this pull request
+Sep 24, 2026
+docs(webmcp): document the new debugging tool annotation
+GoogleChrome/modern-web-guidance-src#1510
+Merged
+jgoldfoot
+mentioned this pull request
+Sep 27, 2026
+Weekly research scan [2026-09-27]
+jgoldfoot/BiModalDesign#175
+Merged
+zerox80
+pushed a commit
+        to zerox80/firefox
+      that referenced
+      this pull request
+Oct 16, 2026
+Bug 2073348 [wpt PR 62767] - [WebMCP] Add debugging member in ToolAnn…
+…
+b70c64d
+…otations, a=testonly
+
+Automatic update from web-platform-tests
+[WebMCP] Add debugging member in ToolAnnotations
+
+When a tool is registered with `debugging: true`, this annotation
+indicates that the tool is intended for debugging and developer
+tooling rather than end-user interactions.
+
+Spec PR:
+webmachinelearning/webmcp#253
+Bug: 489045948
+Change-Id: Ie80de3eccd61e9b8420a32e2deb4ab3e89301dee
+Reviewed-on:
+https://chromium-review.googlesource.com/c/chromium/src/+/8398587
+Reviewed-by: Philip Pfaffe <pfaffe@chromium.org>
+Commit-Queue: Fr <beaufort.francois@gmail.com>
+Cr-Commit-Position: refs/heads/main@{#1700568}
+
+--
+
+wpt-commits: 2699eaa2e5f906eda4d7443f7080c3de19e62365
+wpt-pr: 62767
+Sign up for free
+to join this conversation on GitHub
+.
+    Already have an account?
+Sign in to comment
+Reviewers
+markafoltz
+markafoltz approved these changes
+domfarolino
+domfarolino approved these changes
+Assignees
+No one assigned
+Labels
+Agenda+
+Projects
+None yet
+Milestone
+No milestone
+Development
+Successfully merging this pull request may close these issues.
+Support developer tooling
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+4 participants
+Add this suggestion to a batch that can be applied as a single commit.
+This suggestion is invalid because no changes were made to the code.
+Suggestions cannot be applied while the pull request is closed.
+Suggestions cannot be applied while viewing a subset of changes.
+Only one suggestion per line can be applied in a batch.
+Add this suggestion to a batch that can be applied as a single commit.
+Applying suggestions on deleted lines is not supported.
+You must change the existing code in this line in order to create a valid suggestion.
+Outdated suggestions cannot be applied.
+This suggestion has been applied or marked resolved.
+Suggestions cannot be applied from pending reviews.
+Suggestions cannot be applied on multi-line comments.
+Suggestions cannot be applied while the pull request is queued to merge.
+Suggestion cannot be applied right now. Please check back later.

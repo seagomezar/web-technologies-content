@@ -1,0 +1,167 @@
+CHROME
+	
+
+	Built-in AI Early Preview Program
+Semantic Embedder API
+	Authors
+	Deepti Bogadi
+Ian Zhao
+Kenji Baheux
+	Last-updated
+	Jul 31, 2026
+See changelog.
+	Intro
+Thanks for participating in our Early Preview Program for built-in AI capabilities (Google I/O 2026 talk). As always we are eager to hear your feedback about this program and our APIs.
+
+
+📣
+	Know of other folks who would love to join this program? Or perhaps you got access to this document from a friend? 
+
+
+Sign up to get the latest updates directly in your inbox.
+	
+
+This guide provides instructions for members of the Early Preview Program (EPP) to test the new Semantic Embedder API.
+Initial Setup and Configuration
+To begin testing, ensure you are using the latest version of Chrome Canary ie, it should be greater than 153.0.7979.0. You must manually enable the following experimental flag to access the Semantic Embedder API:
+* Semantic Embedder API: Enable chrome://flags/#semantic-embedder-api
+Semantic Embedder API
+The Semantic Embedder API enables the generation of text embeddings on-device. This allows for privacy-preserving semantic understanding, low-latency applications, and avoids server-side costs. 
+The API is currently supported only on desktops (Linux, Mac and Windows). 
+Core Capabilities:
+* Generates embeddings using a built-in model based on embeddinggemma-300m.
+* Supports single string or batch inputs (array of strings).
+* Returns embeddings as Float32Array values.
+Example usage
+The API follows the standard pattern found in other built-in AI APIs:
+* availability() -> create() -> execute with embed() for this API -> destroy()  
+For the initial trial on the user profile, the model needs a few seconds to download. You can monitor the download progress by passing a monitor callback into the create() function. This allows you to show a progress indicator to your users while the model fetches in the background.
+Optimizing the embedding quality with taskType
+The embed function takes an optional parameter called taskType which allows you to optimize the embedding quality for specific use cases. The following tasks are currently supported:
+Value for taskType
+	Use case
+	"semantic-similarity"
+	Semantic Similarity: Used to generate embeddings that are optimized to assess text similarity. This is not intended for retrieval use cases.
+
+
+The API doesn't pick a default task if taskType isn’t specified. Instead, it computes the embeds for the raw string input as-is.
+	"retrieval-query" or
+"retrieval-document"
+	Retrieval (Query) or Retrieval (Document): Used to generate embeddings that are optimized for document search or information retrieval.
+
+
+* Retrieval (Document): Use this when generating embeddings for your entire collection of documents so they can be indexed in a vector database.
+* Retrieval (Query): Use this when a user submits a search to generate an embedding for their query text in real time.
+	"classification"
+	Classification: Used to generate embeddings that are optimized to classify texts according to preset labels (e.g. sentiment analysis, spam detection).
+	"clustering"
+	Clustering: Used to generate embeddings that are optimized to cluster texts based on their similarities (e.g. document organization, market research, anomaly detection).
+	
+
+For more details, see the official documentation for EmbeddingGemma.
+Code snippet
+// 1. Check if the API is available
+if (!SemanticEmbedder || (await SemanticEmbedder.availability()) !== "available") {
+  console.error("Semantic Embedder API is not available on this device.");
+}
+
+
+// 2. Create the embedder instance with a download monitor
+const semanticEmbedder = await SemanticEmbedder.create({
+  monitor(m) {
+    m.addEventListener('downloadprogress', (e) => {
+      console.log(`Downloaded ${e.loaded * 100}%`);
+    });
+  },
+});
+
+
+// 3. Embed a single string
+const result1 = await semanticEmbedder.embed("The quick brown fox jumps over the lazy dog.", { taskType: "semantic-similarity" });
+const vector1 = result1.embeddings[0].values;
+console.log("Embedding for string 1:", vector1);
+
+
+// 4. Embed a batch of strings
+const passages = [
+  "Built-in AI APIs use on-device models.",
+  "Embeddings are high-dimensional vectors representing semantic meaning.",
+];
+const batchResult = await semanticEmbedder.embed(passages);
+batchResult.embeddings.forEach((emb, i) => {
+  console.log(`Embedding for passage ${i}:`, emb.values);
+});
+
+
+// 5. Compare similarity (Example utility function)
+function cosineSimilarity(vecA, vecB) {
+  if (!vecA || !vecB || vecA.length !== vecB.length) return 0;
+  let dotProduct = 0, normA = 0, normB = 0;
+  for (let i = 0; i < vecA.length; i++) {
+    dotProduct += vecA[i] * vecB[i];
+    normA += vecA[i] * vecA[i];
+    normB += vecB[i] * vecB[i];
+  }
+  if (normA === 0 || normB === 0) return 0;
+  return dotProduct / (Math.sqrt(normA) * Math.sqrt(normB));
+}
+
+
+const result2 = await semanticEmbedder.embed("A fast, dark-colored fox leaps over a resting hound.", { taskType: "semantic-similarity" });
+const vector2 = result2.embeddings[0].values;
+const similarity = cosineSimilarity(vector1, vector2);
+console.log(`Similarity score between string 1 and 2: ${similarity}`);
+
+
+// 6. Proactively release resources
+semanticEmbedder.destroy();
+
+The embed() method returns an EmbedderResult object:
+// Example EmbedderResult structure
+{
+  embeddings: [
+    {
+      values: Float32Array(256), // Example dimension
+    }
+    // ... more embeddings if batch input
+  ]
+}
+Important: Embeddings can only be compared when they originate from the SAME space (meaning they were produced by identical model versions). We are looking into ways to simplify this management in future updates—keep an eye out for news.
+Testing and Feedback
+We encourage you to test the Semantic Embedder API across various use cases. We are particularly interested in:
+* Performance on your test devices.
+* Quality of embeddings for similarity tasks.
+* Ease of use and API ergonomics.
+* Real-world applications you can build or enhance.
+Please provide feedback through the following channels:
+
+
+* Technical Issues: File bug reports for any quality or implementation issues.
+   * Semantic Embedder API : https://issues.chromium.org/issues/new?component=2127822&template=2244689
+* API feedback: For feedback on the API’s ergonomics, consider filing issues on the explainer and spec repository.
+   * Semantic Embedder API: https://github.com/explainers-by-googlers/semantic-embedder-api/issues 
+* Other feedback: For other questions or issues, reach out directly by sending an email to the mailing list owners (chrome-ai-dev-preview+owners@chromium.org). We’ll do our best to be as responsive as possible or update existing documents when more appropriate.
+Appendix
+FAQ
+Participation in the Early Preview Program
+Opt-out and unsubscribe
+To opt-out from the Early Preview Program, simply send an email to:
+* chrome-ai-dev-preview+unsubscribe@chromium.org.
+Opt-in
+If you know someone who would like to join the program, ask them to complete the sign-up form at:
+* goo.gle/chrome-ai-dev-preview-join
+Other updates
+Links to all previous updates and surveys we’ve sent can be found in The Context Index also available via goo.gle/chrome-ai-dev-preview-index
+Changelog
+Date
+	Changes
+	Jul 16, 2026
+	* First version.
+	Jul 16, 2026
+	* Added details about the lack of download progress events. The create call will fail unless the model is fully downloaded.
+	Jul 17, 2026
+	* Fixed typo in link to huggingface.
+	Jul 21, 2026
+	* The embed function takes an optional taskType parameter, not the create function.
+	Jul 31, 2026
+	* Support for download progress has been added in Chrome 153.0.7979.0 and above.

@@ -1,0 +1,27 @@
+La paradoja del aprendizaje con IA: Por qué la comodidad actual puede costar tu futuro como desarrollador
+Sebastian Gomez
+Aug 31, 2026
+Hace unos días escuchaba a Andrew Ng reflexionar sobre cómo la IA mal utilizada perjudica el aprendizaje. Como docente y engineering manager, analizo la gran asimetría entre seniors y juniors, la atrofia del pensamiento crítico y la disciplina de la pizarra.
+Continua Leyendo
+Menos humo y más arquitectura: Patrones de diseño para sistemas con agentes de IA
+Sebastian Gomez
+Aug 31, 2026
+Gran parte de lo que hoy se vende como loop o graph engineering no es magia: son patrones clásicos de software aplicados a LLMs. Analizamos los 4 patrones agénticos clave con código y sus trampas de producción.
+Continua Leyendo
+Ahora puedes invocar a Gemini directamente desde Google Cloud Pub/Sub... ¿pero deberías?
+Sebastian Gomez
+Apr 21, 2026
+Google Cloud ahora permite invocar LLMs como Gemini directamente desde una suscripción de Pub/Sub usando transformaciones de mensajes (SMTs). En este artículo construimos un ejemplo práctico con JavaScript y debatimos una cuestión arquitectónica clave: ¿es buena idea poner la lógica de IA en tu middleware?
+Continua Leyendo
+Construyendo un Coach de Carrera con IA en Tiempo Real: La Inmersión Técnica
+Sebastian Gomez
+Feb 25, 2026
+Durante el Gemini Field Test participé en la construcción de algo que hasta hace poco parecía ciencia ficción: un coach de carrera impulsado por inteligencia artificial capaz de analizar telemetría en tiempo real y dar instrucciones al piloto mientras conduce a más de 200 km/h en el circuito de Thunderhill Raceway, en Sacramento, CA. Este artículo es el tercero de la serie y es el que va directo al código.
+Continua Leyendo
+Ir al Inicio
+Cargar Más ...
+Sebastian Gomez
+Mi nombre es Sebastián Gómez, soy Google Developer Expert en Tecnologías Web, estudié ingeniería de sistemas e Informática y una maestría en Ingeniería de Sistemas de la Universidad Nacional de Colombia. Actualmente trabajo en Twilio como manager de ingeniería. Soy Docente de cátedra y además me gusta dar charlas por el mundo así que contáctame si estas buscando speakers o conferencistas.
+Advertisements
+Recent Posts
+Categorías

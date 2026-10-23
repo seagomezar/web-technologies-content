@@ -1,0 +1,9 @@
+{
+  "checkedAt": "2026-10-23T13:18:13.386Z",
+  "status": "passed",
+  "checks": [
+    "Enter on a focused demo link opens the demo and preserves the current slide.",
+    "Enter on the slide advances normally.",
+    "Enter on the presenter button opens a connected presenter window."
+  ]
+}

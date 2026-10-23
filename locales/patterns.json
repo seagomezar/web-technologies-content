@@ -1,0 +1,158 @@
+{
+  "en": [
+    [
+      "^Abrir (.+) ↗$",
+      "Open $1 ↗"
+    ],
+    [
+      "^(\\d+) de (\\d+)$",
+      "$1 of $2"
+    ],
+    [
+      "^Diapositiva (\\d+)/(\\d+) · paso (\\d+)/(\\d+)$",
+      "Slide $1/$2 · build $3/$4"
+    ],
+    [
+      "^Plan: entrar en (.+) · dedicar (.+) · terminar en (.+)\\.$",
+      "Plan: start at $1 · spend $2 · finish at $3."
+    ]
+  ],
+  "es": [
+    [
+      "^(\\d+)\\. (Small models, thoughtful design|Inside BrowserDJ|From prompts to patterns|Ownership beyond the code)$",
+      "$1. $2"
+    ],
+    [
+      "^Proposal (\\d+)$",
+      "Propuesta $1"
+    ],
+    [
+      "^CSV lines: (.+)\\.$",
+      "Líneas del CSV: $1."
+    ],
+    [
+      "^Primary source (\\d+)$",
+      "Fuente primaria $1"
+    ],
+    [
+      "^Source (\\d+): (.+)$",
+      "Fuente $1: $2"
+    ],
+    [
+      "^(.+) · (\\d+) min estimate$",
+      "$1 · $2 min estimados"
+    ],
+    [
+      "^Review (\\d+) fictional tickets?\\. Nothing has been confirmed\\.$",
+      "Revisa $1 entrada(s) ficticia(s). No se ha confirmado nada."
+    ],
+    [
+      "^Demo request (\\d+): (\\d+) ticket\\(s\\), confirmed through the review button\\. No real booking\\.$",
+      "Solicitud de demostración $1: $2 entrada(s), confirmada con el botón de revisión. Sin reserva real."
+    ],
+    [
+      "^(.+) is not exposed in this browser\\. Use the setup notes and an eligible Chrome profile\\.$",
+      "$1 no está disponible en este navegador. Consulta la configuración y usa un perfil de Chrome compatible."
+    ],
+    [
+      "^(.+) reports unavailable for this device or these options\\.$",
+      "$1 no está disponible para este dispositivo o estas opciones."
+    ],
+    [
+      "^(.+): (.+)\\. Preparing a local session…$",
+      "$1: $2. Preparando una sesión local…"
+    ],
+    [
+      "^(.+) model download: (\\d+)%\\.$",
+      "Descarga del modelo $1: $2%."
+    ],
+    [
+      "^(.+) ready\\. Native local processing\\.$",
+      "$1 listo. Procesamiento local nativo."
+    ],
+    [
+      "^Native registration failed: (.+)\\. Local application controls remain available\\.$",
+      "Falló el registro nativo: $1. Los controles locales siguen disponibles."
+    ],
+    [
+      "^(.+) session was created successfully and released\\. No inference was requested\\.$",
+      "La sesión de $1 se creó y se liberó. No se solicitó inferencia."
+    ],
+    [
+      "^Note (\\d+) ↔ Note (\\d+)$",
+      "Nota $1 ↔ Nota $2"
+    ],
+    [
+      "^(.+) completed\\.$",
+      "$1: terminado."
+    ],
+    [
+      "^(\\d+) measured trial\\(s\\)$",
+      "$1 prueba(s) medida(s)"
+    ],
+    [
+      "^Median generation: (\\d+) ms$",
+      "Mediana de generación: $1 ms"
+    ],
+    [
+      "^ · (\\d+) characters$",
+      " · $1 caracteres"
+    ],
+    [
+      "^· (\\d+) characters$",
+      "· $1 caracteres"
+    ],
+    [
+      "^Native Summarizer · requested (.+) · experimental setting/model selection not independently verified$",
+      "Summarizer nativo · preferencia solicitada $1 · configuración y modelo experimentales sin verificación independiente"
+    ],
+    [
+      "^Translator (.+): (.+)\\. No model creation requested\\.$",
+      "Translator $1: $2. No se solicitó crear un modelo."
+    ],
+    [
+      "^(.+): proposed (.+)\\. No external action performed\\.$",
+      "$1: propuesta $2. No se realizó ninguna acción externa."
+    ],
+    [
+      "^Native evaluation (\\d+)/(\\d+)…$",
+      "Evaluación nativa $1/$2…"
+    ],
+    [
+      "^(.+) evaluation complete\\. Inspect each example before interpreting the aggregate\\.$",
+      "Evaluación $1 terminada. Revisa cada ejemplo antes de interpretar el conjunto."
+    ],
+    [
+      "^Accepted coverage: (.+)$",
+      "Cobertura aceptada: $1"
+    ],
+    [
+      "^Accepted errors: (.+)$",
+      "Errores aceptados: $1"
+    ],
+    [
+      "^Abstained for review: (.+)$",
+      "Abstenciones para revisión: $1"
+    ],
+    [
+      "^Expected: (.+) · Proposed:$",
+      "Esperado: $1 · Propuesto:"
+    ],
+    [
+      "^Native Prompt API · (.+) · (.+)$",
+      "Prompt API nativa · $1 · $2"
+    ],
+    [
+      "^Error: (.+)$",
+      "Error: $1"
+    ],
+    [
+      "^Native task unavailable: (.+)$",
+      "Tarea nativa no disponible: $1"
+    ],
+    [
+      "^Native Prompt path unavailable: (.+)$",
+      "Opción Prompt nativa no disponible: $1"
+    ]
+  ]
+}

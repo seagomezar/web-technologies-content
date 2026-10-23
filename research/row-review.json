@@ -1,0 +1,266 @@
+[
+  {
+    "csv_line": 8,
+    "topic": "Writer/Rewriter consultation",
+    "finding": "Proposal corroborated; archive link mismatch",
+    "analysis": "The linked document is the expert-model guide, not the consultation. The [polyfill repository](https://github.com/GoogleChromeLabs/web-ai-demos/tree/main/writer-rewriter-polyfills) independently describes the proposed removal. Do not announce completed deprecation or infer the final decision from today’s consultation deadline.",
+    "proposals": [
+      "recipes"
+    ],
+    "sources": [
+      "https://github.com/GoogleChromeLabs/web-ai-demos/tree/main/writer-rewriter-polyfills",
+      "https://developer.chrome.com/docs/ai/task-api-polyfill"
+    ]
+  },
+  {
+    "csv_line": 9,
+    "topic": "Task APIs as prompt recipes",
+    "finding": "Corroborated design explanation",
+    "analysis": "The [official task-polyfill article](https://developer.chrome.com/docs/ai/task-api-polyfill) and linked prompt-builder code support comparing custom prompts with task abstractions. A polyfill does not automatically establish equivalent quality or universal browser availability.",
+    "proposals": [
+      "recipes"
+    ],
+    "sources": [
+      "https://developer.chrome.com/docs/ai/task-api-polyfill",
+      "https://github.com/GoogleChromeLabs/web-ai-demos/blob/main/built-in-ai-task-apis-polyfills/summarizer-prompt-builder.js"
+    ]
+  },
+  {
+    "csv_line": 10,
+    "topic": "Summarizer and Proofreader expert models",
+    "finding": "Guide body read; developer-trial constraints",
+    "analysis": "The [EPP guide](https://docs.google.com/document/d/1RnSlXRAy8ffdbehvCcH7msBwmTvsxHJJQiwcw374tMw/edit) documents the specialist preview. Proofreader has no preference option and its expert preview is English-only. Separate this preview from the baseline Summarizer API.",
+    "proposals": [
+      "performance",
+      "languages"
+    ],
+    "sources": [
+      "https://docs.google.com/document/d/1RnSlXRAy8ffdbehvCcH7msBwmTvsxHJJQiwcw374tMw/edit",
+      "https://developer.chrome.com/docs/ai/proofreader-api"
+    ]
+  },
+  {
+    "csv_line": 11,
+    "topic": "Speed preference limitations",
+    "finding": "Guide body read; material caveat",
+    "analysis": "The [expert-model guide](https://docs.google.com/document/d/1RnSlXRAy8ffdbehvCcH7msBwmTvsxHJJQiwcw374tMw/edit) limits speed output to English, key-points/tldr, and short/medium length; markdown behaves like plain text. Incompatible combinations can report unavailable or fail creation.",
+    "proposals": [
+      "performance"
+    ],
+    "sources": [
+      "https://docs.google.com/document/d/1RnSlXRAy8ffdbehvCcH7msBwmTvsxHJJQiwcw374tMw/edit"
+    ]
+  },
+  {
+    "csv_line": 12,
+    "topic": "On-device text embeddings",
+    "finding": "Guide and explainer read; developer trial",
+    "analysis": "The [testing guide](https://docs.google.com/document/d/1ZB6MW8UDczm4V6ej5MorZWqFCYWwLhUs5HKxEdjP35c/edit) uses SemanticEmbedder and taskType on embed(), not create(). The July 31 revision adds download-progress support after 153.0.7979.0. Recompute an index in the same space; dimensions alone do not prove compatibility.",
+    "proposals": [
+      "retrieval"
+    ],
+    "sources": [
+      "https://docs.google.com/document/d/1ZB6MW8UDczm4V6ej5MorZWqFCYWwLhUs5HKxEdjP35c/edit",
+      "https://github.com/explainers-by-googlers/embedding-api"
+    ]
+  },
+  {
+    "csv_line": 13,
+    "topic": "Gemma 4 multi-token prediction",
+    "finding": "Guide body read; email percentage is not a benchmark",
+    "analysis": "The [October 21 guide](https://docs.google.com/document/d/1g7bv9LHSqFWqeQUM2C6EQ5PiZ8UWTz8UibxnlD4ipDE/edit) requires Canary 156.0.8064.0+ and the MTP flag. Prompt needs most-predictable sampling; Summarizer speed uses a different model. Measure warm generation and cold preparation separately. The CSV’s +20–30% is not a result measured here.",
+    "proposals": [
+      "performance"
+    ],
+    "sources": [
+      "https://docs.google.com/document/d/1g7bv9LHSqFWqeQUM2C6EQ5PiZ8UWTz8UibxnlD4ipDE/edit"
+    ]
+  },
+  {
+    "csv_line": 14,
+    "topic": "WebMCP developer tools",
+    "finding": "Docs and linked repositories reviewed",
+    "analysis": "The extension, types, and skills repository support an article about designing, exposing, and inspecting tools. A skills repository is a source to review, not an instruction to install or execute it. The extension’s local-server mode can send data to a hosted model; WebMCP itself is not an on-device model.",
+    "proposals": [
+      "webmcp"
+    ],
+    "sources": [
+      "https://developer.chrome.com/docs/ai/webmcp",
+      "https://github.com/GoogleChromeLabs/webmcp-extension",
+      "https://github.com/webmachinelearning/webmcp-types",
+      "https://github.com/GoogleChromeLabs/webmcp-tools/tree/main/webmcp-skills"
+    ]
+  },
+  {
+    "csv_line": 15,
+    "topic": "Decisions / Semantic If and deprecation reminder",
+    "finding": "Intent-to-prototype only; no verified callable contract",
+    "analysis": "The CSV announces exploration, and its technical link targets Writer/Rewriter polyfills. No reviewed source supplies a Decisions API callable contract. Treat the proposed decision article as an explicitly conceptual Prompt API experiment, with structured output and an abstention lane.",
+    "proposals": [
+      "decisions",
+      "recipes"
+    ],
+    "sources": [
+      "https://developer.chrome.com/docs/ai/prompt-api",
+      "https://github.com/GoogleChromeLabs/web-ai-demos/tree/main/writer-rewriter-polyfills"
+    ]
+  },
+  {
+    "csv_line": 16,
+    "topic": "New static API entry points",
+    "finding": "Historical migration; current shapes confirmed",
+    "analysis": "The current [Prompt API guide](https://developer.chrome.com/docs/ai/prompt-api) uses self.LanguageModel with static availability() and create(). Explain migration through a maintained capability helper; avoid obsolete window.ai examples.",
+    "proposals": [
+      "lifecycle"
+    ],
+    "sources": [
+      "https://developer.chrome.com/docs/ai/prompt-api"
+    ]
+  },
+  {
+    "csv_line": 17,
+    "topic": "Gemma 4 developer trial",
+    "finding": "Guide body read; avoid general shipping claim",
+    "analysis": "The [August guide](https://docs.google.com/document/d/1rpaV4la7WtpLr4Ueb0NttJVETlVL_5a9TNHsrBMBkWk/edit) specifies Canary 153.0.8009.0+ and a flag. Up to 70% is a reported observation, not a guaranteed gain. The guide describes function calling as future work rather than proof it is already exposed. Browser-managed built-in inference is a different integration from a site-managed LiteRT/WebGPU model.",
+    "proposals": [
+      "performance"
+    ],
+    "sources": [
+      "https://docs.google.com/document/d/1rpaV4la7WtpLr4Ueb0NttJVETlVL_5a9TNHsrBMBkWk/edit"
+    ]
+  },
+  {
+    "csv_line": 18,
+    "topic": "Origin-trial feedback, Proofreader, Chromebook Plus, summit",
+    "finding": "Historical program bundle; refresh each product status",
+    "analysis": "The origin-trial explainer describes enrollment, not perpetual availability. Current Proofreader documentation still labels a developer trial. Do not advertise the 2025 summit as an upcoming event or generalize Chromebook Plus support to every Chromebook.",
+    "proposals": [
+      "languages",
+      "lifecycle"
+    ],
+    "sources": [
+      "https://developer.chrome.com/docs/web-platform/origin-trials",
+      "https://developer.chrome.com/docs/ai/proofreader-api",
+      "https://developer.chrome.com/docs/ai/prompt-api",
+      "https://rsvp.withgoogle.com/events/web-ai-summit-2025"
+    ]
+  },
+  {
+    "csv_line": 19,
+    "topic": "Built-in AI do and don’t",
+    "finding": "Public UX guidance reviewed",
+    "analysis": "The public guide supports a lifecycle article: deliberate preparation, progress, user control, and understandable failure states. Use runtime detection and a useful ordinary interface instead of implying universal model support.",
+    "proposals": [
+      "lifecycle"
+    ],
+    "sources": [
+      "https://developer.chrome.com/docs/ai/built-in-ai-dos-donts"
+    ]
+  },
+  {
+    "csv_line": 20,
+    "topic": "Historical 6,144-token context window",
+    "finding": "Historical fact; not a current invariant",
+    "analysis": "The 2024 email records a limit at that time. Current [Prompt documentation](https://developer.chrome.com/docs/ai/prompt-api) exposes contextWindow, contextUsage, and measureContextUsage. Ask the active session rather than hard-coding 6,144.",
+    "proposals": [
+      "performance"
+    ],
+    "sources": [
+      "https://developer.chrome.com/docs/ai/prompt-api"
+    ]
+  },
+  {
+    "csv_line": 21,
+    "topic": "AI in cross-origin iframes",
+    "finding": "Current delegation pattern confirmed",
+    "analysis": "Current documentation specifies per-API policy tokens, such as language-model and proofreader. MDN explains the allow attribute, and the linked Proofreader PR supplies design history. A two-port local probe tests the boundary without requesting a model download.",
+    "proposals": [
+      "lifecycle"
+    ],
+    "sources": [
+      "https://developer.chrome.com/docs/ai/prompt-api",
+      "https://developer.chrome.com/docs/ai/proofreader-api",
+      "https://github.com/webmachinelearning/proofreader-api/pull/14",
+      "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/iframe#allow"
+    ]
+  },
+  {
+    "csv_line": 22,
+    "topic": "Historical 1,024-token prompt caveat removed",
+    "finding": "Historical change; still bounded by session context",
+    "analysis": "Removing that historical per-prompt caveat does not mean unlimited input. Measure the assembled prompt against the runtime session window using the [current API](https://developer.chrome.com/docs/ai/prompt-api).",
+    "proposals": [
+      "performance"
+    ],
+    "sources": [
+      "https://developer.chrome.com/docs/ai/prompt-api"
+    ]
+  },
+  {
+    "csv_line": 23,
+    "topic": "WebMCP debugging annotation",
+    "finding": "Merged specification change verified; version assertion kept separate",
+    "analysis": "PR #253 is merged and current type definitions include debugging. The Chromium Dash link only returned an app shell, so the claimed first Chrome build was not independently verified from that URL. The observatory filters intended developer tools rather than treating debugging as a permissions system.",
+    "proposals": [
+      "webmcp"
+    ],
+    "sources": [
+      "https://github.com/webmachinelearning/webmcp/pull/253",
+      "https://github.com/webmachinelearning/webmcp-types"
+    ]
+  },
+  {
+    "csv_line": 24,
+    "topic": "TypeScript types updated",
+    "finding": "Historical announcement; maintained package verified",
+    "analysis": "Current [Chrome documentation](https://developer.chrome.com/docs/ai/prompt-api) recommends @types/dom-chromium-ai. WebMCP has a separate types package. Types should match the tested browser contract; installing types does not add runtime support.",
+    "proposals": [
+      "lifecycle"
+    ],
+    "sources": [
+      "https://developer.chrome.com/docs/ai/prompt-api",
+      "https://github.com/webmachinelearning/webmcp-types"
+    ]
+  },
+  {
+    "csv_line": 25,
+    "topic": "Debugging local models",
+    "finding": "Current diagnostic destination corroborated",
+    "analysis": "Current [Prompt documentation](https://developer.chrome.com/docs/ai/prompt-api) links chrome://on-device-internals for model information. Use that with console errors and recorded configuration; it is an internal diagnostic page rather than a callable web API.",
+    "proposals": [
+      "lifecycle",
+      "performance"
+    ],
+    "sources": [
+      "https://developer.chrome.com/docs/ai/prompt-api"
+    ]
+  },
+  {
+    "csv_line": 26,
+    "topic": "Untested-language workaround",
+    "finding": "Historical workaround; replace in new content",
+    "analysis": "The issue URL returned only a JavaScript shell, so its resolution was not verified. The [current Prompt guide](https://developer.chrome.com/docs/ai/prompt-api) documents expected input/output languages and NotSupportedError. New demos declare supported languages and preserve failures; they do not reproduce the old safety-classifier flag workaround.",
+    "proposals": [
+      "languages",
+      "lifecycle"
+    ],
+    "sources": [
+      "https://developer.chrome.com/docs/ai/prompt-api",
+      "https://issues.chromium.org/issues/392661409"
+    ]
+  },
+  {
+    "csv_line": 27,
+    "topic": "WebMCP consequentialHint",
+    "finding": "Current type contract and discussion reviewed",
+    "analysis": "The types define consequentialHint for consequential real-world actions; issue #176 provides its motivation. This is metadata for the consuming agent, not application authorization. Enforce the review boundary in application code and test rejection as well as confirmation. The linked Chromium Dash page did not expose the commit body.",
+    "proposals": [
+      "webmcp"
+    ],
+    "sources": [
+      "https://github.com/webmachinelearning/webmcp-types",
+      "https://github.com/webmachinelearning/webmcp/issues/176",
+      "https://github.com/GoogleChromeLabs/webmcp-extension"
+    ]
+  }
+]

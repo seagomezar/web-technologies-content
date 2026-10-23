@@ -1,0 +1,340 @@
+Hint for reversible or consequential actions
+#176
+New issue
+Copy link
+New issue
+Copy link
+Closed
+#217
+Closed
+Hint for reversible or consequential actions
+#176
+#217
+Copy link
+Assignees
+Description
+johannhof
+opened
+on May 8, 2026
+Issue body actions
+From a conversation with
+@ngparker
+While
+readOnlyHint
+is a very useful indicator for agents, enforcing strict HITL rules based on read vs. write actions can be a bit reductive. It would be great to understand whether an action can be easily reversed without consequences for the end user. Depending on user preferences, agents could decide to skip confirmations for these reversible actions.
+For example, drafting an email is not a read only action, but it is also not something that commonly needs to be confirmed with the user. Sending the email, however, is not reversible and should definitely be confirmed.
+This could also be called
+consequentialHint
+if we wanted to reverse the boolean order, though I prefer "reversible" to be consistent with readOnly.
+MCP's
+destructiveHint
+comes close but doesn't feel like it quite hits the same note - there are many possible non-deletion actions that users may take that warrant user confirmation.
+See also
+#53
+Reactions are currently unavailable
+Activity
+anssiko
+added
+Agenda+
+on May 11, 2026
+victorhuangwq
+commented
+on
+May 13, 2026
+victorhuangwq
+on May 13, 2026
+Last edited by
+victorhuangwq
+Contributor
+More actions
+I took a glance at how ToolAnnotations guidance provided by clients calling MCPs, Looking at:
+https://support.claude.com/en/articles/13145358-anthropic-software-directory-policy
+https://developers.openai.com/apps-sdk/app-submission-guidelines#correct-annotation
+readOnlyHint
+and
+destructiveHint
+are the common denominators. The benefit of
+readOnlyHint
+, as seen in like agentic coding tools using MCP, is that it can support "Ask mode" easily, filtering down MCP tools to only tools indicating as
+readOnlyHint
+. And that if
+destructiveHint
+is present, clients should ask for confirmation.
+Bringing this back to WebMCP and browsing agents
+readOnlyHint
+is already useful for research or information‑gathering modes (and already in the spec).
+destructiveHint
+, I do agree it doesn't feel like it fully captures the range of actions browsers care about.
+The strength of
+readOnlyHint
+and
+destructiveHint
+is it has roots in classic read/write operations terminology. As such I am biased towards
+reversible
+or
+irrevocable
+type naming for such hints, and demarcation is clearer.
+I think
+consequential
+despite possibly including more use case, can have clarity issues, and might end up being used too loosely.
+bvandersloot-mozilla
+commented
+on
+May 13, 2026
+bvandersloot-mozilla
+on May 13, 2026
+Contributor
+More actions
+I think
+consequential
+despite possibly including more use case, can have clarity issues, and might end up being used too loosely.
+Ditto.
+reversible
+is closer, but
+destructive
+is really very close and seems to imply an identical use to what is discussed above: "Declare that the tool may delete or overwrite user data
+so ChatGPT knows to elicit explicit approval first.
+"
+One way to think of this is through CRUD operations: I think the gap might be Creates. Which, in a open world model are often irreversible. In that sense, including the
+openWorldHint
+could help solve this problem.
+Another way to think of this is to zoom out on the boundary of the system. If a create operation can't be undone, there are probably externalities that should be included in the system definition such that the things it updated the in a destructive way are part of the application state. This would just mean having well described table entries in documentation of
+destructive
+to clearly include "irrevocable creations".
+johannhof
+commented
+on
+May 14, 2026
+johannhof
+on May 14, 2026
+Contributor
+Author
+More actions
+So, are you folks arguing for just adopting
+destructiveHint
+and documenting it well?
+anssiko
+removed
+Agenda+
+on May 14, 2026
+anssiko
+commented
+on
+May 14, 2026
+anssiko
+on May 14, 2026
+Member
+More actions
+RESOLUTION
+: Identify use cases for hints. (issue
+#176
+)
+domfarolino
+commented
+on
+May 14, 2026
+domfarolino
+on May 14, 2026
+Collaborator
+More actions
+I talked with
+@johannhof
+more after today's call, and raised the issue that if the hint we land on is supposed to be a strong signal for the agent harness to react to / loop in the user, it shouldn't be on "by default". Probably most tools are not destructive or consequential, so we can't rely on 90% of tools supplying
+destructiveHint: false
+if it defaults to true, or supplying
+reversibleHint: true
+if it defaults to false.
+So to keep this a meaningful signal that doesn't get diluted, probably tools should be reversible or "non-destructive" by default, and we can pick whatever name makes the most sense with an "off-by-default" model.
+👍
+React with 👍
+2
+Reacted by
+Victor Huang and Ben Greenstein
+victorhuangwq
+commented
+on
+May 15, 2026
+victorhuangwq
+on May 15, 2026
+Last edited by
+victorhuangwq
+Contributor
+More actions
+Agree with
+@domfarolino
+. The user should need to go out of their way to change it from the default, like how readOnly is default false right now. I do also think most tools aren't destructive or consequential.
+To move the bikeshedding along,
+I would make a soft stance that I now prefer having it to be consequentialHint
+(default = false) alongside good documentation, following the discussion during today's meeting. This would be based on the following reasons.
+I looked at
+destructiveHints
+existing use cases by MCP tools. In most situations, they are indeed restricted to "delete" or "remove" kind of tools, but there are quite a few instances where it's adopted loosely as "consequential or important". The example below were all proposed by the same anthropic employee, but they are adopted by different project maintainers:
+feat: Add tool annotations for improved LLM tool understanding
+makenotion/notion-mcp-server#169
+- creating and cloning were tagged as
+destructive
+feat: Add tool annotations to MongoDB tools for improved LLM understanding
+googleapis/mcp-toolbox#2219
+- insert operations were tagged as
+destructive
+feat: Add tool annotations for improved LLM tool understanding
+razorpay/razorpay-mcp-server#73
+- create, refund tools were tagged as
+destructive
+This indicates the acceptance of a broader term than
+destructive
+which doesn't exist in the MCP spec right now.
+For most parts, I can see many WebMCP tools wanting something to indicate "important or consequential" actions, and yet "reversible=false" might not be
+exactly
+true
+"purchase items in my shopping cart" (e.g. technically you could refund in 24 hours...)
+"create an EC2 instance"
+or like OP said "send an email" or "send calendar invite"
+Having consequential hints be applicable can help mitigate developers from wanting to use
+#165
+to create their own custom confirmation, and leave it to the agent to decide when to prompt if necessary.
+johannhof
+commented
+on
+May 21, 2026
+johannhof
+on May 21, 2026
+Contributor
+Author
+More actions
+I agree with you both, but want to note that the preferred default value really depends on what you're trying to achieve with the hint. Right now readOnly defaults to "false" because that's the safest assumption for its purpose - we should only consider a tool read-only if the author explicitly confirms it, e.g. if you wanted to expose your agent only to read-only tools it would be bad if that accidentally included non-read only tools.
+Are we confident that within the usage we envision for this hint, it's safe to assume tools are "not consequential" by default, e.g. including in cases where the developer simply forgot to tag them? (I'm not suggesting it's not, just want to make sure we're picking correctly here).
+👍
+React with 👍
+1
+Reacted by
+Kasper Kulikowski
+domfarolino
+commented
+on
+May 21, 2026
+domfarolino
+on May 21, 2026
+Collaborator
+More actions
+I think we won't know until we get more developer feedback from the
+Origin Trial
+and
+Dev Trial
+(/cc
+@beaufortfrancois
+and
+@andreban
+), but my assumption is yes, most will be inconsequential / reversible.
+I see it kind of like most buttons on the web. They generally do whatever whatever they say: add a row to my spreadsheet, add an item to my cart, post a response to a thread, etc. Then there are very few buttons that don't immediately do their advertised action, but first seek confirmation from me: deleting a GitHub repository, actually purchasing the items in my cart, changing my password, etc. The developer was very careful to not make these buttons act too fast, and when it comes to WebMCP-ifying their site, they're going to have to translate the care put into those buttons, into the tools that represent them. This makes me confident that most tools will just do what they say, and then a limited few will seek extra confirmation where extra care is
+currently
+put in.
+👍
+React with 👍
+2
+Reacted by
+Johann Hofmann and Tania M
+anssiko
+added
+Agenda+
+on May 25, 2026
+anssiko
+commented
+on
+May 28, 2026
+anssiko
+on May 28, 2026
+Member
+More actions
+RESOLUTION
+: Specify consequential hint as default=false (issue
+#176
+)
+anssiko
+removed
+Agenda+
+on May 28, 2026
+domfarolino
+self-assigned this
+on Jun 16, 2026
+chromium-wpt-export-bot
+added 2 commits that reference this issue
+on Aug 21, 2026
+[WebMCP] Implement consequentialHint annotation
+...
+8a78db7
+[WebMCP] Implement consequentialHint annotation
+...
+4135657
+beckysiegel
+added a commit that references this issue
+on Aug 21, 2026
+[WebMCP] Implement consequentialHint annotation
+...
+a1bf6d8
+chromium-wpt-export-bot
+added a commit that references this issue
+on Aug 21, 2026
+[WebMCP] Implement consequentialHint annotation
+...
+dd83198
+lando-worker
+added a commit that references this issue
+on Aug 26, 2026
+Bug 2065398 [wpt PR 62098] - [WebMCP] Implement consequentialHint ann…
+...
+8510fa3
+domfarolino
+closed this
+as
+completed
+in
+#217
+on Sep 3, 2026
+nartmadi
+commented
+on
+Sep 10, 2026
+nartmadi
+on Sep 10, 2026
+More actions
+I hope it's not too late to revisit the naming, but would
+irreversibleHint
+be clearer than
+consequentialHint
+, since every action has a consequence?
+benji-cannot-code
+added a commit that references this issue
+on Sep 25, 2026
+[WebMCP] Implement consequentialHint annotation
+...
+0dc762d
+zerox80
+added a commit that references this issue
+on Oct 16, 2026
+Bug 2065398 [wpt PR 62098] - [WebMCP] Implement consequentialHint ann…
+...
+30ae65a
+Sign up for free
+to join this conversation on GitHub.
+Already have an account?
+Sign in to comment
+Metadata
+Metadata
+Assignees
+domfarolino
+Labels
+No labels
+No labels
+Type
+No type
+Projects
+No projects
+Milestone
+No milestone
+Relationships
+None yet
+Development
+No branches or pull requests
+Issue actions
+Open in GitHub Copilot app

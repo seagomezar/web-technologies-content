@@ -1,0 +1,16 @@
+{
+  "checkedAt": "2026-10-23T13:19:20.264Z",
+  "status": "passed",
+  "languages": [
+    "en",
+    "es"
+  ],
+  "archiveFiles": 126,
+  "checks": [
+    "Both decks contain six code examples.",
+    "Code renders with local regular-weight Roboto Mono.",
+    "Slide and highlight state restores from the address.",
+    "Clicker advances code focus to the shared callback.",
+    "No network requests or uncaught exceptions."
+  ]
+}

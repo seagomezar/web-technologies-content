@@ -1,0 +1,1520 @@
+{
+  "checked_at": "2026-10-23T12:16:23.215815+00:00",
+  "message_count": 20,
+  "csv": "Built-in AI EPP Emails with URLs - Built-in AI EPP Archive.csv",
+  "messages": [
+    {
+      "csv_line": 8,
+      "date": "2026-09-22T12:05:55-05:00",
+      "subject": "[Built-in AI EPP] Evolving Built-In AI: Your feedback and our next steps on Writer & Rewriter",
+      "urls": [
+        "https://docs.google.com/document/d/1RnSlXRAy8ffdbehvCcH7msBwmTvsxHJJQiwcw374tMw/edit?tab=t.0",
+        "mailto:chrome-ai-dev-preview+unsubscribe@chromium.org",
+        "https://groups.google.com/a/chromium.org/d/msgid/chrome-ai-dev-preview/CADWWn7XLXKLovdBDFZsuqoB_Q1XCNzRot6dCxSvWK%2BfQfkrpeQ%40mail.gmail.com",
+        "goo.gle/chrome-ai-dev-preview-feedback-quality"
+      ]
+    },
+    {
+      "csv_line": 9,
+      "date": "2026-09-23T02:24:09-05:00",
+      "subject": "[Built-in AI EPP] Evolving Built-In AI: Your feedback and our next steps on Writer & Rewriter",
+      "urls": [
+        "https://github.com/GoogleChromeLabs/web-ai-demos/blob/main/built-in-ai-task-apis-polyfills/summarizer-prompt-builder.js",
+        "https://developer.chrome.com/docs/ai/task-api-polyfill#expandable-1",
+        "https://blog.tomayac.com",
+        "https://toot.cafe/@tomayac",
+        "hTtPs://xKcd.cOm/1181/",
+        "https://groups.google.com/a/chromium.org/d/msgid/chrome-ai-dev-preview/CALgRrLkEYaKVM25wVZzQUdPW3S1e%3DO4ukscKWRUHTL%2BU%2Bgpq2g%40mail.gmail.com"
+      ]
+    },
+    {
+      "csv_line": 10,
+      "date": "2026-06-01T18:48:31-05:00",
+      "subject": "[Built-in AI EPP] Developer Previews: Expert Models for Summarizer & Proofreader APIs + Mid-2026 Survey Reminder",
+      "urls": [
+        "https://docs.google.com/document/d/1RnSlXRAy8ffdbehvCcH7msBwmTvsxHJJQiwcw374tMw/edit?usp=sharing",
+        "goo.gle/chrome-ai-dev-preview-feedback-quality",
+        "mailto:chrome-ai-dev-preview+unsubscribe@chromium.org",
+        "https://groups.google.com/a/chromium.org/d/msgid/chrome-ai-dev-preview/CADWWn7UO5KkY%3DYL5DwRyBpdS%3DT7xM0uSZQpKWsukRxRoycOb-A%40mail.gmail.com"
+      ]
+    },
+    {
+      "csv_line": 11,
+      "date": "2026-06-04T03:35:10-05:00",
+      "subject": "[Built-in AI EPP] Developer Previews: Expert Models for Summarizer & Proofreader APIs + Mid-2026 Survey Reminder",
+      "urls": [
+        "https://docs.google.com/document/d/1RnSlXRAy8ffdbehvCcH7msBwmTvsxHJJQiwcw374tMw/edit?usp=sharing",
+        "http://goo.gle/chrome-ai-dev-preview-feedback-quality",
+        "blog.tomayac.com",
+        "toot.cafe/@tomayac",
+        "xKcd.cOm/1181",
+        "https://groups.google.com/a/chromium.org/d/msgid/chrome-ai-dev-preview/CALgRrLmEy1zZ1Bwix_PFJhxbBRobrLo1u-Z6Hv0xQKLNGgOgWQ%40mail.gmail.com"
+      ]
+    },
+    {
+      "csv_line": 12,
+      "date": "2026-07-15T18:49:14-05:00",
+      "subject": "[Built-in AI EPP] New in the built-in AI Early Preview Program: Embedding API Dev Trial!",
+      "urls": [
+        "https://docs.google.com/document/d/1ZB6MW8UDczm4V6ej5MorZWqFCYWwLhUs5HKxEdjP35c/edit?usp=sharing",
+        "https://forms.gle/MTRG4aa648H5ZNSa6",
+        "mailto:chrome-ai-dev-preview+owners@chromium.org",
+        "https://groups.google.com/a/chromium.org/g/chrome-ai-dev-preview-discuss/",
+        "https://github.com/explainers-by-googlers/embedding-api/issues",
+        "https://issues.chromium.org/issues/new?component=2127822&template=2244689",
+        "http://balance/kenjibaheux",
+        "goo.gle/chrome-ai-dev-preview-feedback-quality",
+        "mailto:chrome-ai-dev-preview+unsubscribe@chromium.org",
+        "https://groups.google.com/a/chromium.org/d/msgid/chrome-ai-dev-preview/CADWWn7WJv0ZgXvRnvE44jM_PxKbeexVW6zOOnRYOCyqJceyfSw%40mail.gmail.com"
+      ]
+    },
+    {
+      "csv_line": 13,
+      "date": "2026-10-20T21:13:00-05:00",
+      "subject": "[Built-in AI EPP] DevTrial: Faster Gemma 4 Inference with Multi-Token Prediction (MTP)",
+      "urls": [
+        "https://docs.google.com/document/d/1g7bv9LHSqFWqeQUM2C6EQ5PiZ8UWTz8UibxnlD4ipDE/edit?usp=sharing",
+        "goo.gle/chrome-ai-dev-preview-feedback-quality",
+        "mailto:chrome-ai-dev-preview+unsubscribe@chromium.org",
+        "https://groups.google.com/a/chromium.org/d/msgid/chrome-ai-dev-preview/CADWWn7XUXp_fYK6J6ADC1k1_u_DvvXv9p4wD90ROGzOdST_hgg%40mail.gmail.com"
+      ]
+    },
+    {
+      "csv_line": 14,
+      "date": "2026-10-15T09:45:10-05:00",
+      "subject": "[Built-in AI EPP] New WebMCP developer tools: webmcp-extension, webmcp-types, and webmcp-skills",
+      "urls": [
+        "https://github.com/GoogleChromeLabs/webmcp-extension",
+        "https://github.com/webmachinelearning/webmcp-types",
+        "https://github.com/GoogleChromeLabs/webmcp-tools/tree/main/webmcp-skills",
+        "https://developer.chrome.com/docs/ai/webmcp",
+        "https://developer.chrome.com/docs/modern-web-guidance",
+        "goo.gle/chrome-ai-dev-preview-feedback-quality",
+        "mailto:chrome-ai-dev-preview+unsubscribe@chromium.org",
+        "https://groups.google.com/a/chromium.org/d/msgid/chrome-ai-dev-preview/CAPpwU5KB148Ok7jS2vvTWzadpzcu%3D9M96p%2BW8eT%2B0QgXYzhtzA%40mail.gmail.com"
+      ]
+    },
+    {
+      "csv_line": 15,
+      "date": "2026-10-05T12:13:38-05:00",
+      "subject": "[Built-in AI EPP] Intent to Prototype: Decisions API (\"Semantic If\") + Writer/Rewriter Deprecation Reminder",
+      "urls": [
+        "https://github.com/GoogleChromeLabs/web-ai-demos/tree/main/writer-rewriter-polyfills",
+        "http://balance/kenjibaheux",
+        "goo.gle/chrome-ai-dev-preview-feedback-quality",
+        "mailto:chrome-ai-dev-preview+unsubscribe@chromium.org",
+        "https://groups.google.com/a/chromium.org/d/msgid/chrome-ai-dev-preview/CADWWn7UqdNZjMzAdxYBgYtHS_J2AHt411J4V9nEnVeTWiOZ8Bg%40mail.gmail.com"
+      ]
+    },
+    {
+      "csv_line": 16,
+      "date": "2025-04-01T09:29:33-05:00",
+      "subject": "[Built-in AI EPP] PSA: New API entry points",
+      "urls": [
+        "blog.tomayac.com",
+        "toot.cafe/@tomayac",
+        "xKcd.cOm/1181",
+        "goo.gle/chrome-ai-dev-preview-feedback-quality",
+        "mailto:chrome-ai-dev-preview+unsubscribe@chromium.org",
+        "https://groups.google.com/a/chromium.org/d/msgid/chrome-ai-dev-preview/CALgRrLk-unGYc1DzWYT20U0Qo%3DPZr6OFyQ3Y3tKXVa_h_uNjYg%40mail.gmail.com"
+      ]
+    },
+    {
+      "csv_line": 17,
+      "date": "2026-08-25T00:55:03-05:00",
+      "subject": "[Built-in AI EPP] Gemma 4 is available for testing with Built-in AI APIs (Prompt API, Summarizer API, etc)!",
+      "urls": [
+        "https://docs.google.com/document/d/1rpaV4la7WtpLr4Ueb0NttJVETlVL_5a9TNHsrBMBkWk/edit?usp=sharing",
+        "https://issues.chromium.org/issues/new?component=1583300&template=2244689",
+        "https://developer.chrome.com/docs/ai/join-epp",
+        "goo.gle/chrome-ai-dev-preview-feedback-quality",
+        "mailto:chrome-ai-dev-preview+unsubscribe@chromium.org",
+        "https://groups.google.com/a/chromium.org/d/msgid/chrome-ai-dev-preview/CADWWn7U06zQhYxXmj1esOPe0xfanyzkEEWVERWtf-FEEvcq2Qg%40mail.gmail.com"
+      ]
+    },
+    {
+      "csv_line": 18,
+      "date": "2025-09-17T01:28:09-05:00",
+      "subject": "[Built-in AI EPP] Your feedback needed to ship Writer/Rewriter/Prompt APIs + other Web AI updates!",
+      "urls": [
+        "https://developer.chrome.com/docs/web-platform/origin-trials",
+        "https://forms.gle/szmYbXAWqLoQS5N96",
+        "https://developer.chrome.com/origintrials/#/view_trial/1988902185437495297",
+        "https://developer.chrome.com/docs/ai/proofreader-api",
+        "https://rsvp.withgoogle.com/events/web-ai-summit-2025",
+        "goo.gle/chrome-ai-dev-preview-feedback-quality",
+        "mailto:chrome-ai-dev-preview+unsubscribe@chromium.org",
+        "https://groups.google.com/a/chromium.org/d/msgid/chrome-ai-dev-preview/CADWWn7UbzmgvzDKspy568JkY13CweLJW-GJpS6H94AHgV%2Bsr4Q%40mail.gmail.com"
+      ]
+    },
+    {
+      "csv_line": 19,
+      "date": "2026-07-28T07:03:12-05:00",
+      "subject": "[Built-in AI EPP] [Built-in AI APIs] Do and Don't",
+      "urls": [
+        "https://developer.chrome.com/docs/ai/built-in-ai-dos-donts",
+        "goo.gle/chrome-ai-dev-preview-feedback-quality",
+        "mailto:chrome-ai-dev-preview+unsubscribe@chromium.org",
+        "https://groups.google.com/a/chromium.org/d/msgid/chrome-ai-dev-preview/c1b30884-1f63-4ad2-9d8e-8531e483e3e0n%40chromium.org"
+      ]
+    },
+    {
+      "csv_line": 20,
+      "date": "2024-12-04T21:38:47-05:00",
+      "subject": "[Built-in AI EPP] PSA: New context window size in the Prompt API",
+      "urls": [
+        "mailto:chrome-ai-dev-preview+unsubscribe@chromium.org",
+        "https://blog.tomayac.com",
+        "https://toot.cafe/@tomayac",
+        "hTtPs://xKcd.cOm/1181/",
+        "goo.gle/chrome-ai-dev-preview-feedback-quality",
+        "https://groups.google.com/a/chromium.org/d/msgid/chrome-ai-dev-preview/CALgRrLkm2Dc7v%2BruZbPgUdo94nksU6RNLU7gCLkiN1pjfk-kNA%40mail.gmail.com"
+      ]
+    },
+    {
+      "csv_line": 21,
+      "date": "2025-07-10T08:41:17-05:00",
+      "subject": "[Built-in AI EPP] Heads-up about the built-in AI APIs in cross-origin iframes",
+      "urls": [
+        "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/iframe#allow",
+        "https://github.com/webmachinelearning/proofreader-api/pull/14",
+        "https://blog.tomayac.com",
+        "https://toot.cafe/@tomayac",
+        "hTtPs://xKcd.cOm/1181/",
+        "goo.gle/chrome-ai-dev-preview-feedback-quality",
+        "mailto:chrome-ai-dev-preview+unsubscribe@chromium.org",
+        "https://groups.google.com/a/chromium.org/d/msgid/chrome-ai-dev-preview/CALgRrLnNmMB9_9juuktkNFsCKGt7kOYBnqZgnb_EeExra%3DvUqg%40mail.gmail.com"
+      ]
+    },
+    {
+      "csv_line": 22,
+      "date": "2024-11-28T11:36:11-05:00",
+      "subject": "[Built-in AI EPP] PSA: Prompt API 1,024 token caveat removed",
+      "urls": [
+        "https://blog.tomayac.com",
+        "https://toot.cafe/@tomayac",
+        "hTtPs://xKcd.cOm/1181/",
+        "goo.gle/chrome-ai-dev-preview-feedback-quality",
+        "mailto:chrome-ai-dev-preview+unsubscribe@chromium.org",
+        "https://groups.google.com/a/chromium.org/d/msgid/chrome-ai-dev-preview/CALgRrLmstUbmkMfQuXB05vi%3Dx8c5ApJLSybiZKMBzr2R2pcbQw%40mail.gmail.com"
+      ]
+    },
+    {
+      "csv_line": 23,
+      "date": "2026-09-22T05:46:35-05:00",
+      "subject": "[Built-in AI EPP] [WebMCP API] New debugging member to ToolAnnotations",
+      "urls": [
+        "https://chromiumdash.appspot.com/commit/4ba301ad8c7c1e2190707d80aec6bc8aa63a2671",
+        "https://github.com/webmachinelearning/webmcp/pull/253",
+        "goo.gle/chrome-ai-dev-preview-feedback-quality",
+        "mailto:chrome-ai-dev-preview+unsubscribe@chromium.org",
+        "https://groups.google.com/a/chromium.org/d/msgid/chrome-ai-dev-preview/CAPpwU5JWyj_bbxpzO%3DG%3DZRgV%3D4uRnc%2BEA6Jese7%2B%2BXT4eBFzvQ%40mail.gmail.com"
+      ]
+    },
+    {
+      "csv_line": 24,
+      "date": "2025-05-22T12:02:57-05:00",
+      "subject": "[Built-in AI EPP] Re: TypeScript types for the Built-in AI APIs",
+      "urls": [
+        "blog.tomayac.com",
+        "toot.cafe/@tomayac",
+        "xKcd.cOm/1181",
+        "goo.gle/chrome-ai-dev-preview-feedback-quality",
+        "mailto:chrome-ai-dev-preview+unsubscribe@chromium.org",
+        "https://groups.google.com/a/chromium.org/d/msgid/chrome-ai-dev-preview/CALgRrLmNTjA%2BJQ5TLZ2SNL6hPQN6aAvE6TmRB8ruC1MrDx1jvg%40mail.gmail.com"
+      ]
+    },
+    {
+      "csv_line": 25,
+      "date": "2025-01-30T04:56:36-05:00",
+      "subject": "[Built-in AI EPP] Debugging the model",
+      "urls": [
+        "https://issues.chromium.org/issues/392661409",
+        "blog.tomayac.com",
+        "toot.cafe/@tomayac",
+        "xKcd.cOm/1181",
+        "goo.gle/chrome-ai-dev-preview-feedback-quality",
+        "mailto:chrome-ai-dev-preview+unsubscribe@chromium.org",
+        "https://groups.google.com/a/chromium.org/d/msgid/chrome-ai-dev-preview/CALgRrLmKVJT3RUB4qTN8zk75z0uhCKW1b31SuBkDFLr9WrBGVA%40mail.gmail.com"
+      ]
+    },
+    {
+      "csv_line": 26,
+      "date": "2024-11-29T10:09:09-05:00",
+      "subject": "[Built-in AI EPP] PSA: Workaround for \"The model attempted to output text in an untested language, and was prevented from doing so\" exception",
+      "urls": [
+        "https://developer.chrome.com/docs/extensions/ai/prompt-api",
+        "blog.tomayac.com",
+        "toot.cafe/@tomayac",
+        "hTtPs://xKcd.cOm/1181/",
+        "goo.gle/chrome-ai-dev-preview-feedback-quality",
+        "mailto:chrome-ai-dev-preview+unsubscribe@chromium.org",
+        "https://groups.google.com/a/chromium.org/d/msgid/chrome-ai-dev-preview/CALgRrLnx5LbaKU73ZAEFVTYstKJ0Jgr2yo%3DwAf%2B0VWPorybGUg%40mail.gmail.com"
+      ]
+    },
+    {
+      "csv_line": 27,
+      "date": "2026-09-04T01:33:57-05:00",
+      "subject": "[Built-in AI EPP] [WebMCP API] New consequentialHint member in ToolAnnotations",
+      "urls": [
+        "https://chromiumdash.appspot.com/commit/a1bf6d8347ecd82fae080076f62a61e8795d8e22",
+        "https://github.com/webmachinelearning/webmcp/issues/176",
+        "goo.gle/chrome-ai-dev-preview-feedback-quality",
+        "mailto:chrome-ai-dev-preview+unsubscribe@chromium.org",
+        "https://groups.google.com/a/chromium.org/d/msgid/chrome-ai-dev-preview/CAPpwU5%2B%3DXnzyfTxXho%2Bejn5L4cNp1VFGe1%3DX2NL%3DYgjCyBKUGw%40mail.gmail.com"
+      ]
+    }
+  ],
+  "links": [
+    {
+      "url": "https://docs.google.com/document/d/1RnSlXRAy8ffdbehvCcH7msBwmTvsxHJJQiwcw374tMw/edit?tab=t.0",
+      "csv_lines": [
+        8
+      ],
+      "originals": [
+        "https://docs.google.com/document/d/1RnSlXRAy8ffdbehvCcH7msBwmTvsxHJJQiwcw374tMw/edit?tab=t.0"
+      ],
+      "kind": "source",
+      "http_status": 200,
+      "final_url": "https://docs.google.com/document/d/1RnSlXRAy8ffdbehvCcH7msBwmTvsxHJJQiwcw374tMw/edit?tab=t.0",
+      "title": "Built-in AI Early Preview Program - Summarizer & Proofreader Expert Models - Documentos de Google",
+      "snapshot": "research/snapshots/f5355e9b001d.txt",
+      "status": "Google Docs shell only; see export evidence"
+    },
+    {
+      "url": "mailto:chrome-ai-dev-preview+unsubscribe@chromium.org",
+      "csv_lines": [
+        8,
+        10,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27
+      ],
+      "originals": [
+        "mailto:chrome-ai-dev-preview+unsubscribe@chromium.org"
+      ],
+      "kind": "mail action",
+      "status": "not requested",
+      "note": "Not a documentation page; no email sent."
+    },
+    {
+      "url": "https://groups.google.com/a/chromium.org/d/msgid/chrome-ai-dev-preview/CADWWn7XLXKLovdBDFZsuqoB_Q1XCNzRot6dCxSvWK%2BfQfkrpeQ%40mail.gmail.com",
+      "csv_lines": [
+        8
+      ],
+      "originals": [
+        "https://groups.google.com/a/chromium.org/d/msgid/chrome-ai-dev-preview/CADWWn7XLXKLovdBDFZsuqoB_Q1XCNzRot6dCxSvWK%2BfQfkrpeQ%40mail.gmail.com"
+      ],
+      "kind": "mailing-list",
+      "status": "group shell or authentication required; email body not verified",
+      "http_status": 200,
+      "final_url": "https://groups.google.com/a/chromium.org/g/chrome-ai-dev-preview",
+      "title": "Chrome Built-in AI Early Preview Program - Google Groups",
+      "snapshot": "research/snapshots/0738193ac55d.txt"
+    },
+    {
+      "url": "https://goo.gle/chrome-ai-dev-preview-feedback-quality",
+      "csv_lines": [
+        8,
+        10,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27
+      ],
+      "originals": [
+        "goo.gle/chrome-ai-dev-preview-feedback-quality"
+      ],
+      "kind": "feedback",
+      "http_status": 200,
+      "final_url": "https://docs.google.com/forms/d/e/1FAIpQLSfS1cVG_qx-5WD8yM_hfL76ISL_okAQAnLgXUB4RFmJ79FrvA/viewform?usp=send_form",
+      "title": "Built-in AI - Feedback on output quality",
+      "snapshot": "research/snapshots/656e644a1cda.txt",
+      "status": "retrieved"
+    },
+    {
+      "url": "https://github.com/GoogleChromeLabs/web-ai-demos/blob/main/built-in-ai-task-apis-polyfills/summarizer-prompt-builder.js",
+      "csv_lines": [
+        9
+      ],
+      "originals": [
+        "https://github.com/GoogleChromeLabs/web-ai-demos/blob/main/built-in-ai-task-apis-polyfills/summarizer-prompt-builder.js"
+      ],
+      "kind": "source",
+      "http_status": 200,
+      "final_url": "https://github.com/GoogleChromeLabs/web-ai-demos/blob/main/built-in-ai-task-apis-polyfills/summarizer-prompt-builder.js",
+      "title": "web-ai-demos/built-in-ai-task-apis-polyfills/summarizer-prompt-builder.js at main · GoogleChromeLabs/web-ai-demos · GitHub",
+      "snapshot": "research/snapshots/a64b22ad7168.txt",
+      "status": "retrieved"
+    },
+    {
+      "url": "https://developer.chrome.com/docs/ai/task-api-polyfill",
+      "csv_lines": [
+        9
+      ],
+      "originals": [
+        "https://developer.chrome.com/docs/ai/task-api-polyfill#expandable-1"
+      ],
+      "kind": "source",
+      "http_status": 200,
+      "final_url": "https://developer.chrome.com/docs/ai/task-api-polyfill",
+      "title": "Experimental polyfills for the built-in AI task APIs  |  AI in Chrome  |  Chrome for Developers",
+      "snapshot": "research/snapshots/fe6d99c6085e.txt",
+      "status": "retrieved"
+    },
+    {
+      "url": "https://blog.tomayac.com",
+      "csv_lines": [
+        9,
+        11,
+        16,
+        20,
+        21,
+        22,
+        24,
+        25,
+        26
+      ],
+      "originals": [
+        "https://blog.tomayac.com",
+        "blog.tomayac.com"
+      ],
+      "kind": "signature",
+      "status": "retrieved via system TLS",
+      "http_status": 200,
+      "final_url": "https://blog.tomayac.com/",
+      "title": "Blogccasion",
+      "snapshot": "research/snapshots/a6d6ca3e5b16.txt"
+    },
+    {
+      "url": "https://toot.cafe/@tomayac",
+      "csv_lines": [
+        9,
+        11,
+        16,
+        20,
+        21,
+        22,
+        24,
+        25,
+        26
+      ],
+      "originals": [
+        "https://toot.cafe/@tomayac",
+        "toot.cafe/@tomayac"
+      ],
+      "kind": "signature",
+      "http_status": 200,
+      "final_url": "https://toot.cafe/@tomayac",
+      "title": "Thomas Steiner :chrome: (@tomayac@toot.cafe) - Toot Café",
+      "snapshot": "research/snapshots/3ebd43d73751.txt",
+      "status": "retrieved",
+      "note": "Thin response; not sufficient to verify technical claims."
+    },
+    {
+      "url": "https://xkcd.com/1181/",
+      "csv_lines": [
+        9,
+        20,
+        21,
+        22,
+        26
+      ],
+      "originals": [
+        "hTtPs://xKcd.cOm/1181/"
+      ],
+      "kind": "signature",
+      "status": "retrieved via system TLS",
+      "http_status": 200,
+      "final_url": "https://xkcd.com/1181/",
+      "title": "xkcd: PGP",
+      "snapshot": "research/snapshots/a6b31320782e.txt"
+    },
+    {
+      "url": "https://groups.google.com/a/chromium.org/d/msgid/chrome-ai-dev-preview/CALgRrLkEYaKVM25wVZzQUdPW3S1e%3DO4ukscKWRUHTL%2BU%2Bgpq2g%40mail.gmail.com",
+      "csv_lines": [
+        9
+      ],
+      "originals": [
+        "https://groups.google.com/a/chromium.org/d/msgid/chrome-ai-dev-preview/CALgRrLkEYaKVM25wVZzQUdPW3S1e%3DO4ukscKWRUHTL%2BU%2Bgpq2g%40mail.gmail.com"
+      ],
+      "kind": "mailing-list",
+      "status": "group shell or authentication required; email body not verified",
+      "http_status": 200,
+      "final_url": "https://groups.google.com/a/chromium.org/g/chrome-ai-dev-preview",
+      "title": "Chrome Built-in AI Early Preview Program - Google Groups",
+      "snapshot": "research/snapshots/6f6463f7aeba.txt"
+    },
+    {
+      "url": "https://docs.google.com/document/d/1RnSlXRAy8ffdbehvCcH7msBwmTvsxHJJQiwcw374tMw/edit?usp=sharing",
+      "csv_lines": [
+        10,
+        11
+      ],
+      "originals": [
+        "https://docs.google.com/document/d/1RnSlXRAy8ffdbehvCcH7msBwmTvsxHJJQiwcw374tMw/edit?usp=sharing"
+      ],
+      "kind": "source",
+      "http_status": 200,
+      "final_url": "https://docs.google.com/document/d/1RnSlXRAy8ffdbehvCcH7msBwmTvsxHJJQiwcw374tMw/edit?usp=sharing",
+      "title": "Built-in AI Early Preview Program - Summarizer & Proofreader Expert Models - Documentos de Google",
+      "snapshot": "research/snapshots/df4bef237a56.txt",
+      "status": "Google Docs shell only; see export evidence"
+    },
+    {
+      "url": "https://groups.google.com/a/chromium.org/d/msgid/chrome-ai-dev-preview/CADWWn7UO5KkY%3DYL5DwRyBpdS%3DT7xM0uSZQpKWsukRxRoycOb-A%40mail.gmail.com",
+      "csv_lines": [
+        10
+      ],
+      "originals": [
+        "https://groups.google.com/a/chromium.org/d/msgid/chrome-ai-dev-preview/CADWWn7UO5KkY%3DYL5DwRyBpdS%3DT7xM0uSZQpKWsukRxRoycOb-A%40mail.gmail.com"
+      ],
+      "kind": "mailing-list",
+      "status": "group shell or authentication required; email body not verified",
+      "http_status": 200,
+      "final_url": "https://groups.google.com/a/chromium.org/g/chrome-ai-dev-preview",
+      "title": "Chrome Built-in AI Early Preview Program - Google Groups",
+      "snapshot": "research/snapshots/2dfd54045ac3.txt"
+    },
+    {
+      "url": "http://goo.gle/chrome-ai-dev-preview-feedback-quality",
+      "csv_lines": [
+        11
+      ],
+      "originals": [
+        "http://goo.gle/chrome-ai-dev-preview-feedback-quality"
+      ],
+      "kind": "feedback",
+      "http_status": 200,
+      "final_url": "https://docs.google.com/forms/d/e/1FAIpQLSfS1cVG_qx-5WD8yM_hfL76ISL_okAQAnLgXUB4RFmJ79FrvA/viewform?usp=send_form",
+      "title": "Built-in AI - Feedback on output quality",
+      "snapshot": "research/snapshots/3ac23915c52d.txt",
+      "status": "retrieved"
+    },
+    {
+      "url": "https://xkcd.com/1181",
+      "csv_lines": [
+        11,
+        16,
+        24,
+        25
+      ],
+      "originals": [
+        "xKcd.cOm/1181"
+      ],
+      "kind": "signature",
+      "status": "retrieved via system TLS",
+      "http_status": 200,
+      "final_url": "https://xkcd.com/1181/",
+      "title": "xkcd: PGP",
+      "snapshot": "research/snapshots/8be87437402e.txt"
+    },
+    {
+      "url": "https://groups.google.com/a/chromium.org/d/msgid/chrome-ai-dev-preview/CALgRrLmEy1zZ1Bwix_PFJhxbBRobrLo1u-Z6Hv0xQKLNGgOgWQ%40mail.gmail.com",
+      "csv_lines": [
+        11
+      ],
+      "originals": [
+        "https://groups.google.com/a/chromium.org/d/msgid/chrome-ai-dev-preview/CALgRrLmEy1zZ1Bwix_PFJhxbBRobrLo1u-Z6Hv0xQKLNGgOgWQ%40mail.gmail.com"
+      ],
+      "kind": "mailing-list",
+      "status": "group shell or authentication required; email body not verified",
+      "http_status": 200,
+      "final_url": "https://groups.google.com/a/chromium.org/g/chrome-ai-dev-preview",
+      "title": "Chrome Built-in AI Early Preview Program - Google Groups",
+      "snapshot": "research/snapshots/1af0dc9f8b12.txt"
+    },
+    {
+      "url": "https://docs.google.com/document/d/1ZB6MW8UDczm4V6ej5MorZWqFCYWwLhUs5HKxEdjP35c/edit?usp=sharing",
+      "csv_lines": [
+        12
+      ],
+      "originals": [
+        "https://docs.google.com/document/d/1ZB6MW8UDczm4V6ej5MorZWqFCYWwLhUs5HKxEdjP35c/edit?usp=sharing"
+      ],
+      "kind": "source",
+      "http_status": 200,
+      "final_url": "https://docs.google.com/document/d/1ZB6MW8UDczm4V6ej5MorZWqFCYWwLhUs5HKxEdjP35c/edit?usp=sharing",
+      "title": "Built-in AI Early Preview Program - Semantic Embedder API - Documentos de Google",
+      "snapshot": "research/snapshots/6c475c675460.txt",
+      "status": "Google Docs shell only; see export evidence"
+    },
+    {
+      "url": "https://forms.gle/MTRG4aa648H5ZNSa6",
+      "csv_lines": [
+        12
+      ],
+      "originals": [
+        "https://forms.gle/MTRG4aa648H5ZNSa6"
+      ],
+      "kind": "feedback",
+      "http_status": 200,
+      "final_url": "https://docs.google.com/forms/d/e/1FAIpQLSdBmT4lCBoM66I9sfgfYmC1chmVp-ERHeQEYSXSUlLGvMAGgg/viewform?usp=send_form",
+      "title": "Feedback about the Built-in AI Early Preview Program",
+      "snapshot": "research/snapshots/8a6165cbab9b.txt",
+      "status": "retrieved"
+    },
+    {
+      "url": "mailto:chrome-ai-dev-preview+owners@chromium.org",
+      "csv_lines": [
+        12
+      ],
+      "originals": [
+        "mailto:chrome-ai-dev-preview+owners@chromium.org"
+      ],
+      "kind": "mail action",
+      "status": "not requested",
+      "note": "Not a documentation page; no email sent."
+    },
+    {
+      "url": "https://groups.google.com/a/chromium.org/g/chrome-ai-dev-preview-discuss/",
+      "csv_lines": [
+        12
+      ],
+      "originals": [
+        "https://groups.google.com/a/chromium.org/g/chrome-ai-dev-preview-discuss/"
+      ],
+      "kind": "mailing-list",
+      "status": "retrieved via system TLS",
+      "http_status": 200,
+      "final_url": "https://groups.google.com/a/chromium.org/g/chrome-ai-dev-preview-discuss/",
+      "title": "Chrome Built-in AI Early Preview Program Discussions - Google Groups",
+      "snapshot": "research/snapshots/df11ad29ef57.txt"
+    },
+    {
+      "url": "https://github.com/explainers-by-googlers/embedding-api/issues",
+      "csv_lines": [
+        12
+      ],
+      "originals": [
+        "https://github.com/explainers-by-googlers/embedding-api/issues"
+      ],
+      "kind": "source",
+      "http_status": 200,
+      "final_url": "https://github.com/explainers-by-googlers/semantic-embedder-api/issues",
+      "title": "Issues · explainers-by-googlers/semantic-embedder-api · GitHub",
+      "snapshot": "research/snapshots/a250313b45b5.txt",
+      "status": "retrieved"
+    },
+    {
+      "url": "https://issues.chromium.org/issues/new?component=2127822&template=2244689",
+      "csv_lines": [
+        12
+      ],
+      "originals": [
+        "https://issues.chromium.org/issues/new?component=2127822&template=2244689"
+      ],
+      "kind": "source",
+      "http_status": 200,
+      "final_url": "https://accounts.google.com/v3/signin/identifier?continue=https://issues.chromium.org/issues/new?component%3D2127822%26template%3D2244689&followup=https://issues.chromium.org/issues/new?component%3D2127822%26template%3D2244689&osid=1&passive=1209600&flowName=WebLiteSignIn&flowEntry=ServiceLogin&dsh=S-99824666:1792757778545395",
+      "title": "Sign in - Google Accounts",
+      "snapshot": "research/snapshots/c8b6cf55e839.txt",
+      "status": "authentication or group access required"
+    },
+    {
+      "url": "http://balance/kenjibaheux",
+      "csv_lines": [
+        12,
+        15
+      ],
+      "originals": [
+        "http://balance/kenjibaheux"
+      ],
+      "kind": "internal signature",
+      "status": "unresolvable internal host",
+      "note": "Google-internal profile URL; no public evidence."
+    },
+    {
+      "url": "https://groups.google.com/a/chromium.org/d/msgid/chrome-ai-dev-preview/CADWWn7WJv0ZgXvRnvE44jM_PxKbeexVW6zOOnRYOCyqJceyfSw%40mail.gmail.com",
+      "csv_lines": [
+        12
+      ],
+      "originals": [
+        "https://groups.google.com/a/chromium.org/d/msgid/chrome-ai-dev-preview/CADWWn7WJv0ZgXvRnvE44jM_PxKbeexVW6zOOnRYOCyqJceyfSw%40mail.gmail.com"
+      ],
+      "kind": "mailing-list",
+      "status": "group shell or authentication required; email body not verified",
+      "http_status": 200,
+      "final_url": "https://groups.google.com/a/chromium.org/g/chrome-ai-dev-preview",
+      "title": "Chrome Built-in AI Early Preview Program - Google Groups",
+      "snapshot": "research/snapshots/07190902c413.txt"
+    },
+    {
+      "url": "https://docs.google.com/document/d/1g7bv9LHSqFWqeQUM2C6EQ5PiZ8UWTz8UibxnlD4ipDE/edit?usp=sharing",
+      "csv_lines": [
+        13
+      ],
+      "originals": [
+        "https://docs.google.com/document/d/1g7bv9LHSqFWqeQUM2C6EQ5PiZ8UWTz8UibxnlD4ipDE/edit?usp=sharing"
+      ],
+      "kind": "source",
+      "http_status": 200,
+      "final_url": "https://docs.google.com/document/d/1g7bv9LHSqFWqeQUM2C6EQ5PiZ8UWTz8UibxnlD4ipDE/edit?usp=sharing",
+      "title": "Built-in AI Early Preview Program - Enabling MTP in Gemma v4 - Documentos de Google",
+      "snapshot": "research/snapshots/664d5065dec2.txt",
+      "status": "Google Docs shell only; see export evidence"
+    },
+    {
+      "url": "https://groups.google.com/a/chromium.org/d/msgid/chrome-ai-dev-preview/CADWWn7XUXp_fYK6J6ADC1k1_u_DvvXv9p4wD90ROGzOdST_hgg%40mail.gmail.com",
+      "csv_lines": [
+        13
+      ],
+      "originals": [
+        "https://groups.google.com/a/chromium.org/d/msgid/chrome-ai-dev-preview/CADWWn7XUXp_fYK6J6ADC1k1_u_DvvXv9p4wD90ROGzOdST_hgg%40mail.gmail.com"
+      ],
+      "kind": "mailing-list",
+      "status": "group shell or authentication required; email body not verified",
+      "http_status": 200,
+      "final_url": "https://groups.google.com/a/chromium.org/g/chrome-ai-dev-preview",
+      "title": "Chrome Built-in AI Early Preview Program - Google Groups",
+      "snapshot": "research/snapshots/fdf282a78631.txt"
+    },
+    {
+      "url": "https://github.com/GoogleChromeLabs/webmcp-extension",
+      "csv_lines": [
+        14
+      ],
+      "originals": [
+        "https://github.com/GoogleChromeLabs/webmcp-extension"
+      ],
+      "kind": "source",
+      "http_status": 200,
+      "final_url": "https://github.com/GoogleChromeLabs/webmcp-extension",
+      "title": "GitHub - GoogleChromeLabs/webmcp-extension: Example Agentic Chrome Extension to test WebMCP · GitHub",
+      "snapshot": "research/snapshots/75347a442265.txt",
+      "status": "retrieved"
+    },
+    {
+      "url": "https://github.com/webmachinelearning/webmcp-types",
+      "csv_lines": [
+        14
+      ],
+      "originals": [
+        "https://github.com/webmachinelearning/webmcp-types"
+      ],
+      "kind": "source",
+      "http_status": 200,
+      "final_url": "https://github.com/webmachinelearning/webmcp-types",
+      "title": "GitHub - webmachinelearning/webmcp-types: TypeScript Types Declarations for WebMCP · GitHub",
+      "snapshot": "research/snapshots/76fef4c022d6.txt",
+      "status": "retrieved"
+    },
+    {
+      "url": "https://github.com/GoogleChromeLabs/webmcp-tools/tree/main/webmcp-skills",
+      "csv_lines": [
+        14
+      ],
+      "originals": [
+        "https://github.com/GoogleChromeLabs/webmcp-tools/tree/main/webmcp-skills"
+      ],
+      "kind": "source",
+      "http_status": 200,
+      "final_url": "https://github.com/GoogleChromeLabs/webmcp-tools/tree/main/webmcp-skills",
+      "title": "webmcp-tools/webmcp-skills at main · GoogleChromeLabs/webmcp-tools · GitHub",
+      "snapshot": "research/snapshots/6985d6c59eeb.txt",
+      "status": "retrieved"
+    },
+    {
+      "url": "https://developer.chrome.com/docs/ai/webmcp",
+      "csv_lines": [
+        14
+      ],
+      "originals": [
+        "https://developer.chrome.com/docs/ai/webmcp"
+      ],
+      "kind": "source",
+      "http_status": 200,
+      "final_url": "https://developer.chrome.com/docs/ai/webmcp",
+      "title": "WebMCP  |  AI in Chrome  |  Chrome for Developers",
+      "snapshot": "research/snapshots/80345c4fcd7a.txt",
+      "status": "retrieved"
+    },
+    {
+      "url": "https://developer.chrome.com/docs/modern-web-guidance",
+      "csv_lines": [
+        14
+      ],
+      "originals": [
+        "https://developer.chrome.com/docs/modern-web-guidance"
+      ],
+      "kind": "source",
+      "http_status": 200,
+      "final_url": "https://developer.chrome.com/docs/modern-web-guidance",
+      "title": "Modern Web Guidance  |  Chrome for Developers",
+      "snapshot": "research/snapshots/86e58e20e8f9.txt",
+      "status": "retrieved"
+    },
+    {
+      "url": "https://groups.google.com/a/chromium.org/d/msgid/chrome-ai-dev-preview/CAPpwU5KB148Ok7jS2vvTWzadpzcu%3D9M96p%2BW8eT%2B0QgXYzhtzA%40mail.gmail.com",
+      "csv_lines": [
+        14
+      ],
+      "originals": [
+        "https://groups.google.com/a/chromium.org/d/msgid/chrome-ai-dev-preview/CAPpwU5KB148Ok7jS2vvTWzadpzcu%3D9M96p%2BW8eT%2B0QgXYzhtzA%40mail.gmail.com"
+      ],
+      "kind": "mailing-list",
+      "status": "group shell or authentication required; email body not verified",
+      "http_status": 200,
+      "final_url": "https://groups.google.com/a/chromium.org/g/chrome-ai-dev-preview",
+      "title": "Chrome Built-in AI Early Preview Program - Google Groups",
+      "snapshot": "research/snapshots/a832dea565b1.txt"
+    },
+    {
+      "url": "https://github.com/GoogleChromeLabs/web-ai-demos/tree/main/writer-rewriter-polyfills",
+      "csv_lines": [
+        15
+      ],
+      "originals": [
+        "https://github.com/GoogleChromeLabs/web-ai-demos/tree/main/writer-rewriter-polyfills"
+      ],
+      "kind": "source",
+      "http_status": 200,
+      "final_url": "https://github.com/GoogleChromeLabs/web-ai-demos/tree/main/writer-rewriter-polyfills",
+      "title": "web-ai-demos/writer-rewriter-polyfills at main · GoogleChromeLabs/web-ai-demos · GitHub",
+      "snapshot": "research/snapshots/3c2dd6a7a4a6.txt",
+      "status": "retrieved"
+    },
+    {
+      "url": "https://groups.google.com/a/chromium.org/d/msgid/chrome-ai-dev-preview/CADWWn7UqdNZjMzAdxYBgYtHS_J2AHt411J4V9nEnVeTWiOZ8Bg%40mail.gmail.com",
+      "csv_lines": [
+        15
+      ],
+      "originals": [
+        "https://groups.google.com/a/chromium.org/d/msgid/chrome-ai-dev-preview/CADWWn7UqdNZjMzAdxYBgYtHS_J2AHt411J4V9nEnVeTWiOZ8Bg%40mail.gmail.com"
+      ],
+      "kind": "mailing-list",
+      "status": "group shell or authentication required; email body not verified",
+      "http_status": 200,
+      "final_url": "https://groups.google.com/a/chromium.org/g/chrome-ai-dev-preview",
+      "title": "Chrome Built-in AI Early Preview Program - Google Groups",
+      "snapshot": "research/snapshots/b3bc8da21281.txt"
+    },
+    {
+      "url": "https://groups.google.com/a/chromium.org/d/msgid/chrome-ai-dev-preview/CALgRrLk-unGYc1DzWYT20U0Qo%3DPZr6OFyQ3Y3tKXVa_h_uNjYg%40mail.gmail.com",
+      "csv_lines": [
+        16
+      ],
+      "originals": [
+        "https://groups.google.com/a/chromium.org/d/msgid/chrome-ai-dev-preview/CALgRrLk-unGYc1DzWYT20U0Qo%3DPZr6OFyQ3Y3tKXVa_h_uNjYg%40mail.gmail.com"
+      ],
+      "kind": "mailing-list",
+      "status": "group shell or authentication required; email body not verified",
+      "http_status": 200,
+      "final_url": "https://groups.google.com/a/chromium.org/g/chrome-ai-dev-preview",
+      "title": "Chrome Built-in AI Early Preview Program - Google Groups",
+      "snapshot": "research/snapshots/501f06f99d44.txt"
+    },
+    {
+      "url": "https://docs.google.com/document/d/1rpaV4la7WtpLr4Ueb0NttJVETlVL_5a9TNHsrBMBkWk/edit?usp=sharing",
+      "csv_lines": [
+        17
+      ],
+      "originals": [
+        "https://docs.google.com/document/d/1rpaV4la7WtpLr4Ueb0NttJVETlVL_5a9TNHsrBMBkWk/edit?usp=sharing"
+      ],
+      "kind": "source",
+      "http_status": 200,
+      "final_url": "https://docs.google.com/document/d/1rpaV4la7WtpLr4Ueb0NttJVETlVL_5a9TNHsrBMBkWk/edit?usp=sharing",
+      "title": "Built-in AI Early Preview Program - Gemma 4 - Documentos de Google",
+      "snapshot": "research/snapshots/497434788dcd.txt",
+      "status": "Google Docs shell only; see export evidence"
+    },
+    {
+      "url": "https://issues.chromium.org/issues/new?component=1583300&template=2244689",
+      "csv_lines": [
+        17
+      ],
+      "originals": [
+        "https://issues.chromium.org/issues/new?component=1583300&template=2244689"
+      ],
+      "kind": "source",
+      "http_status": 200,
+      "final_url": "https://accounts.google.com/v3/signin/identifier?continue=https://issues.chromium.org/issues/new?component%3D1583300%26template%3D2244689&followup=https://issues.chromium.org/issues/new?component%3D1583300%26template%3D2244689&osid=1&passive=1209600&flowName=WebLiteSignIn&flowEntry=ServiceLogin&dsh=S-1137210389:1792757780023943",
+      "title": "Sign in - Google Accounts",
+      "snapshot": "research/snapshots/788ca3e93ebc.txt",
+      "status": "authentication or group access required"
+    },
+    {
+      "url": "https://developer.chrome.com/docs/ai/join-epp",
+      "csv_lines": [
+        17
+      ],
+      "originals": [
+        "https://developer.chrome.com/docs/ai/join-epp"
+      ],
+      "kind": "source",
+      "http_status": 200,
+      "final_url": "https://developer.chrome.com/docs/ai/join-epp",
+      "title": "Join the early preview program  |  AI in Chrome  |  Chrome for Developers",
+      "snapshot": "research/snapshots/0eafd2b2a4e3.txt",
+      "status": "retrieved"
+    },
+    {
+      "url": "https://groups.google.com/a/chromium.org/d/msgid/chrome-ai-dev-preview/CADWWn7U06zQhYxXmj1esOPe0xfanyzkEEWVERWtf-FEEvcq2Qg%40mail.gmail.com",
+      "csv_lines": [
+        17
+      ],
+      "originals": [
+        "https://groups.google.com/a/chromium.org/d/msgid/chrome-ai-dev-preview/CADWWn7U06zQhYxXmj1esOPe0xfanyzkEEWVERWtf-FEEvcq2Qg%40mail.gmail.com"
+      ],
+      "kind": "mailing-list",
+      "status": "group shell or authentication required; email body not verified",
+      "http_status": 200,
+      "final_url": "https://groups.google.com/a/chromium.org/g/chrome-ai-dev-preview",
+      "title": "Chrome Built-in AI Early Preview Program - Google Groups",
+      "snapshot": "research/snapshots/22af763d3040.txt"
+    },
+    {
+      "url": "https://developer.chrome.com/docs/web-platform/origin-trials",
+      "csv_lines": [
+        18
+      ],
+      "originals": [
+        "https://developer.chrome.com/docs/web-platform/origin-trials"
+      ],
+      "kind": "source",
+      "http_status": 200,
+      "final_url": "https://developer.chrome.com/docs/web-platform/origin-trials",
+      "title": "Get started with origin trials  |  Web Platform  |  Chrome for Developers",
+      "snapshot": "research/snapshots/02da99a96b2d.txt",
+      "status": "retrieved"
+    },
+    {
+      "url": "https://forms.gle/szmYbXAWqLoQS5N96",
+      "csv_lines": [
+        18
+      ],
+      "originals": [
+        "https://forms.gle/szmYbXAWqLoQS5N96"
+      ],
+      "kind": "feedback",
+      "http_status": 200,
+      "final_url": "https://docs.google.com/forms/d/e/1FAIpQLScO-jms9d8Mm6dTIY8jeeDjoTJ5esFJDFEnWeoglBvvmCZPcw/viewform?usp=send_form",
+      "title": "Built-in AI - API readiness (2025/09)",
+      "snapshot": "research/snapshots/4e0dece586f1.txt",
+      "status": "retrieved"
+    },
+    {
+      "url": "https://developer.chrome.com/origintrials/",
+      "csv_lines": [
+        18
+      ],
+      "originals": [
+        "https://developer.chrome.com/origintrials/#/view_trial/1988902185437495297"
+      ],
+      "kind": "source",
+      "http_status": 200,
+      "final_url": "https://developer.chrome.com/origintrials/",
+      "title": "Origin Trials",
+      "snapshot": "research/snapshots/5747eb6d6516.txt",
+      "status": "origin-trial SPA shell; exact trial status not verified",
+      "note": "Thin response; not sufficient to verify technical claims.",
+      "content_readable": false,
+      "original_fragment_urls": [
+        "https://developer.chrome.com/origintrials/#/view_trial/1988902185437495297"
+      ]
+    },
+    {
+      "url": "https://developer.chrome.com/docs/ai/proofreader-api",
+      "csv_lines": [
+        18
+      ],
+      "originals": [
+        "https://developer.chrome.com/docs/ai/proofreader-api"
+      ],
+      "kind": "source",
+      "http_status": 200,
+      "final_url": "https://developer.chrome.com/docs/ai/proofreader-api",
+      "title": "The Proofreader API  |  AI in Chrome  |  Chrome for Developers",
+      "snapshot": "research/snapshots/275aa3c2c1a6.txt",
+      "status": "retrieved"
+    },
+    {
+      "url": "https://rsvp.withgoogle.com/events/web-ai-summit-2025",
+      "csv_lines": [
+        18
+      ],
+      "originals": [
+        "https://rsvp.withgoogle.com/events/web-ai-summit-2025"
+      ],
+      "kind": "source",
+      "http_status": 200,
+      "final_url": "https://rsvp.withgoogle.com/events/web-ai-summit-2025?psv=1",
+      "title": "",
+      "snapshot": "research/snapshots/f0b188b9fcf1.txt",
+      "status": "retrieved",
+      "note": "Thin response; not sufficient to verify technical claims."
+    },
+    {
+      "url": "https://groups.google.com/a/chromium.org/d/msgid/chrome-ai-dev-preview/CADWWn7UbzmgvzDKspy568JkY13CweLJW-GJpS6H94AHgV%2Bsr4Q%40mail.gmail.com",
+      "csv_lines": [
+        18
+      ],
+      "originals": [
+        "https://groups.google.com/a/chromium.org/d/msgid/chrome-ai-dev-preview/CADWWn7UbzmgvzDKspy568JkY13CweLJW-GJpS6H94AHgV%2Bsr4Q%40mail.gmail.com"
+      ],
+      "kind": "mailing-list",
+      "status": "group shell or authentication required; email body not verified",
+      "http_status": 200,
+      "final_url": "https://groups.google.com/a/chromium.org/g/chrome-ai-dev-preview",
+      "title": "Chrome Built-in AI Early Preview Program - Google Groups",
+      "snapshot": "research/snapshots/111ed3748859.txt"
+    },
+    {
+      "url": "https://developer.chrome.com/docs/ai/built-in-ai-dos-donts",
+      "csv_lines": [
+        19
+      ],
+      "originals": [
+        "https://developer.chrome.com/docs/ai/built-in-ai-dos-donts"
+      ],
+      "kind": "source",
+      "http_status": 200,
+      "final_url": "https://developer.chrome.com/docs/ai/built-in-ai-dos-donts",
+      "title": "Built-in AI APIs: Do and don't  |  AI in Chrome  |  Chrome for Developers",
+      "snapshot": "research/snapshots/85dcb3f5945b.txt",
+      "status": "retrieved"
+    },
+    {
+      "url": "https://groups.google.com/a/chromium.org/d/msgid/chrome-ai-dev-preview/c1b30884-1f63-4ad2-9d8e-8531e483e3e0n%40chromium.org",
+      "csv_lines": [
+        19
+      ],
+      "originals": [
+        "https://groups.google.com/a/chromium.org/d/msgid/chrome-ai-dev-preview/c1b30884-1f63-4ad2-9d8e-8531e483e3e0n%40chromium.org"
+      ],
+      "kind": "mailing-list",
+      "status": "group shell or authentication required; email body not verified",
+      "http_status": 200,
+      "final_url": "https://groups.google.com/a/chromium.org/g/chrome-ai-dev-preview",
+      "title": "Chrome Built-in AI Early Preview Program - Google Groups",
+      "snapshot": "research/snapshots/c96044d977aa.txt"
+    },
+    {
+      "url": "https://groups.google.com/a/chromium.org/d/msgid/chrome-ai-dev-preview/CALgRrLkm2Dc7v%2BruZbPgUdo94nksU6RNLU7gCLkiN1pjfk-kNA%40mail.gmail.com",
+      "csv_lines": [
+        20
+      ],
+      "originals": [
+        "https://groups.google.com/a/chromium.org/d/msgid/chrome-ai-dev-preview/CALgRrLkm2Dc7v%2BruZbPgUdo94nksU6RNLU7gCLkiN1pjfk-kNA%40mail.gmail.com"
+      ],
+      "kind": "mailing-list",
+      "status": "group shell or authentication required; email body not verified",
+      "http_status": 200,
+      "final_url": "https://groups.google.com/a/chromium.org/g/chrome-ai-dev-preview",
+      "title": "Chrome Built-in AI Early Preview Program - Google Groups",
+      "snapshot": "research/snapshots/64b8a50334b5.txt"
+    },
+    {
+      "url": "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/iframe",
+      "csv_lines": [
+        21
+      ],
+      "originals": [
+        "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/iframe#allow"
+      ],
+      "kind": "source",
+      "http_status": 200,
+      "final_url": "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/iframe",
+      "title": "<iframe> HTML inline frame element - HTML | MDN",
+      "snapshot": "research/snapshots/34161b13a7d0.txt",
+      "status": "retrieved"
+    },
+    {
+      "url": "https://github.com/webmachinelearning/proofreader-api/pull/14",
+      "csv_lines": [
+        21
+      ],
+      "originals": [
+        "https://github.com/webmachinelearning/proofreader-api/pull/14"
+      ],
+      "kind": "source",
+      "http_status": 200,
+      "final_url": "https://github.com/webmachinelearning/proofreader-api/pull/14",
+      "title": "Suggestion to add Permission Policy and Worker note by tomayac · Pull Request #14 · webmachinelearning/proofreader-api · GitHub",
+      "snapshot": "research/snapshots/2f1fbfc86fc3.txt",
+      "status": "retrieved"
+    },
+    {
+      "url": "https://groups.google.com/a/chromium.org/d/msgid/chrome-ai-dev-preview/CALgRrLnNmMB9_9juuktkNFsCKGt7kOYBnqZgnb_EeExra%3DvUqg%40mail.gmail.com",
+      "csv_lines": [
+        21
+      ],
+      "originals": [
+        "https://groups.google.com/a/chromium.org/d/msgid/chrome-ai-dev-preview/CALgRrLnNmMB9_9juuktkNFsCKGt7kOYBnqZgnb_EeExra%3DvUqg%40mail.gmail.com"
+      ],
+      "kind": "mailing-list",
+      "status": "group shell or authentication required; email body not verified",
+      "http_status": 200,
+      "final_url": "https://groups.google.com/a/chromium.org/g/chrome-ai-dev-preview",
+      "title": "Chrome Built-in AI Early Preview Program - Google Groups",
+      "snapshot": "research/snapshots/e052f36d3fe5.txt"
+    },
+    {
+      "url": "https://groups.google.com/a/chromium.org/d/msgid/chrome-ai-dev-preview/CALgRrLmstUbmkMfQuXB05vi%3Dx8c5ApJLSybiZKMBzr2R2pcbQw%40mail.gmail.com",
+      "csv_lines": [
+        22
+      ],
+      "originals": [
+        "https://groups.google.com/a/chromium.org/d/msgid/chrome-ai-dev-preview/CALgRrLmstUbmkMfQuXB05vi%3Dx8c5ApJLSybiZKMBzr2R2pcbQw%40mail.gmail.com"
+      ],
+      "kind": "mailing-list",
+      "status": "group shell or authentication required; email body not verified",
+      "http_status": 200,
+      "final_url": "https://groups.google.com/a/chromium.org/g/chrome-ai-dev-preview",
+      "title": "Chrome Built-in AI Early Preview Program - Google Groups",
+      "snapshot": "research/snapshots/26e1384d4a18.txt"
+    },
+    {
+      "url": "https://chromiumdash.appspot.com/commit/4ba301ad8c7c1e2190707d80aec6bc8aa63a2671",
+      "csv_lines": [
+        23
+      ],
+      "originals": [
+        "https://chromiumdash.appspot.com/commit/4ba301ad8c7c1e2190707d80aec6bc8aa63a2671"
+      ],
+      "kind": "source",
+      "http_status": 200,
+      "final_url": "https://chromiumdash.appspot.com/commit/4ba301ad8c7c1e2190707d80aec6bc8aa63a2671",
+      "title": "Chromium Dash",
+      "snapshot": "research/snapshots/bf65246993a1.txt",
+      "status": "JavaScript app shell only; technical body not reviewed",
+      "note": "Thin response; not sufficient to verify technical claims.",
+      "content_readable": false
+    },
+    {
+      "url": "https://github.com/webmachinelearning/webmcp/pull/253",
+      "csv_lines": [
+        23
+      ],
+      "originals": [
+        "https://github.com/webmachinelearning/webmcp/pull/253"
+      ],
+      "kind": "source",
+      "http_status": 200,
+      "final_url": "https://github.com/webmachinelearning/webmcp/pull/253",
+      "title": "Add `debugging` member to ToolAnnotations by beaufortfrancois · Pull Request #253 · webmachinelearning/webmcp · GitHub",
+      "snapshot": "research/snapshots/73bc241c9f73.txt",
+      "status": "retrieved"
+    },
+    {
+      "url": "https://groups.google.com/a/chromium.org/d/msgid/chrome-ai-dev-preview/CAPpwU5JWyj_bbxpzO%3DG%3DZRgV%3D4uRnc%2BEA6Jese7%2B%2BXT4eBFzvQ%40mail.gmail.com",
+      "csv_lines": [
+        23
+      ],
+      "originals": [
+        "https://groups.google.com/a/chromium.org/d/msgid/chrome-ai-dev-preview/CAPpwU5JWyj_bbxpzO%3DG%3DZRgV%3D4uRnc%2BEA6Jese7%2B%2BXT4eBFzvQ%40mail.gmail.com"
+      ],
+      "kind": "mailing-list",
+      "status": "group shell or authentication required; email body not verified",
+      "http_status": 200,
+      "final_url": "https://groups.google.com/a/chromium.org/g/chrome-ai-dev-preview",
+      "title": "Chrome Built-in AI Early Preview Program - Google Groups",
+      "snapshot": "research/snapshots/43215c249a19.txt"
+    },
+    {
+      "url": "https://groups.google.com/a/chromium.org/d/msgid/chrome-ai-dev-preview/CALgRrLmNTjA%2BJQ5TLZ2SNL6hPQN6aAvE6TmRB8ruC1MrDx1jvg%40mail.gmail.com",
+      "csv_lines": [
+        24
+      ],
+      "originals": [
+        "https://groups.google.com/a/chromium.org/d/msgid/chrome-ai-dev-preview/CALgRrLmNTjA%2BJQ5TLZ2SNL6hPQN6aAvE6TmRB8ruC1MrDx1jvg%40mail.gmail.com"
+      ],
+      "kind": "mailing-list",
+      "status": "group shell or authentication required; email body not verified",
+      "http_status": 200,
+      "final_url": "https://groups.google.com/a/chromium.org/g/chrome-ai-dev-preview",
+      "title": "Chrome Built-in AI Early Preview Program - Google Groups",
+      "snapshot": "research/snapshots/f6332895790a.txt"
+    },
+    {
+      "url": "https://issues.chromium.org/issues/392661409",
+      "csv_lines": [
+        25
+      ],
+      "originals": [
+        "https://issues.chromium.org/issues/392661409"
+      ],
+      "kind": "source",
+      "http_status": 200,
+      "final_url": "https://issues.chromium.org/issues/392661409",
+      "title": "Chromium",
+      "snapshot": "research/snapshots/8adba5033a6d.txt",
+      "status": "JavaScript app shell only; technical body not reviewed",
+      "note": "Thin response; not sufficient to verify technical claims.",
+      "content_readable": false
+    },
+    {
+      "url": "https://groups.google.com/a/chromium.org/d/msgid/chrome-ai-dev-preview/CALgRrLmKVJT3RUB4qTN8zk75z0uhCKW1b31SuBkDFLr9WrBGVA%40mail.gmail.com",
+      "csv_lines": [
+        25
+      ],
+      "originals": [
+        "https://groups.google.com/a/chromium.org/d/msgid/chrome-ai-dev-preview/CALgRrLmKVJT3RUB4qTN8zk75z0uhCKW1b31SuBkDFLr9WrBGVA%40mail.gmail.com"
+      ],
+      "kind": "mailing-list",
+      "status": "group shell or authentication required; email body not verified",
+      "http_status": 200,
+      "final_url": "https://groups.google.com/a/chromium.org/g/chrome-ai-dev-preview",
+      "title": "Chrome Built-in AI Early Preview Program - Google Groups",
+      "snapshot": "research/snapshots/84d98cdf025a.txt"
+    },
+    {
+      "url": "https://developer.chrome.com/docs/extensions/ai/prompt-api",
+      "csv_lines": [
+        26
+      ],
+      "originals": [
+        "https://developer.chrome.com/docs/extensions/ai/prompt-api"
+      ],
+      "kind": "source",
+      "http_status": 200,
+      "final_url": "https://developer.chrome.com/docs/ai/prompt-api",
+      "title": "The Prompt API  |  AI in Chrome  |  Chrome for Developers",
+      "snapshot": "research/snapshots/324ed0dee781.txt",
+      "status": "retrieved"
+    },
+    {
+      "url": "https://groups.google.com/a/chromium.org/d/msgid/chrome-ai-dev-preview/CALgRrLnx5LbaKU73ZAEFVTYstKJ0Jgr2yo%3DwAf%2B0VWPorybGUg%40mail.gmail.com",
+      "csv_lines": [
+        26
+      ],
+      "originals": [
+        "https://groups.google.com/a/chromium.org/d/msgid/chrome-ai-dev-preview/CALgRrLnx5LbaKU73ZAEFVTYstKJ0Jgr2yo%3DwAf%2B0VWPorybGUg%40mail.gmail.com"
+      ],
+      "kind": "mailing-list",
+      "status": "group shell or authentication required; email body not verified",
+      "http_status": 200,
+      "final_url": "https://groups.google.com/a/chromium.org/g/chrome-ai-dev-preview",
+      "title": "Chrome Built-in AI Early Preview Program - Google Groups",
+      "snapshot": "research/snapshots/c6b559b736fd.txt"
+    },
+    {
+      "url": "https://chromiumdash.appspot.com/commit/a1bf6d8347ecd82fae080076f62a61e8795d8e22",
+      "csv_lines": [
+        27
+      ],
+      "originals": [
+        "https://chromiumdash.appspot.com/commit/a1bf6d8347ecd82fae080076f62a61e8795d8e22"
+      ],
+      "kind": "source",
+      "http_status": 200,
+      "final_url": "https://chromiumdash.appspot.com/commit/a1bf6d8347ecd82fae080076f62a61e8795d8e22",
+      "title": "Chromium Dash",
+      "snapshot": "research/snapshots/c1295354cea0.txt",
+      "status": "JavaScript app shell only; technical body not reviewed",
+      "note": "Thin response; not sufficient to verify technical claims.",
+      "content_readable": false
+    },
+    {
+      "url": "https://github.com/webmachinelearning/webmcp/issues/176",
+      "csv_lines": [
+        27
+      ],
+      "originals": [
+        "https://github.com/webmachinelearning/webmcp/issues/176"
+      ],
+      "kind": "source",
+      "http_status": 200,
+      "final_url": "https://github.com/webmachinelearning/webmcp/issues/176",
+      "title": "Hint for reversible or consequential actions · Issue #176 · webmachinelearning/webmcp · GitHub",
+      "snapshot": "research/snapshots/293dc6c47fee.txt",
+      "status": "retrieved"
+    },
+    {
+      "url": "https://groups.google.com/a/chromium.org/d/msgid/chrome-ai-dev-preview/CAPpwU5%2B%3DXnzyfTxXho%2Bejn5L4cNp1VFGe1%3DX2NL%3DYgjCyBKUGw%40mail.gmail.com",
+      "csv_lines": [
+        27
+      ],
+      "originals": [
+        "https://groups.google.com/a/chromium.org/d/msgid/chrome-ai-dev-preview/CAPpwU5%2B%3DXnzyfTxXho%2Bejn5L4cNp1VFGe1%3DX2NL%3DYgjCyBKUGw%40mail.gmail.com"
+      ],
+      "kind": "mailing-list",
+      "status": "group shell or authentication required; email body not verified",
+      "http_status": 200,
+      "final_url": "https://groups.google.com/a/chromium.org/g/chrome-ai-dev-preview",
+      "title": "Chrome Built-in AI Early Preview Program - Google Groups",
+      "snapshot": "research/snapshots/f7660cb05fec.txt"
+    },
+    {
+      "url": "https://www.sebastian-gomez.com/en",
+      "csv_lines": [],
+      "originals": [
+        "https://www.sebastian-gomez.com/en"
+      ],
+      "kind": "source",
+      "status": "retrieved via system TLS",
+      "http_status": 200,
+      "final_url": "https://www.sebastian-gomez.com/en",
+      "title": "Sebastian Gomez",
+      "snapshot": "research/snapshots/0b74b84a5f96.txt"
+    },
+    {
+      "url": "https://www.sebastian-gomez.com/en/posts/page/2",
+      "csv_lines": [],
+      "originals": [
+        "https://www.sebastian-gomez.com/en/posts/page/2"
+      ],
+      "kind": "source",
+      "status": "retrieved via system TLS",
+      "http_status": 200,
+      "final_url": "https://www.sebastian-gomez.com/en/posts/page/2",
+      "title": "Sebastian Gomez",
+      "snapshot": "research/snapshots/aa74a8b58b21.txt"
+    },
+    {
+      "url": "https://www.sebastian-gomez.com/en/post/modelos-pequenos-buen-diseno-ia-navegador-litert-lm",
+      "csv_lines": [],
+      "originals": [
+        "https://www.sebastian-gomez.com/en/post/modelos-pequenos-buen-diseno-ia-navegador-litert-lm"
+      ],
+      "kind": "source",
+      "status": "retrieved via system TLS",
+      "http_status": 200,
+      "final_url": "https://www.sebastian-gomez.com/en/post/modelos-pequenos-buen-diseno-ia-navegador-litert-lm",
+      "title": "Modelos pequeños y buen diseño: la IA en el navegador",
+      "snapshot": "research/snapshots/af444e6c1d99.txt"
+    },
+    {
+      "url": "https://www.sebastian-gomez.com/en/post/el-borde-es-inevitable-browserdj-ai-gemma-antigravity",
+      "csv_lines": [],
+      "originals": [
+        "https://www.sebastian-gomez.com/en/post/el-borde-es-inevitable-browserdj-ai-gemma-antigravity"
+      ],
+      "kind": "source",
+      "status": "retrieved via system TLS",
+      "http_status": 200,
+      "final_url": "https://www.sebastian-gomez.com/en/post/el-borde-es-inevitable-browserdj-ai-gemma-antigravity",
+      "title": "El Borde es Inevitable: Por Qué Construimos BrowserDJ AI con Gemma 4 y Google Antigravity",
+      "snapshot": "research/snapshots/913a4cdc96e4.txt"
+    },
+    {
+      "url": "https://developer.chrome.com/docs/ai/prompt-api",
+      "csv_lines": [],
+      "originals": [
+        "https://developer.chrome.com/docs/ai/prompt-api"
+      ],
+      "kind": "source",
+      "http_status": 200,
+      "final_url": "https://developer.chrome.com/docs/ai/prompt-api",
+      "title": "The Prompt API  |  AI in Chrome  |  Chrome for Developers",
+      "snapshot": "research/snapshots/30616e1d8eef.txt",
+      "status": "retrieved"
+    },
+    {
+      "url": "https://developer.chrome.com/docs/ai/summarizer-api",
+      "csv_lines": [],
+      "originals": [
+        "https://developer.chrome.com/docs/ai/summarizer-api"
+      ],
+      "kind": "source",
+      "http_status": 200,
+      "final_url": "https://developer.chrome.com/docs/ai/summarizer-api",
+      "title": "Summarize with built-in AI  |  AI in Chrome  |  Chrome for Developers",
+      "snapshot": "research/snapshots/112b36d4e94b.txt",
+      "status": "retrieved"
+    },
+    {
+      "url": "https://developer.chrome.com/docs/ai/translator-api",
+      "csv_lines": [],
+      "originals": [
+        "https://developer.chrome.com/docs/ai/translator-api"
+      ],
+      "kind": "source",
+      "http_status": 200,
+      "final_url": "https://developer.chrome.com/docs/ai/translator-api",
+      "title": "Translation with built-in AI  |  AI in Chrome  |  Chrome for Developers",
+      "snapshot": "research/snapshots/f1c6f9703eac.txt",
+      "status": "retrieved"
+    },
+    {
+      "url": "https://developer.chrome.com/docs/ai/language-detection",
+      "csv_lines": [],
+      "originals": [
+        "https://developer.chrome.com/docs/ai/language-detection"
+      ],
+      "kind": "source",
+      "http_status": 200,
+      "final_url": "https://developer.chrome.com/docs/ai/language-detection",
+      "title": "Language detection with built-in AI  |  AI in Chrome  |  Chrome for Developers",
+      "snapshot": "research/snapshots/17d8122a0b5c.txt",
+      "status": "retrieved"
+    },
+    {
+      "url": "https://developer.chrome.com/docs/ai/built-in",
+      "csv_lines": [],
+      "originals": [
+        "https://developer.chrome.com/docs/ai/built-in"
+      ],
+      "kind": "source",
+      "http_status": 200,
+      "final_url": "https://developer.chrome.com/docs/ai/built-in",
+      "title": "Built-in AI  |  AI in Chrome  |  Chrome for Developers",
+      "snapshot": "research/snapshots/23394d0e3d23.txt",
+      "status": "retrieved"
+    },
+    {
+      "url": "https://developer.chrome.com/docs/ai/session-management",
+      "csv_lines": [],
+      "originals": [
+        "https://developer.chrome.com/docs/ai/session-management"
+      ],
+      "kind": "source",
+      "http_status": 200,
+      "final_url": "https://developer.chrome.com/docs/ai/session-management",
+      "title": "Best practices for session management with the Prompt API  |  AI in Chrome  |  Chrome for Developers",
+      "snapshot": "research/snapshots/7aaf2c8a69f4.txt",
+      "status": "retrieved"
+    },
+    {
+      "url": "https://developer.chrome.com/docs/ai/debugging",
+      "csv_lines": [],
+      "originals": [
+        "https://developer.chrome.com/docs/ai/debugging"
+      ],
+      "kind": "source",
+      "http_status": 404,
+      "final_url": "https://developer.chrome.com/docs/ai/debugging",
+      "title": "404  |  Page Not Found  |  Chrome for Developers",
+      "snapshot": "research/snapshots/2e58bca5fea8.txt",
+      "status": "HTTP error"
+    },
+    {
+      "url": "https://developer.chrome.com/docs/ai/built-in-apis",
+      "csv_lines": [],
+      "originals": [
+        "https://developer.chrome.com/docs/ai/built-in-apis"
+      ],
+      "kind": "source",
+      "http_status": 200,
+      "final_url": "https://developer.chrome.com/docs/ai/built-in-apis",
+      "title": "Built-in AI APIs  |  AI in Chrome  |  Chrome for Developers",
+      "snapshot": "research/snapshots/29782c9773c4.txt",
+      "status": "retrieved"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/webmachinelearning/webmcp/main/README.md",
+      "csv_lines": [],
+      "originals": [
+        "https://raw.githubusercontent.com/webmachinelearning/webmcp/main/README.md"
+      ],
+      "kind": "source",
+      "http_status": 200,
+      "final_url": "https://raw.githubusercontent.com/webmachinelearning/webmcp/main/README.md",
+      "title": "",
+      "snapshot": "research/snapshots/4e36894dc029.txt",
+      "status": "retrieved"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/webmachinelearning/webmcp/main/docs/proposal.md",
+      "csv_lines": [],
+      "originals": [
+        "https://raw.githubusercontent.com/webmachinelearning/webmcp/main/docs/proposal.md"
+      ],
+      "kind": "source",
+      "http_status": 404,
+      "final_url": "https://raw.githubusercontent.com/webmachinelearning/webmcp/main/docs/proposal.md",
+      "title": "",
+      "snapshot": "research/snapshots/a670a3243d7d.txt",
+      "status": "HTTP error"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/webmachinelearning/prompt-api/main/README.md",
+      "csv_lines": [],
+      "originals": [
+        "https://raw.githubusercontent.com/webmachinelearning/prompt-api/main/README.md"
+      ],
+      "kind": "source",
+      "http_status": 200,
+      "final_url": "https://raw.githubusercontent.com/webmachinelearning/prompt-api/main/README.md",
+      "title": "",
+      "snapshot": "research/snapshots/bc35b31fd60b.txt",
+      "status": "retrieved"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/explainers-by-googlers/embedding-api/main/README.md",
+      "csv_lines": [],
+      "originals": [
+        "https://raw.githubusercontent.com/explainers-by-googlers/embedding-api/main/README.md"
+      ],
+      "kind": "source",
+      "http_status": 200,
+      "final_url": "https://raw.githubusercontent.com/explainers-by-googlers/embedding-api/main/README.md",
+      "title": "",
+      "snapshot": "research/snapshots/6841af97a707.txt",
+      "status": "retrieved"
+    },
+    {
+      "url": "https://docs.google.com/presentation/d/1bTHqCd-ZdfXplMtFIISS_kdRjTVPBkOh85B0rB5ohEM/edit",
+      "csv_lines": [],
+      "originals": [
+        "https://docs.google.com/presentation/d/1bTHqCd-ZdfXplMtFIISS_kdRjTVPBkOh85B0rB5ohEM/edit"
+      ],
+      "kind": "source",
+      "http_status": 200,
+      "final_url": "https://docs.google.com/presentation/d/1bTHqCd-ZdfXplMtFIISS_kdRjTVPBkOh85B0rB5ohEM/edit",
+      "title": "Tracks @ DevFest 2026 - Presentation Template - Presentaciones de Google",
+      "snapshot": "research/snapshots/a5573c1ad92b.txt",
+      "status": "retrieved"
+    }
+  ],
+  "guide_exports": [
+    {
+      "url": "https://docs.google.com/document/d/1RnSlXRAy8ffdbehvCcH7msBwmTvsxHJJQiwcw374tMw/export?format=txt",
+      "guide": "expert-models",
+      "http_status": 200,
+      "final_url": "https://doc-0k-08-docstext.googleusercontent.com/export/s8v029du74rmth76t5k6ldhbqs/eqn6prgvm1ek9umptke9t5h8ko/1792757825000/117833821799708132471/*/1RnSlXRAy8ffdbehvCcH7msBwmTvsxHJJQiwcw374tMw?format=txt",
+      "status": "body reviewed",
+      "snapshot": "research/snapshots/guide-expert-models.txt"
+    },
+    {
+      "url": "https://docs.google.com/document/d/1ZB6MW8UDczm4V6ej5MorZWqFCYWwLhUs5HKxEdjP35c/export?format=txt",
+      "guide": "semantic-embedder",
+      "http_status": 200,
+      "final_url": "https://doc-00-08-docstext.googleusercontent.com/export/s8v029du74rmth76t5k6ldhbqs/3ag5o976np9uhnvde12f8ih57c/1792757825000/117833821799708132471/*/1ZB6MW8UDczm4V6ej5MorZWqFCYWwLhUs5HKxEdjP35c?format=txt",
+      "status": "body reviewed",
+      "snapshot": "research/snapshots/guide-semantic-embedder.txt"
+    },
+    {
+      "url": "https://docs.google.com/document/d/1g7bv9LHSqFWqeQUM2C6EQ5PiZ8UWTz8UibxnlD4ipDE/export?format=txt",
+      "guide": "mtp",
+      "http_status": 200,
+      "final_url": "https://doc-0k-a4-docstext.googleusercontent.com/export/s8v029du74rmth76t5k6ldhbqs/54785m130grs2v733tuvmrctrs/1792757820000/117086902755823008840/*/1g7bv9LHSqFWqeQUM2C6EQ5PiZ8UWTz8UibxnlD4ipDE?format=txt",
+      "status": "body reviewed",
+      "snapshot": "research/snapshots/guide-mtp.txt"
+    },
+    {
+      "url": "https://docs.google.com/document/d/1rpaV4la7WtpLr4Ueb0NttJVETlVL_5a9TNHsrBMBkWk/export?format=txt",
+      "guide": "gemma4",
+      "http_status": 200,
+      "final_url": "https://doc-08-08-docstext.googleusercontent.com/export/s8v029du74rmth76t5k6ldhbqs/1lthq78h6rvaa7v8i0hoc2m7nk/1792757825000/117833821799708132471/*/1rpaV4la7WtpLr4Ueb0NttJVETlVL_5a9TNHsrBMBkWk?format=txt",
+      "status": "body reviewed",
+      "snapshot": "research/snapshots/guide-gemma4.txt"
+    }
+  ]
+}

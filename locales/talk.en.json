@@ -1,0 +1,355 @@
+{
+  "title": "Your website has tools, too",
+  "defaults": {
+    "structure": "One hands-on talk around WebMCP and three demos",
+    "language": "English",
+    "city": "City to be confirmed"
+  },
+  "slides": [
+    {
+      "id": "opening",
+      "title": "Your website<br>has tools, too.",
+      "subtitle": "WebMCP: people and agents<br>in the same interface.",
+      "speaker": "Sebastián Gómez<br>Google Developer Expert · Web",
+      "builds": [],
+      "notes": [
+        "A web page already knows how to search, filter, and prepare a reading route. How can we offer those same actions to an agent while preserving an interface that a person understands? This talk starts with a concrete need: choosing what to read before a talk.\n\nSet the scope: WebMCP is still experimental. The demos include a local console for exploring the same functions when the browser does not expose the API. That console is not an AI agent."
+      ]
+    },
+    {
+      "id": "intent",
+      "title": "One intention.<br>One visible action.",
+      "subtitle": "“Help me choose what to read.”",
+      "diagram": [
+        {
+          "title": "A person",
+          "body": "Expresses the goal",
+          "color": "blue"
+        },
+        {
+          "title": "A tool",
+          "body": "Adds a reading",
+          "color": "yellow",
+          "step": 1
+        },
+        {
+          "title": "The same page",
+          "body": "Shows the new route",
+          "color": "green",
+          "step": 2
+        }
+      ],
+      "builds": [
+        "A tool",
+        "A shared page"
+      ],
+      "notes": [
+        "A person wants to prepare for a talk. The intention is simple: help me choose what to read. The experience should remain understandable on screen.",
+        "The agent needs a bounded action, such as adding an article. A tool with defined arguments reduces what the agent must infer about the page.",
+        "The visible list changes. The person can inspect the result and remove an article with the usual controls. That continuity is the central idea."
+      ]
+    },
+    {
+      "id": "shared-function",
+      "title": "The same function<br>moves the interface.",
+      "subtitle": "The button and the tool share state.",
+      "diagram": [
+        {
+          "title": "Button",
+          "body": "A human action",
+          "color": "blue"
+        },
+        {
+          "title": "addToRoute()",
+          "body": "Validate → update",
+          "color": "yellow",
+          "step": 1
+        },
+        {
+          "title": "Tool",
+          "body": "A structured action",
+          "color": "green",
+          "step": 2,
+          "arrow": "←"
+        }
+      ],
+      "builds": [
+        "An application function",
+        "A second entry point"
+      ],
+      "notes": [
+        "The add button calls an application function. We do not need to build a second application for the agent.",
+        "That function validates the identifier, avoids duplicates, and updates the list. State and rules remain the application's responsibility.",
+        "The tool callback uses that same function. The browser connection is a small layer around logic that already makes sense to the person."
+      ]
+    },
+    {
+      "id": "demo-route",
+      "title": "Build a route<br>people can see.",
+      "subtitle": "Add with a tool. Remove with a button.",
+      "demoTitle": "Reading Route",
+      "builds": [],
+      "notes": [
+        "Open Reading Route. Explain that the catalog metadata is curated sample content. First add Small models from the local console with articleId models. The visible route receives the article. Then remove that same article with the ordinary button.\n\nTry an unknown identifier to show a useful error. The console calls the function directly; it does not simulate language understanding. With a prepared WebMCP browser, inspect the registered tool or use a compatible agent.\n\nContingency: if the agent or API is unavailable, continue with the console and explain the difference explicitly. The demo checks the contract and shared state."
+      ]
+    },
+    {
+      "id": "errors",
+      "kind": "code",
+      "title": "Errors with<br>a next step.",
+      "subtitle": "Return a code and a way to continue.",
+      "builds": [
+        "A clear next step"
+      ],
+      "notes": [
+        "This is an excerpt of Reading Route's error response. article is the result of looking up the supplied identifier. When it is absent, the function returns an object without changing the route. UNKNOWN_ARTICLE is a stable application code, not a universal error shape defined by WebMCP.",
+        "The message explains recovery and retryable tells the client that it can correct the arguments. It does not require an automatic retry. The application also rejects incorrect argument types and avoids duplicates. The source link contains the full implementation and its more detailed messages."
+      ],
+      "codeDemo": "reading-route",
+      "code": "if (!article) {\n  return {\n    code: \"UNKNOWN_ARTICLE\",\n    error: \"Choose a known articleId.\",\n    retryable: true\n  };\n}",
+      "codeFocus": [
+        [
+          1,
+          2,
+          3
+        ],
+        [
+          4,
+          5
+        ]
+      ],
+      "codeLabel": "Excerpt · reading-route"
+    },
+    {
+      "id": "tool-design",
+      "kind": "code",
+      "title": "Register<br>one action.",
+      "subtitle": "The same callback the page uses.",
+      "builds": [
+        "A bounded contract",
+        "An observable result"
+      ],
+      "notes": [
+        "This registration uses document.modelContext.registerTool and awaits its promise. add_to_route is a stable name; the description explains when to select the tool. This excerpt assumes support was already detected. We will cover that check and registration errors later.",
+        "The schema helper belongs to this application: it builds an object schema, requires its properties, and disallows extra fields. articles is the demo catalog; its identifiers bound articleId. We will see the helper body on the contract slide. These dependencies are in the linked full source.",
+        "execute receives add, the same application callback used by the button. In the demo, add validates arguments, avoids duplicates, and renders the route again. The browser API supplies the entry point; rules and state remain in the application."
+      ],
+      "codeDemo": "reading-route",
+      "code": "await document.modelContext.registerTool({\n  name: \"add_to_route\",\n  description: \"Add a reading\",\n  inputSchema: schema({\n    articleId: {\n      type: \"string\",\n      enum: articles.map(a => a.id)\n    }\n  }),\n  execute: add\n});",
+      "codeFocus": [
+        [
+          2,
+          3
+        ],
+        [
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        [
+          10
+        ]
+      ],
+      "codeLabel": "Excerpt · reading-route"
+    },
+    {
+      "id": "demo-consent",
+      "title": "Preparing does not<br>mean confirming.",
+      "subtitle": "The final action remains deliberate.",
+      "demoTitle": "The Last Click",
+      "builds": [],
+      "notes": [
+        "Open The Last Click. All tickets are fictional: no booking, payment, or request to an external service occurs. Prepare two tickets and show that no confirmed request exists. Reject the proposal.\n\nPrepare another request and confirm it with the visible button. Local history changes only after that decision. An annotation describes the action for the tool-consuming client; the application must still enforce its own review boundary.\n\nWith a prepared WebMCP client, show the tool requesting review. Never present a client's warning as a guaranteed feature of every agent."
+      ]
+    },
+    {
+      "id": "annotations",
+      "kind": "code",
+      "title": "The app waits<br>for your click.",
+      "subtitle": "The annotation describes. Your app decides.",
+      "builds": [
+        "The rule lives in the application"
+      ],
+      "notes": [
+        "The Last Click registers requestReview with these annotations. consequentialHint describes a consequence without granting permission or imposing identical confirmation behavior across clients. This is an excerpt: the full registration passes the annotation object alongside the name, description, schema, and callback.",
+        "Application code enforces review. prepare validates quantity and pending requests, updates the screen, and can return an error. On the valid path, the promise stays pending until a person decides. In the full source, the confirmation button resolves finishReview; the rejection button returns rejected. The full flow also checks for a pending request, handles AbortSignal, cleans up state, and records the result. No payment or real booking occurs."
+      ],
+      "codeDemo": "consent-cart",
+      "code": "const annotations = {\n  consequentialHint: true\n};\n\nasync function requestReview(args) {\n  const prepared = prepare(args);\n  if (prepared.error) return prepared;\n  return new Promise(resolve => {\n    finishReview = resolve;\n  });\n}",
+      "codeFocus": [
+        [
+          1,
+          2,
+          3
+        ],
+        [
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ]
+      ],
+      "codeLabel": "Excerpt · consent-cart"
+    },
+    {
+      "id": "debugging",
+      "kind": "code",
+      "title": "Tools for<br>developers.",
+      "subtitle": "debugging identifies the intended audience.",
+      "builds": [
+        "Distinguish development use"
+      ],
+      "notes": [
+        "This excerpt defines inspect_state with an empty schema and a read callback. inspectState stands for the demo callback returning a snapshot with time and proposal count; it is application logic, not another browser API. Register this tool using the same registration pattern we just saw.",
+        "readOnlyHint describes read-only behavior and debugging identifies a development audience. Neither annotation is an access control. The observatory explicitly filters these tools; that illustrates this console's decision and does not guarantee every agent's behavior."
+      ],
+      "codeDemo": "tool-observatory",
+      "code": "const debugTool = {\n  name: \"inspect_state\",\n  description: \"Inspect local state\",\n  inputSchema: {\n    type: \"object\", properties: {}\n  },\n  annotations: {\n    readOnlyHint: true,\n    debugging: true\n  },\n  execute: inspectState\n};",
+      "codeFocus": [
+        [
+          2,
+          3,
+          4,
+          5
+        ],
+        [
+          7,
+          8,
+          9
+        ]
+      ],
+      "codeLabel": "Excerpt · tool-observatory"
+    },
+    {
+      "id": "demo-observatory",
+      "title": "Look at what<br>the tool exposes.",
+      "subtitle": "Schema, annotations, and results in view.",
+      "demoTitle": "Tool Observatory",
+      "builds": [],
+      "notes": [
+        "Open Tool Observatory. Execute find_demo with query browser. Show the schema and result. Then use an empty argument to show a recoverable error. Finally try malformed JSON to distinguish an editor error from the tool's result.\n\nEnable Include developer tools. Select inspect_state and change the arguments to an empty object. This console's filter illustrates the debugging audience; it does not establish every agent's behavior. If native WebMCP is available, inspect the browser registrations."
+      ]
+    },
+    {
+      "id": "types",
+      "kind": "code",
+      "title": "An explicit<br>contract.",
+      "subtitle": "Required fields. Valid values. No extras.",
+      "builds": [
+        "Validate incoming data",
+        "Test what happens"
+      ],
+      "notes": [
+        "This is the schema helper used to register add_to_route. It takes a property map and returns an object JSON Schema. It is a small application function, not a function that WebMCP adds to the browser.",
+        "Object.keys makes every supplied property required and additionalProperties: false rejects unexpected names. The enum in the registration bounds article identifiers. The contract guides the client, but add still validates real input before modifying state; types and schemas do not replace business rules.",
+        "Test null, incorrect types, unknown identifiers, and duplicates as well as the successful path. In the review flow, test rejection and confirmation too. The source link shows runtime validation alongside this helper."
+      ],
+      "codeDemo": "reading-route",
+      "code": "const schema = properties => ({\n  type: \"object\",\n  properties,\n  required: Object.keys(properties),\n  additionalProperties: false\n});",
+      "codeFocus": [
+        [
+          1,
+          2,
+          3
+        ],
+        [
+          4,
+          5
+        ],
+        [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ]
+      ],
+      "codeLabel": "Excerpt · reading-route"
+    },
+    {
+      "id": "fallback",
+      "kind": "code",
+      "title": "The buttons<br>still work.",
+      "subtitle": "Register when supported. Keep the interface.",
+      "builds": [
+        "Conditional registration",
+        "A useful interface"
+      ],
+      "notes": [
+        "The first line renders ordinary controls before attempting registration. render, tool, and status are application pieces. This excerpt runs in an async context, like the demo's registration helper. Without WebMCP support, the page already lets people add and remove readings.",
+        "Check document.modelContext and registerTool. If the method exists, await its promise before announcing a registered tool. The reviewed local setup uses enable-webmcp-testing; documentation also describes the origin trial. Support detection concerns the browser actually being tested.",
+        "The catch reports registration failure without removing page buttons. A useful interface must survive both missing support and failed registration. WebMCP connects tools to the page; an agent may use local or remote inference, and registration cannot establish where its model runs."
+      ],
+      "codeDemo": "reading-route",
+      "code": "render();\n\nif (document.modelContext?.registerTool) {\n  try {\n    await document.modelContext\n      .registerTool(tool);\n  } catch (error) {\n    status(error.message, true);\n  }\n}",
+      "codeFocus": [
+        [
+          1
+        ],
+        [
+          3,
+          4,
+          5,
+          6
+        ],
+        [
+          7,
+          8,
+          9,
+          10
+        ]
+      ],
+      "codeLabel": "Excerpt · reading-route"
+    },
+    {
+      "id": "limits",
+      "eyebrow": "The proposal's scope",
+      "title": "A visited page.<br>A shared context.",
+      "subtitle": "Discovering tools requires visiting the page.",
+      "builds": [
+        "A boundary that shapes design"
+      ],
+      "notes": [
+        "The reviewed design describes tools living in a page context. That guides the experiences worth building.",
+        "The documentation describes discovery limits and flows without a human interface. Future explorations exist, but this use case does not need them. Avoid promising global discovery or background tasks from today's example."
+      ]
+    },
+    {
+      "id": "first-step",
+      "eyebrow": "Your next experiment",
+      "title": "Start with<br>one useful action.",
+      "subtitle": "One intention. One contract. One visible change.",
+      "builds": [],
+      "notes": [
+        "Choose an action a person already wants on your site. Write down what it accepts and changes. Connect it to the ordinary control, then to a tool. Test the complete journey before expanding the catalog. A reading route is a good first candidate for my site."
+      ]
+    },
+    {
+      "id": "takeaway",
+      "eyebrow": "The idea to take home",
+      "title": "One useful action.<br>One shared page.",
+      "subtitle": "The visitor can see, review, and continue.",
+      "builds": [],
+      "notes": [
+        "This talk offers a practical connection: tools can reuse rules that already make an interface valuable. The examples and source review are in the local gallery. Primary sources also appear in the presentation notes."
+      ]
+    },
+    {
+      "id": "questions",
+      "eyebrow": "Let's talk",
+      "title": "Which action on your site<br>would you share first?",
+      "subtitle": "Questions · examples · design decisions",
+      "builds": [],
+      "notes": [
+        "Reserve two and a half minutes for questions. If nobody asks immediately, invite an example of a real audience action and walk through its goal, arguments, validation, and visible result. Do not promise version support without checking its documentation. To inspect the code, return to the gallery and open any of the three demos."
+      ]
+    }
+  ]
+}

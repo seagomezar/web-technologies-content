@@ -1,0 +1,47 @@
+{
+  "checkedAt": "2026-10-23T13:17:26.939Z",
+  "checks": [
+    {
+      "name": "en: six code examples retain exact copyable text and fit the panel at every build on three screen sizes",
+      "status": "pass"
+    },
+    {
+      "name": "en: displayed code executes with its stated helpers, returns useful errors, waits for review, and preserves controls on unsupported or failed registration",
+      "status": "pass"
+    },
+    {
+      "name": "en: presenter notes, preview highlights, keyboard links and reload-persistent builds work on code slides",
+      "status": "pass"
+    },
+    {
+      "name": "es: six code examples retain exact copyable text and fit the panel at every build on three screen sizes",
+      "status": "pass"
+    },
+    {
+      "name": "es: displayed code executes with its stated helpers, returns useful errors, waits for review, and preserves controls on unsupported or failed registration",
+      "status": "pass"
+    },
+    {
+      "name": "es: presenter notes, preview highlights, keyboard links and reload-persistent builds work on code slides",
+      "status": "pass"
+    },
+    {
+      "name": "English and Spanish code slides, regular-weight local fonts and clicker highlights work offline",
+      "status": "pass"
+    },
+    {
+      "name": "Displayed registration and schema code register and execute through native WebMCP in real Canary, in both languages",
+      "status": "pass"
+    }
+  ],
+  "languages": [
+    "en",
+    "es"
+  ],
+  "limitations": [
+    "The slides contain focused excerpts; surrounding application helpers, rejection and cancellation handling are in the linked demo source.",
+    "Native WebMCP checks use a temporary Canary profile and deterministic application callbacks; no model or external agent is invoked."
+  ],
+  "nativeBrowser": "158.0.8119.0",
+  "status": "passed"
+}

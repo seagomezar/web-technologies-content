@@ -1,0 +1,246 @@
+Home
+Docs
+Web Platform
+Get started with origin trials
+Stay organized with collections
+Save and categorize content based on your preferences.
+Test a new or experimental web platform feature.
+Sam Dutton
+X
+GitHub
+Mastodon
+Bluesky
+Homepage
+Origin trials give you access to a new or experimental feature, so that you can
+test this feature and offer it to your users, for a limited time. Once the trial
+is completed and the feedback assessed, Chrome decides if the feature should be
+made available to everyone.
+You can register for an origin trial to enable a feature for all users on your
+origin
+, without requiring them
+to toggle any flags or switch to an alternative build of Chrome (though, they
+may need to upgrade). Once, registered, developers can build demos and
+prototypes using the new features. The trials also help Chrome engineers
+understand how new features are used and how they may interact with other web
+technologies.
+Availability
+Origin trials are public and open to all developers. They are limited in
+duration and usage. Participation is a self-managed process with limited
+documentation and support. Participants should be willing and able to work
+relatively independently using the documentation available, which, at this
+stage, is likely limited to API specifications and explainers.
+We do
+try to provide guidance
+whenever possible.
+If you register for a trial, the Chrome team will periodically ask you for
+specific feedback on your use of the trial feature. Some features may undergo
+multiple origin trials, as feedback is incorporated and adjustments are made.
+Origin trials are also available for
+Firefox
+and
+Microsoft
+Edge
+.
+Third-party origin trials
+By default, an origin trial feature is only available on the
+origin
+registered for the trial.
+Some trials provide a
+Third-party matching option
+on registration. This allows
+providers of embedded content or services to try a new feature across multiple
+sites, without requiring a token for every origin.
+Find out more:
+What are third-party origin
+trials?
+Deprecation trials
+Some origin trials allow you to temporarily re-enable a deprecated feature.
+These are known as
+deprecation trials
+. In some contexts, they are referred to
+as "reverse" origin trials.
+For example,
+mutation events were removed
+,
+starting in Chrome 127. Sites that needed extra time before removing these
+events, can register for the
+deprecation trial
+to re-enable the events temporarily, on specified sites.
+Take part in an origin trial
+Choose an origin trial from the
+list of active
+trials
+.
+Request a token by clicking the
+Register
+button and filling out the
+form.
+Provide the token on every web page for which you want the trial feature to
+be enabled:
+As a meta tag in the <head>:
+<meta http-equiv="origin-trial"
+content="TOKEN_GOES_HERE">
+As an HTTP header:
+Origin-Trial: TOKEN_GOES_HERE
+By
+providing a token programmatically
+.
+Try out the new feature.
+Submit feedback. Do this through the origin trial site. This feedback is not
+public and is available only to a limited group of people on the Chrome
+team. Each trial also provides a link for spontaneous community feedback.
+This typically points to the feature on GitHub or some other public channel.
+When your token expires, you will get an email with a renewal link. To do
+so, you are again asked to submit feedback.
+You can register for the same origin trial multiple times, for different
+origins, and include multiple tokens in the same page. This can be useful if you
+need to provide tokens that are valid for resources served from different
+origins, such as code included on multiple sites that you own.
+The origin trials framework looks for the first valid token and then ignores all
+other tokens. You can validate this
+with Chrome
+DevTools
+.
+Provide a token programmatically
+Instead of providing a token as an HTTP header or as a meta tag in the HTML of
+your page, as described earlier, you can inject a token with JavaScript:
+const
+otMeta
+=
+document
+.
+createElement
+(
+'meta'
+);
+otMeta
+.
+httpEquiv
+=
+'origin-trial'
+;
+otMeta
+.
+content
+=
+'TOKEN_GOES_HERE'
+;
+document
+.
+head
+.
+append
+(
+otMeta
+);
+Use this method if you're participating in a
+third-party trial
+.
+Caution:
+A third-party token must be provided in an external JavaScript file
+included with a
+<script>
+element. A third-party token won't work in a meta
+tag, inline script or HTTP header.
+Tokens and iframes
+To access a trial feature from an iframe, you can provide a trial token in a
+meta tag, an HTTP header, or
+programmatically
+.
+As for all token usage, the origin registered for the token must match the
+context of JavaScript that accesses the trial feature: either the origin of the
+page the includes an inline script, or the
+src
+of a
+<script>
+element for
+JavaScript included from an external file.
+Tokens and extensions
+To use a trial feature inside of a
+background script
+,
+popup
+,
+sidepanel
+, or
+offscreen document
+, use the
+trial_tokens
+key
+in your
+manifest.json file
+.
+"trial_tokens"
+:
+[
+"AnlT7gRo/750gGKtoI/A3D2rL5yAQA9wISlLqHGE6vJQinPfk0HiIij5LhWs+iuB7mTeotXmEXkvdpOAC1YjAgAAAG97Im9yaWdpbiI6ImNocm9tZS1leHRlbnNpb246Ly9sampoamFha21uY2lib25uanBhb2dsYmhjamVvbGhrayIsImZlYXR1cmUiOiJJQ2Fubm90QmVsaWV2ZVlvdVdhc3RlZFlvdXJUaW1lRGVjb2RpbmdUaGlzIiwiZXhwaXJ5Ijo1NzI1NDA3OTk5fQ=="
+]
+Content scripts
+are handled
+differently. Exposing a feature to one
+world
+could
+be confusing and unintuitive. Instead of using the manifest's
+trial_token
+, add
+the token to the page in one of the following ways:
+Insert a header using
+declarativeNetRequest
+Programmatically
+add it directly in your content script.
+Remember that tokens are tied to specific domains, so you need to register for
+the domain the content script is running on, rather than your extension ID.
+To register your extension for a trial, you use the URL
+chrome-extension://YOUR_EXTENSION_ID
+, for example
+chrome-extension://ljjhjaakmncibonnjpaoglbhcjeolhkk
+.
+Renew origin trial enrollment
+If an origin trial is extended, you'll receive an email warning that you need
+to renew registration and provide a new token for each origin enrolled in the
+trial.
+Go to
+My Registrations
+.
+For each origin registered for the extended trial, click
+RENEW
+.
+Copy the new token and make it available for every page that should remain
+enrolled in the trial. You can provide multiple tokens if necessary.
+Chrome ignores invalid or expired tokens.
+Note:
+The requirement for a breaking period was
+removed in April 2022
+.
+View origin trial information
+View information about the origin trials available to a site from the
+Application
+panel in
+Chrome DevTools
+.
+Features in origin trial
+The following are demos for APIs in ongoing origin trials
+Translator and Language Detector API playground
+Summarizer API playground
+Resources
+Keep reading our Chrome concept documentation:
+Troubleshoot Chrome origin trials
+What are third-party origin trials?
+Discover more about origin trials in Chrome:
+Guide for web developers
+Origin trial explainer
+Running an origin trial
+Process to launch new features in Chromium
+Intent to explain: Demystifying the Blink shipping process
+View origin trials information in
+DevTools from Chrome 94
+Other browsers
+Find origin trials in other browsers:
+Use Origin Trials in Microsoft Edge
+Origin trials for Firefox
+Previous
+arrow_back
+Chrome variations
+Next
+Third-party origin trials
+arrow_forward

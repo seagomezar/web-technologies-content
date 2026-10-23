@@ -1,0 +1,266 @@
+[
+  {
+    "csv_line": 8,
+    "topic": "Consulta sobre Writer/Rewriter",
+    "finding": "Propuesta corroborada; enlace del archivo incorrecto",
+    "analysis": "El documento enlazado es la guía de modelos expertos, no la consulta. El repositorio oficial de polyfills describe por separado la retirada propuesta. No se puede anunciar una retirada completada ni inferir una decisión definitiva a partir de la fecha límite de consulta.",
+    "proposals": [
+      "recipes"
+    ],
+    "sources": [
+      "https://github.com/GoogleChromeLabs/web-ai-demos/tree/main/writer-rewriter-polyfills",
+      "https://developer.chrome.com/docs/ai/task-api-polyfill"
+    ]
+  },
+  {
+    "csv_line": 9,
+    "topic": "APIs de tareas como recetas de prompts",
+    "finding": "Explicación de diseño corroborada",
+    "analysis": "El artículo oficial sobre polyfills y su constructor de prompts permiten comparar prompts propios y abstracciones de tareas. Un polyfill no demuestra por sí solo una calidad equivalente ni disponibilidad universal en los navegadores.",
+    "proposals": [
+      "recipes"
+    ],
+    "sources": [
+      "https://developer.chrome.com/docs/ai/task-api-polyfill",
+      "https://github.com/GoogleChromeLabs/web-ai-demos/blob/main/built-in-ai-task-apis-polyfills/summarizer-prompt-builder.js"
+    ]
+  },
+  {
+    "csv_line": 10,
+    "topic": "Modelos expertos de Summarizer y Proofreader",
+    "finding": "Contenido de la guía leído; restricciones de la prueba",
+    "analysis": "La guía EPP documenta la versión especializada. Proofreader no tiene una opción preference y su versión experta solo admite inglés. Esta prueba debe distinguirse de la API Summarizer habitual.",
+    "proposals": [
+      "performance",
+      "languages"
+    ],
+    "sources": [
+      "https://docs.google.com/document/d/1RnSlXRAy8ffdbehvCcH7msBwmTvsxHJJQiwcw374tMw/edit",
+      "https://developer.chrome.com/docs/ai/proofreader-api"
+    ]
+  },
+  {
+    "csv_line": 11,
+    "topic": "Limitaciones de la preferencia speed",
+    "finding": "Contenido de la guía leído; restricción importante",
+    "analysis": "La guía limita la salida de speed al inglés, los tipos key-points/tldr y las longitudes short/medium; markdown se comporta como texto plano. Las combinaciones incompatibles pueden informar unavailable o fallar al crear la sesión.",
+    "proposals": [
+      "performance"
+    ],
+    "sources": [
+      "https://docs.google.com/document/d/1RnSlXRAy8ffdbehvCcH7msBwmTvsxHJJQiwcw374tMw/edit"
+    ]
+  },
+  {
+    "csv_line": 12,
+    "topic": "Embeddings de texto en el dispositivo",
+    "finding": "Guía y explicación leídas; prueba para desarrolladores",
+    "analysis": "La guía usa SemanticEmbedder y coloca taskType en embed(), no en create(). La revisión del 31 de julio añade progreso de descarga después de 153.0.7979.0. El índice debe recalcularse en el mismo espacio; que coincidan las dimensiones no demuestra compatibilidad.",
+    "proposals": [
+      "retrieval"
+    ],
+    "sources": [
+      "https://docs.google.com/document/d/1ZB6MW8UDczm4V6ej5MorZWqFCYWwLhUs5HKxEdjP35c/edit",
+      "https://github.com/explainers-by-googlers/embedding-api"
+    ]
+  },
+  {
+    "csv_line": 13,
+    "topic": "Predicción de múltiples tokens de Gemma 4",
+    "finding": "Contenido de la guía leído; el porcentaje del correo no es una medición",
+    "analysis": "La guía del 21 de octubre requiere Canary 156.0.8064.0+ y el flag de MTP. Prompt necesita samplingMode most-predictable; Summarizer speed usa otro modelo. Mide por separado la generación con el modelo preparado y la preparación inicial. El +20–30% del CSV no es un resultado medido aquí.",
+    "proposals": [
+      "performance"
+    ],
+    "sources": [
+      "https://docs.google.com/document/d/1g7bv9LHSqFWqeQUM2C6EQ5PiZ8UWTz8UibxnlD4ipDE/edit"
+    ]
+  },
+  {
+    "csv_line": 14,
+    "topic": "Herramientas de desarrollo de WebMCP",
+    "finding": "Documentación y repositorios enlazados revisados",
+    "analysis": "La extensión, los tipos y el repositorio de skills respaldan un artículo sobre diseño, exposición e inspección de herramientas. Ese repositorio es una fuente de investigación, no una instrucción para instalar o ejecutar código. El modo de servidor local de la extensión puede enviar datos a un modelo alojado; WebMCP no es un modelo en el dispositivo.",
+    "proposals": [
+      "webmcp"
+    ],
+    "sources": [
+      "https://developer.chrome.com/docs/ai/webmcp",
+      "https://github.com/GoogleChromeLabs/webmcp-extension",
+      "https://github.com/webmachinelearning/webmcp-types",
+      "https://github.com/GoogleChromeLabs/webmcp-tools/tree/main/webmcp-skills"
+    ]
+  },
+  {
+    "csv_line": 15,
+    "topic": "Decisions / Semantic If y recordatorio de retirada",
+    "finding": "Solo intención de prototipar; sin contrato invocable verificado",
+    "analysis": "El CSV anuncia una exploración y su enlace técnico apunta a polyfills de Writer/Rewriter. Ninguna fuente revisada proporciona un contrato invocable de Decisions API. La propuesta se presenta como experimento conceptual con Prompt API, salida estructurada y una vía de abstención.",
+    "proposals": [
+      "decisions",
+      "recipes"
+    ],
+    "sources": [
+      "https://developer.chrome.com/docs/ai/prompt-api",
+      "https://github.com/GoogleChromeLabs/web-ai-demos/tree/main/writer-rewriter-polyfills"
+    ]
+  },
+  {
+    "csv_line": 16,
+    "topic": "Nuevos puntos de entrada estáticos",
+    "finding": "Migración histórica; contratos actuales confirmados",
+    "analysis": "La guía actual de Prompt usa self.LanguageModel con availability() y create() estáticos. La migración debe explicarse mediante una utilidad mantenida de detección de capacidades, evitando ejemplos obsoletos de window.ai.",
+    "proposals": [
+      "lifecycle"
+    ],
+    "sources": [
+      "https://developer.chrome.com/docs/ai/prompt-api"
+    ]
+  },
+  {
+    "csv_line": 17,
+    "topic": "Prueba para desarrolladores de Gemma 4",
+    "finding": "Contenido de la guía leído; sin afirmar publicación general",
+    "analysis": "La guía de agosto especifica Canary 153.0.8009.0+ y un flag. Hasta 70% es una observación comunicada, no una mejora garantizada. La guía describe las llamadas a funciones como trabajo futuro. La inferencia integrada administrada por el navegador es una integración distinta de un modelo LiteRT/WebGPU administrado por el sitio.",
+    "proposals": [
+      "performance"
+    ],
+    "sources": [
+      "https://docs.google.com/document/d/1rpaV4la7WtpLr4Ueb0NttJVETlVL_5a9TNHsrBMBkWk/edit"
+    ]
+  },
+  {
+    "csv_line": 18,
+    "topic": "Comentarios sobre origin trials, Proofreader, Chromebook Plus y cumbre",
+    "finding": "Conjunto histórico de anuncios; actualizar cada estado",
+    "analysis": "La explicación de origin trials describe la inscripción, no una disponibilidad permanente. La documentación actual de Proofreader sigue indicando una prueba para desarrolladores. La cumbre de 2025 no debe anunciarse como próxima ni debe generalizarse el soporte de Chromebook Plus a todos los Chromebook.",
+    "proposals": [
+      "languages",
+      "lifecycle"
+    ],
+    "sources": [
+      "https://developer.chrome.com/docs/web-platform/origin-trials",
+      "https://developer.chrome.com/docs/ai/proofreader-api",
+      "https://developer.chrome.com/docs/ai/prompt-api",
+      "https://rsvp.withgoogle.com/events/web-ai-summit-2025"
+    ]
+  },
+  {
+    "csv_line": 19,
+    "topic": "Buenas prácticas de IA integrada",
+    "finding": "Guía pública de experiencia de usuario revisada",
+    "analysis": "La guía respalda un artículo sobre preparación deliberada, progreso, control del usuario y estados de fallo comprensibles. Conviene detectar las capacidades en ejecución y conservar una interfaz habitual útil sin sugerir soporte universal de modelos.",
+    "proposals": [
+      "lifecycle"
+    ],
+    "sources": [
+      "https://developer.chrome.com/docs/ai/built-in-ai-dos-donts"
+    ]
+  },
+  {
+    "csv_line": 20,
+    "topic": "Ventana histórica de contexto de 6144 tokens",
+    "finding": "Dato histórico; no es una constante actual",
+    "analysis": "El correo de 2024 registra un límite de aquella época. La documentación actual de Prompt expone contextWindow, contextUsage y measureContextUsage. Debe consultarse la sesión activa en lugar de fijar 6144.",
+    "proposals": [
+      "performance"
+    ],
+    "sources": [
+      "https://developer.chrome.com/docs/ai/prompt-api"
+    ]
+  },
+  {
+    "csv_line": 21,
+    "topic": "IA en iframes de otro origen",
+    "finding": "Patrón actual de delegación confirmado",
+    "analysis": "La documentación especifica permisos por API, como language-model y proofreader. MDN explica allow y el PR de Proofreader aporta el historial de diseño. La prueba local de dos puertos comprueba el límite sin solicitar descargas de modelos.",
+    "proposals": [
+      "lifecycle"
+    ],
+    "sources": [
+      "https://developer.chrome.com/docs/ai/prompt-api",
+      "https://developer.chrome.com/docs/ai/proofreader-api",
+      "https://github.com/webmachinelearning/proofreader-api/pull/14",
+      "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/iframe#allow"
+    ]
+  },
+  {
+    "csv_line": 22,
+    "topic": "Retirada de la restricción histórica de 1024 tokens por prompt",
+    "finding": "Cambio histórico; el contexto de sesión sigue limitado",
+    "analysis": "Retirar aquella restricción no significa admitir entradas ilimitadas. El prompt completo debe medirse contra la ventana de contexto de la sesión mediante la API actual.",
+    "proposals": [
+      "performance"
+    ],
+    "sources": [
+      "https://developer.chrome.com/docs/ai/prompt-api"
+    ]
+  },
+  {
+    "csv_line": 23,
+    "topic": "Anotación debugging de WebMCP",
+    "finding": "Cambio de especificación integrado verificado; versión exacta sin confirmar",
+    "analysis": "El PR #253 está integrado y los tipos actuales incluyen debugging. El enlace de Chromium Dash solo devolvió una estructura de aplicación; no permitió verificar la primera versión de Chrome afirmada. El observatorio filtra las herramientas destinadas a desarrollo sin tratar debugging como sistema de permisos.",
+    "proposals": [
+      "webmcp"
+    ],
+    "sources": [
+      "https://github.com/webmachinelearning/webmcp/pull/253",
+      "https://github.com/webmachinelearning/webmcp-types"
+    ]
+  },
+  {
+    "csv_line": 24,
+    "topic": "Tipos de TypeScript actualizados",
+    "finding": "Anuncio histórico; paquete mantenido verificado",
+    "analysis": "La documentación actual de Chrome recomienda @types/dom-chromium-ai. WebMCP tiene un paquete de tipos separado. Los tipos deben corresponder al contrato probado del navegador; instalarlos no añade soporte en ejecución.",
+    "proposals": [
+      "lifecycle"
+    ],
+    "sources": [
+      "https://developer.chrome.com/docs/ai/prompt-api",
+      "https://github.com/webmachinelearning/webmcp-types"
+    ]
+  },
+  {
+    "csv_line": 25,
+    "topic": "Depuración de modelos locales",
+    "finding": "Destino de diagnóstico actual corroborado",
+    "analysis": "La documentación actual de Prompt enlaza chrome://on-device-internals para consultar información del modelo. Debe usarse junto con los errores de consola y la configuración registrada. Es una página interna de diagnóstico, no una API web invocable.",
+    "proposals": [
+      "lifecycle",
+      "performance"
+    ],
+    "sources": [
+      "https://developer.chrome.com/docs/ai/prompt-api"
+    ]
+  },
+  {
+    "csv_line": 26,
+    "topic": "Alternativa histórica para idiomas no probados",
+    "finding": "Solución histórica; reemplazar en contenido nuevo",
+    "analysis": "La incidencia solo devolvió una estructura JavaScript, por lo que su resolución no se verificó. La guía actual de Prompt documenta los idiomas esperados y NotSupportedError. Los demos declaran los idiomas admitidos y preservan los errores; no reproducen el antiguo flag que evitaba el clasificador de seguridad.",
+    "proposals": [
+      "languages",
+      "lifecycle"
+    ],
+    "sources": [
+      "https://developer.chrome.com/docs/ai/prompt-api",
+      "https://issues.chromium.org/issues/392661409"
+    ]
+  },
+  {
+    "csv_line": 27,
+    "topic": "Anotación consequentialHint de WebMCP",
+    "finding": "Contrato actual de tipos y discusión revisados",
+    "analysis": "Los tipos definen consequentialHint para acciones con consecuencias en el mundo real; la incidencia #176 explica su motivación. Es información para el agente consumidor, no autorización de la aplicación. La revisión debe imponerse en el código y probar tanto rechazo como confirmación. Chromium Dash no expuso el contenido del commit.",
+    "proposals": [
+      "webmcp"
+    ],
+    "sources": [
+      "https://github.com/webmachinelearning/webmcp-types",
+      "https://github.com/webmachinelearning/webmcp/issues/176",
+      "https://github.com/GoogleChromeLabs/webmcp-extension"
+    ]
+  }
+]

@@ -1,0 +1,226 @@
+Sebastian Gomez
+Sep 15, 2026
+Updated:
+Sep 15, 2026
+El Borde es Inevitable: Por Qué Construimos BrowserDJ AI con Gemma 4 y Google Antigravity
+Estación en vivo:
+seagomezar.github.io/djintheedge
+Código fuente:
+github.com/seagomezar/djintheedge
+Tarde o temprano, los modelos que corren en los dispositivos de los usuarios alcanzarán las mismas capacidades que hoy exigen infraestructura dedicada en la nube.
+Cuando esa transición ocurra, la arquitectura por defecto del software generativo cambiará por completo. Hoy, la norma sigue siendo alquilar GPUs en la nube, interponer una petición
+POST
+de alta latencia entre el usuario y el modelo, y enviar de vuelta archivos estáticos. Pero el navegador web ya es un entorno de ejecución aislado, universal y sin instalación que ofrece tres garantías que las APIs en la nube no pueden asegurar juntas:
+Privacidad absoluta:
+Ningún prompt, pulsación de tecla ni muestra de audio sale de la máquina del usuario.
+Resiliencia offline real:
+Cero peticiones de red, cero tokens de API y total inmunidad ante caídas de servidores o límites de cuota.
+Respuesta instantánea:
+Al compartir la inferencia y la síntesis de audio el mismo hilo y la memoria GPU local, la latencia cae de segundos a milisegundos.
+Construimos
+BrowserDJ AI (Modelo AP-808)
+como una prueba de concepto para demostrar lo que la inteligencia artificial en el borde (
+edge AI
+) ya puede lograr dentro del navegador hoy en día, y para inspirar a desarrolladores y creadores a explorar el navegador no solo como un visor pasivo, sino como un instrumento autónomo en tiempo real.
+Sonido Procedural en Lugar de Audio Estático
+La mayoría de las herramientas de música con IA en la web funcionan como máquinas expendedoras: introduces un texto, esperas diez segundos y descargas un archivo pregrabado. Si quieres el tempo un poco más rápido o silenciar el bombo, debes enviar otro prompt y volver a esperar. No hay interpretación, modulación en directo ni control táctil.
+BrowserDJ AI toma el camino opuesto:
+parametrización generativa de síntesis procedural en vivo
+.
+El modelo no genera archivos de audio. En su lugar, traduce el lenguaje natural en un
+contrato DSP determinista
+: una estructura de estado en JSON que alimenta directamente la
+Web Audio API
+nativa del navegador:
+[ Prompt del Usuario: "techno a 135 bpm con onda cuadrada y filtro bajo" ]
+                                   │
+                                   ▼
+          ┌─────────────────────────────────────────────────┐
+          │       Inferencia Local (LiteRT-LM / WebGPU)     │
+          │       Gemma 4 en el Dispositivo                 │
+          │       + Parser Semántico Determinista           │
+          └────────────────────────┬────────────────────────┘
+                                   │
+                                   ▼  (Contrato DSP de Estado)
+          ┌─────────────────────────────────────────────────┐
+          │             Gestor de Bucle con Estado          │
+          │    (Preserva tempo, escala y pistas activas)    │
+          └────────────────────────┬────────────────────────┘
+                                   │
+                                   ▼
+          ┌─────────────────────────────────────────────────┐
+          │             Motor de Audio Procedural           │
+          │   Reloj TR-808 de 16 pasos • Filtro SVF Lowpass │
+          │   Osciladores Sierra/Cuadrada/Seno • FX Reverb  │
+          └────────────────────────┬────────────────────────┘
+                                   │
+                                   ▼
+                    [ Salida Estéreo en Vivo a 48 kHz ]
+Cuando un usuario pide
+"más reverb"
+o
+"un ritmo más rápido"
+, el motor no descarta lo que ya está sonando. Muta exclusivamente la pista indicada mientras mantiene intactos el tono, el tempo y la línea del sintetizador. Como la síntesis ocurre matemáticamente en la pestaña del navegador, el cambio es instantáneo.
+Bajo el Capó: Los Fundamentos de Ingeniería
+Para comprender por qué BrowserDJ AI se comporta como un instrumento físico y no como una página web ordinaria, es necesario examinar las tres capas arquitectónicas que operan bajo el capó:
+1. El Grafo de Web Audio y el Reloj de Anticipación (*Lookahead Scheduler*)
+En aplicaciones de audio en navegador, confiar en temporizadores de JavaScript como
+setTimeout
+o
+setInterval
+genera retrasos rítmicos y chasquidos audibles, ya que el hilo principal se bloquea con frecuencia recalculando el DOM o procesando eventos de entrada.
+BrowserDJ AI resuelve esto aplicando el patrón de *
+programación por anticipación (
+lookahead scheduling
+)
+*:
+Un
+AudioContext
+opera a una frecuencia de muestreo fija de 48 kHz.
+Una rutina de alta prioridad se ejecuta cada 25 milisegundos, explorando los siguientes 100 milisegundos de la línea de tiempo y encolando eventos de audio directamente contra el reloj de hardware del sistema (
+audioCtx.currentTime
+).
+Síntesis del Bombo (Kick):
+Construido mediante un
+OscillatorNode
+que ejecuta un barrido tonal exponencial rápido (de 150 Hz a 38 Hz en 0.08 segundos) sumado a un disparo breve de ganancia para lograr el golpe físico del transitorio, sin depender de samples externos.
+Voz del Platillo (Hi-Hat):
+Generado a través de un búfer continuo de ruido blanco filtrado con un
+BiquadFilterNode
+paso-banda centrado en 8.5 kHz (Q=3.0) y esculpido con envolventes ADSR ultrarrápidas.
+Sintetizador Lead:
+Alimentado por osciladores seleccionables (
+sierra
+,
+cuadrada
+,
+senoidal
+) que atraviesan un filtro de estado variable (SVF) con resonancia dinámica, antes de pasar por líneas de retardo estéreo con realimentación y un bus de reverberación por convolución.
+2. El Contrato DSP con Estado (Motor de Mutación Incremental)
+La música en directo exige acumulación de contexto. Si un músico está improvisando y pide
+"subir el delay"
+, no espera que la batería deje de sonar de repente.
+BrowserDJ AI mantiene un
+árbol de estado mutable en memoria
+(
+activeLoopState
+):
+{
+  "meta": { "bpm": 135, "scale": "Am", "energy": 0.8 },
+  "dsp_graph": {
+    "drums": {
+      "kick_pattern": [1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0],
+      "hihat_pattern": [0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1]
+    },
+    "synth_lead": {
+      "wave_type": "square",
+      "filter_cutoff_hz": 1200,
+      "filter_resonance": 3.2,
+      "adsr": [0.01, 0.15, 0.7, 0.2],
+      "notes_sequence": [57, 60, 64, 67, 64, 60, 57, 0]
+    },
+    "effects": {
+      "delay_feedback": 0.35,
+      "reverb_mix": 0.25
+    }
+  }
+}
+Cuando llega un nuevo comando:
+El parser determina el objetivo semántico (tempo, frecuencia de corte, silenciamiento de pista o escala).
+Aplica la mutación exclusivamente sobre los campos afectados en
+activeLoopState
+.
+Envía el grafo resultante a
+audio.renderGraph()
+, actualizando frecuencias y nodos en la frontera del siguiente semicompás (paso de 1/16) sin chasquidos ni interrupciones acústicas.
+3. La Frontera de Ejecución en el Borde (Latencia Cero)
+Las peticiones a través de la red introducen habitualmente entre 120 ms y 800 ms de latencia en condiciones óptimas, y varios segundos cuando los servidores en la nube encolan solicitudes. En psicoacústica:
+Latencia < 15 ms:
+El cerebro la percibe como instantánea y físicamente conectada a la acción.
+Latencia > 30 ms:
+Se percibe como un eco o desfase perceptible que arruina el tempo de cualquier interpretación.
+Al ejecutar la inferencia de lenguaje en local (Gemma 4 a través de LiteRT/WebGPU junto con un parser semántico offline) acoplada a la síntesis en el navegador, BrowserDJ AI elimina por completo el viaje de ida y vuelta a internet, los apretones de manos TLS y las colas de procesamiento en servidores remotos. El tiempo total desde que el usuario pulsa Enter hasta que el sonido muta se mantiene estrictamente por debajo de los 20 milisegundos.
+Rechazando el "AI Slop": La Importancia del Hardware Táctil
+Las herramientas generativas no tienen por qué parecer ventanas de chat genéricas. Decidimos rechazar deliberadamente los patrones visuales que saturan las aplicaciones de IA actuales: fondos oscuros vacíos, degradados violeta/cian y efectos de vidrio esmerilado (
+glassmorphism
+) sin función práctica.
+Preferimos fundamentar la interfaz en los principios de diseño industrial de
+Dieter Rams para Braun
+, la mítica
+Roland TR-808
+y las consolas de estudio de los años 80:
+Materialidad Mecánica:
+Chasis crema mate (
+#f4f1ea
+) con tornillos visibles en las esquinas y serigrafía técnica.
+Reloj Rítmico TR-808:
+Botonera física con los cuatro colores clásicos de Roland (Rojo bermellón, Naranja cálido, Amarillo ámbar y Crema) combinada con LEDs incandescentes que parpadean en sincronía estricta con el secuenciador.
+Consola de Faders Físicos:
+Cinco controles deslizantes verticales (Volumen, Cutoff, Reverb, Delay y Compás) que se mueven físicamente en tiempo real cuando un prompt altera los parámetros de sonido, con escalas serigrafiadas en decibelios (
++6
+,
+0
+,
+-6
+,
+-12
+,
+-∞
+).
+Osciloscopio Vectorial CRT:
+Pantalla embutida con trazo de fósforo cálido (
+#fea619
+) que dibuja la onda de audio real a 48 kHz sobre una retícula de medición.
+Selector Mecánico Multilingüe:
+En lugar de esconder los idiomas en un menú desplegable web, construimos una botonera táctil de tres pulsadores
+[EN | ES | PT]
+con LEDs ámbar independientes. Toda la interfaz (bancos de presets, telemetría y entradas de texto) cambia dinámicamente entre inglés, español y portugués sin cortar el audio.
+Construyendo en el Borde con Google Antigravity
+Integrar WebGPU, la Web Audio API, procesamiento de lenguaje natural multilingüe y una interfaz con tacto analógico a través de múltiples capas presenta retos técnicos complejos. Desarrollamos BrowserDJ AI mediante pair programming continuo con
+Google Antigravity
+.
+A diferencia de los asistentes de código convencionales, limitados a autocompletar líneas aisladas, Antigravity actuó como un compañero de ingeniería autónomo en todas las etapas del proyecto:
+Diagnóstico Arquitectónico de Raíz:
+Al principio, los prompts no modificaban la música de manera predecible. Antigravity auditó el flujo de datos y descubrió que el generador no tenía acumulador de estado: cada instrucción sobreescribía todo el grafo DSP. Diseñó un modelo incremental de acumulación que corrigió el fallo limpiamente.
+Verificación Directa en Navegador con Chrome DevTools MCP:
+Mediante la integración de Chrome DevTools, Antigravity interactuó en vivo con el DOM, forzó eventos de usuario, verificó que las políticas de autoplay de Chromium no suspendieran el
+AudioContext
+y tomó capturas directas del viewport.
+Iteración de Hardware con Stitch:
+Para evitar que elementos web modernos rompieran la estética retro, Antigravity utilizó StitchMCP para diseñar los componentes mecánicos, dando origen al bisel de aluminio superior y al selector de idioma táctil.
+Depuración Guiada por Tests:
+Cuando las pruebas en portugués fallaron en notas con tilde (
+"escala em ré menor"
+asignaba
+Em
+en lugar de
+Dm
+), Antigravity ejecutó Vitest, diagnosticó que el delimitador ASCII
+\b
+de JavaScript falla con caracteres Unicode y que la preposición
+"em"
+colisionaba con la notación de acordes, reescribió las expresiones regulares con fronteras seguras y logró que las 19 pruebas pasaran limpias.
+Automatización de CI/CD para Producción:
+Consolidó el código en la rama
+main
+, retiró ramas obsoletas, configuró el flujo de GitHub Actions (
+.github/workflows/deploy.yml
+) y comprobó mediante solicitudes HTTP que el sitio público estuviese respondiendo correctamente.
+Por Qué Este Proyecto es Relevante
+BrowserDJ AI es gratuito, de código abierto y utilizable por cualquier persona con un navegador moderno. No te pide registro, tarjeta de crédito ni claves de API.
+Construimos este proyecto para encender la curiosidad sobre lo que es posible cuando se aprovecha en serio el procesamiento en el dispositivo. Modelos como Gemma ejecutándose directamente en el hardware del usuario mediante WebGPU no son un experimento menor: son el cimiento de una web más privada, rápida e independiente.
+Explora la estación en vivo, revisa el código fuente y descubre lo que puedes construir cuando la nube deja de ser un requisito obligatorio.
+Estación en vivo:
+https://seagomezar.github.io/djintheedge/
+Repositorio en GitHub:
+https://github.com/seagomezar/djintheedge
+0
+Sebastian Gomez
+Creador de contenido principalmente acerca de tecnología.
+Leave a Reply
+Save my name, email in this browser for the next time I comment.
+Post Comment
+0 Comments
+Advertisements
+Related Posts
+Categorías

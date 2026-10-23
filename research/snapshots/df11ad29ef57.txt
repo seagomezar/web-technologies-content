@@ -1,0 +1,355 @@
+Chrome Built-in AI Early Preview Program Discussions - Google Groups
+Groups
+Groups
+Contact owners and managers
+1–30 of 447
+
+
+This is an official forum for discussions around Chrome's Built-in AI Early Preview Program. By contributing to this mailing list you agree to follow the
+Chromium Code of Conduct
+.
+
+
+Mark all as read
+Report group
+0 selected
+
+
+Alessandro Vernet
+, …
+joseph brewerton
+8
+Oct 22
+WebMCP in production: the bottleneck is now on the agent side
+Hi Alex, I think it's worth taking a step back to look at what WebMCP actually does under the
+unread,
+WebMCP in production: the bottleneck is now on the agent side
+Hi Alex, I think it's worth taking a step back to look at what WebMCP actually does under the
+Oct 22
+
+joseph brewerton
+,
+Kenji Baheux
+5
+Oct 22
+Showcase: Zero-Cloud BSL In-Vision Interpreter driven by Gemini Nano & S-Expression AST Vectors
+Hi Kenji, Thanks for confirming the issue and for the tip on initialPrompts. I've updated the
+unread,
+Showcase: Zero-Cloud BSL In-Vision Interpreter driven by Gemini Nano & S-Expression AST Vectors
+Hi Kenji, Thanks for confirming the issue and for the tip on initialPrompts. I've updated the
+Oct 22
+
+Aditya
+, …
+Diego Sebastián Caro
+6
+Oct 16
+Prompt API: very slow session creation and streaming on both macOS and Windows
+*Asunto:* Re: High latency with Prompt API (Gemini Nano) Hola equipo, Soy quien está trabajando con
+unread,
+Prompt API: very slow session creation and streaming on both macOS and Windows
+*Asunto:* Re: High latency with Prompt API (Gemini Nano) Hola equipo, Soy quien está trabajando con
+Oct 16
+
+Nart Madi
+2
+Oct 9
+Senro: the first reliability platform for WebMCP
+Hi everyone, Quick update: Senro is now a WebMCP evaluation and observability platform, and we've
+unread,
+Senro: the first reliability platform for WebMCP
+Hi everyone, Quick update: Senro is now a WebMCP evaluation and observability platform, and we've
+Oct 9
+
+Thomas Steiner
+Sep 23
+Sorry for the spam
+Hi all, Really sorry for the spam. I have banned the two offending accounts and deleted all of their
+unread,
+Sorry for the spam
+Hi all, Really sorry for the spam. I have banned the two offending accounts and deleted all of their
+Sep 23
+
+Joe Jiang
+,
+Ikenna Ene
+2
+Sep 17
+Does your WebMCP actually save time and tokens? A paired benchmark tool in DeepDeck
+This is quite insightful! On Thu, 17 Sep 2026 at 08:50, Joe Jiang <j.j...@gmail.com> wrote: Hi
+unread,
+Does your WebMCP actually save time and tokens? A paired benchmark tool in DeepDeck
+This is quite insightful! On Thu, 17 Sep 2026 at 08:50, Joe Jiang <j.j...@gmail.com> wrote: Hi
+Sep 17
+
+Joe Jiang
+Sep 7
+DeepDeck: a WebMCP browser with a Builder for reusable website tools
+Hi everyone, I maintain DeepDeck, an open-source macOS desktop client built on DeepSeek Harness. I
+unread,
+DeepDeck: a WebMCP browser with a Builder for reusable website tools
+Hi everyone, I maintain DeepDeck, an open-source macOS desktop client built on DeepSeek Harness. I
+Sep 7
+
+Idan Levin
+Aug 24
+WindTunnel: an open benchmark for WebMCP vs. browser agents
+Hi everyone, We've published WindTunnel, an open and reproducible benchmark comparing WebMCP with
+unread,
+WindTunnel: an open benchmark for WebMCP vs. browser agents
+Hi everyone, We've published WindTunnel, an open and reproducible benchmark comparing WebMCP with
+Aug 24
+
+Alon Haber
+Aug 20
+Would love your feedback on my WebMCP extension
+Hi everyone, I built a chrome extension for testing the WebMCP tools a website exposes. Would love to
+unread,
+Would love your feedback on my WebMCP extension
+Hi everyone, I built a chrome extension for testing the WebMCP tools a website exposes. Would love to
+Aug 20
+
+Daniel Ostrovsky
+,
+Thomas Steiner
+4
+Aug 6
+A hands-on playground for the built-in AI APIs and Course from 0 to hero
+Hi Daniel, Let me respond inline below… On Wed, Aug 5, 2026 at 7:26 PM Daniel Ostrovsky <danduh@
+unread,
+A hands-on playground for the built-in AI APIs and Course from 0 to hero
+Hi Daniel, Let me respond inline below… On Wed, Aug 5, 2026 at 7:26 PM Daniel Ostrovsky <danduh@
+Aug 6
+
+Raymond Camden
+, …
+Daniel Ostrovsky
+7
+Aug 5
+Stuck on "downloading"
+Thank you, that worked perfectly. On Wed, Aug 5, 2026 at 12:27 PM Daniel Ostrovsky <danduh@gmail.
+unread,
+Stuck on "downloading"
+Thank you, that worked perfectly. On Wed, Aug 5, 2026 at 12:27 PM Daniel Ostrovsky <danduh@gmail.
+Aug 5
+
+Thomas Steiner
+,
+Marco Papavero
+3
+Aug 3
+Re: [chrome-ai-dev-preview-discuss] Request of inclusion of an external weather app in Chrome AI projects - MeteoStation by Marco Papavero
+Hi Marco, On Mon, Aug 3, 2026 at 2:32 PM Marco Papavero <papave...@gmail.com> wrote: Hi
+unread,
+Re: [chrome-ai-dev-preview-discuss] Request of inclusion of an external weather app in Chrome AI projects - MeteoStation by Marco Papavero
+Hi Marco, On Mon, Aug 3, 2026 at 2:32 PM Marco Papavero <papave...@gmail.com> wrote: Hi
+Aug 3
+
+Hi-tech Espresso Services
+,
+Daniel Colin Huerta
+2
+Aug 2
+[Request received]
+Gracias necesito ayuda urgente creen que puedan ayudarme? El dom, 2 de ago. de 2026 3:55 a. m., '
+unread,
+[Request received]
+Gracias necesito ayuda urgente creen que puedan ayudarme? El dom, 2 de ago. de 2026 3:55 a. m., '
+Aug 2
+
+Raymond Camden
+, …
+joseph brewerton
+9
+Aug 1
+First testing of WebMCP - Part 2!
+Hi Santiago, My site is now up and running, and I think it works pretty well! It is hosted at https:/
+unread,
+First testing of WebMCP - Part 2!
+Hi Santiago, My site is now up and running, and I think it works pretty well! It is hosted at https:/
+Aug 1
+
+Maud Nalpas
+Jul 28
+[Built-in AI APIs] Do and Don't
+Hi everyone, We've published Built-in AI APIs: Do and don't. These are technical and UX
+unread,
+[Built-in AI APIs] Do and Don't
+Hi everyone, We've published Built-in AI APIs: Do and don't. These are technical and UX
+Jul 28
+
+Santiago Omar Javier Aguirre
+Jul 21
+Gemini agents Web MCP support
+July 21, Gemini 3.6 Release and can't able to use WEBMCP tools, for what we are working? this is
+unread,
+Gemini agents Web MCP support
+July 21, Gemini 3.6 Release and can't able to use WEBMCP tools, for what we are working? this is
+Jul 21
+
+joseph brewerton
+, …
+Barat Selvanayagam
+39
+Jul 19
+Production-Ready Dual-Engine Handshake: Overcoming downloading States with Gemini Nano & Cloud Fallback
+This technical document serves as a high-performance Proof of Concept (POC) detailing a working
+unread,
+Production-Ready Dual-Engine Handshake: Overcoming downloading States with Gemini Nano & Cloud Fallback
+This technical document serves as a high-performance Proof of Concept (POC) detailing a working
+Jul 19
+
+Amith Cabraal
+Jul 17
+Testers needed : AI Summarizer, Read-It-Later & Offline Search
+Hi, I hope it is ok to post this here. I built a chrome extension to allow me to summarise the
+unread,
+Testers needed : AI Summarizer, Read-It-Later & Offline Search
+Hi, I hope it is ok to post this here. I built a chrome extension to allow me to summarise the
+Jul 17
+
+Alex McManus
+, …
+François Beaufort
+5
+Jul 9
+WebMCP TypeScript API
+Status update: I've published some basic implementation of TypeScript type definitions for WebMCP
+unread,
+WebMCP TypeScript API
+Status update: I've published some basic implementation of TypeScript type definitions for WebMCP
+Jul 9
+
+Colin Mummery
+,
+Thomas Steiner
+2
+Jul 6
+Proofreader API separate from Prompt?
+Hi Colin, On Sun, Jul 5, 2026 at 7:54 AM Colin Mummery <colin....@gmail.com> wrote: I'
+unread,
+Proofreader API separate from Prompt?
+Hi Colin, On Sun, Jul 5, 2026 at 7:54 AM Colin Mummery <colin....@gmail.com> wrote: I'
+Jul 6
+
+Raymond Camden
+, …
+Thomas Steiner
+5
+Jun 29
+Previous OCR demo acting up...
+Dangit. I'm sorry. Not only that, I'm on mainline Chrome on a different machine and it works
+unread,
+Previous OCR demo acting up...
+Dangit. I'm sorry. Not only that, I'm on mainline Chrome on a different machine and it works
+Jun 29
+
+Nico Martin
+Jun 29
+Tool-Calling / Multimodality
+Hi all, I'm Nico, ML Engineer at Hugging Face where I work on Transformers.js. Lately I've
+unread,
+Tool-Calling / Multimodality
+Hi all, I'm Nico, ML Engineer at Hugging Face where I work on Transformers.js. Lately I've
+Jun 29
+
+Pratush Kaushik
+, …
+Steve
+5
+Jun 24
+WebMCP Early Preview Program
+Hey Steve, But how do i proceed further. We have created a set up on our system by installing the
+unread,
+WebMCP Early Preview Program
+Hey Steve, But how do i proceed further. We have created a set up on our system by installing the
+Jun 24
+
+Steve
+Jun 23
+Shipped WebMCP on a live host (publish a page from the browser)
+Hi all, We registered https://stacktr.ee for the WebMCP origin trial and now run it live across our
+unread,
+Shipped WebMCP on a live host (publish a page from the browser)
+Hi all, We registered https://stacktr.ee for the WebMCP origin trial and now run it live across our
+Jun 23
+
+diego garcia
+, …
+Kenji Baheux
+3
+Jun 17
+Prestashop Ecommerce AI Assistant Test
+Thanks for sharing Diego! Is this something you have written about on your blog, or might consider
+unread,
+Prestashop Ecommerce AI Assistant Test
+Thanks for sharing Diego! Is this something you have written about on your blog, or might consider
+Jun 17
+
+Raymond Camden
+, …
+Jacqueline Hinse
+7
+Jun 13
+Prompt API hanging, never returning
+The fruaders are taking my whole life over and every asset of the city. On Thu, Jun 11, 2026, 10:50
+unread,
+Prompt API hanging, never returning
+The fruaders are taking my whole life over and every asset of the city. On Thu, Jun 11, 2026, 10:50
+Jun 13
+
+Matt Duffield
+,
+Kenji Baheux
+3
+Jun 13
+Demo of Gemini Nano
+Hi Kenji, I am currently testing out the signup to the application. As soon as I get the green light,
+unread,
+Demo of Gemini Nano
+Hi Kenji, I am currently testing out the signup to the application. As soon as I get the green light,
+Jun 13
+
+Raymond Camden
+,
+Thomas Steiner
+3
+Jun 12
+Rewriter suddenly changing language
+That did the trick. I went ahead and added a button to copy over the result to the input: https://
+unread,
+Rewriter suddenly changing language
+That did the trick. I went ahead and added a button to copy over the result to the input: https://
+Jun 12
+
+Raymond Camden
+, …
+Алла Цис
+7
+Jun 8
+kErrorUnknown
+Дякую, Томасе та Кенджі, за ваші міркування. Хоча я запускаю запити послідовно (не паралельно), я
+unread,
+kErrorUnknown
+Дякую, Томасе та Кенджі, за ваші міркування. Хоча я запускаю запити послідовно (не паралельно), я
+Jun 8
+
+Younes Peters Touati
+, …
+Thomas Steiner
+3
+Jun 4
+More details on the Gemma 197M model behind the Summarizer API?
+While I can't promise that you can reproduce a model with similar characteristics, if you want to
+unread,
+More details on the Gemma 197M model behind the Summarizer API?
+While I can't promise that you can reproduce a model with similar characteristics, if you want to
+Jun 4
+
+
+
+Search
+Clear search
+Close search
+Google apps
+Main menu

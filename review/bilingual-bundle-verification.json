@@ -1,0 +1,16 @@
+{
+  "checkedAt": "2026-10-23T13:03:57.346Z",
+  "status": "passed",
+  "languages": [
+    "en",
+    "es"
+  ],
+  "archiveFiles": 103,
+  "checks": [
+    "Extracted ZIP gallery and reading route work offline in both languages.",
+    "Spanish reading-route titles and search use translated metadata.",
+    "Both full decks load with local fonts and correct slide/build state.",
+    "No HTTP requests or uncaught exceptions.",
+    "Original source CSV checksum unchanged."
+  ]
+}

@@ -1,0 +1,715 @@
+SLIDE 1
+Directions for use:
+●
+Select the “File” drop down menu above. Go to “Make a copy”.
+●
+Rename the file and save to your Drive.
+●
+Create your presentation! For every image you add to this deck, 
+add source details as well. 
+●
+NOTE: Pink slides and notes are to help guide you on how to 
+build your presentation. Once you’re done customizing your 
+slides, delete all pink slides and notes.
+Keep text above this line:
+
+SLIDE 2
+Color & 
+Typography
+
+SLIDE 3
+Headlines
+Google Sans Bold
+Subheads
+Roboto Mono Light
+Body
+Google Sans Normal
+Google Blue 500
+#4285f4
+Google Green 500
+#34a853
+Google Red 500
+#ea4335
+Google Yellow 500
+#fbbc04
+Halftone  Blue
+#57caff
+Halftone Green
+#5cdb6d
+Halftone Red
+#ff7daf
+Halftone Yellow 
+#ffd427
+Pastel Blue
+##c3ecf6
+Pastel Green
+#ccf6c5
+Pastel Red
+#f8d8d8
+Pastel Yellow
+#ffe7a5
+Off-White
+#f0f0f0
+Black 02
+#1e1e1e
+
+SLIDE 4
+Title Slides
+
+SLIDE 5
+Editable Location 
+Name Lastname
+Title, Company
+Here is a big and 
+bold two line title
+Track
+
+SLIDE 6
+Name Lastname
+Title, Company
+Use this template for titles 
+that are very long, up to 
+three lines max
+Editable Location 
+Track
+
+SLIDE 7
+Name Lastname
+Title, Company
+Use this template for titles 
+that are very long, up to 
+three lines max
+2026
+Editable Location 
+Track
+
+SLIDE 8
+Name Lastname
+Title, Company
+This is for 
+short, three 
+lines titles
+Editable Location 
+Track
+
+SLIDE 9
+01
+Single line titles
+Here is a subhead 
+example, please keep 
+to three lines max
+
+SLIDE 10
+02
+Short titles are 
+two lines max
+Here is a subhead 
+example, please keep 
+to three lines max
+
+SLIDE 11
+03
+Midsize section 
+titles are three 
+lines max
+Here is a subhead 
+example, please keep 
+to three lines max
+
+SLIDE 12
+04
+This is an example of 
+a long section title, 
+please keep these to 
+four lines of text
+Here is a subhead 
+example, please keep 
+to three lines max
+
+SLIDE 13
+05
+This is an example of a 
+section title slide that 
+is super long, please 
+keep these to five lines 
+of text maximum
+These subheads can 
+be two lines max
+
+SLIDE 14
+Midsize section 
+titles are three 
+lines max
+Here is a subhead 
+example, please keep 
+to three lines max
+Editable Location 
+Track
+
+SLIDE 15
+Midsize section 
+titles are three 
+lines max
+Here is a subhead 
+example, please keep 
+to three lines max
+Track
+Editable Location 
+
+SLIDE 16
+This is an example of 
+a long section title, 
+please keep these to 
+four lines of text
+Here is a subhead 
+example, please keep 
+to three lines max
+Editable Location 
+Track
+
+SLIDE 17
+This is an example of 
+a section title slide 
+that is super long, 
+please keep these to 
+five lines maximum
+These subheads can 
+be two lines max
+Editable Location 
+Track
+
+SLIDE 18
+Content Slides
+
+SLIDE 19
+Full screen slides
+Use full-screen slides whenever it makes the most sense for the 
+content you’re creating. The extra slide real estate for full-screen 
+allows for larger graphics and larger text.
+If you’re doing a VO or designing a full-screen animated video, 
+you would use this layout for every slide in your deck.
+
+SLIDE 20
+Use this slide for a large block of text. Lorem ipsum 
+dolor sit amet, consectetur adipiscing elit, sed do 
+eiusmod tempor incididunt ut labore et dolore 
+magna aliqua. Ut enim ad minim veniam, quis 
+nostrud exercitation ullamco laboris nisi ut aliquip 
+ex ea commodo consequat. Duis aute irure dolor in 
+reprehenderit in voluptate velit esse cillum dolore 
+eu fugiat nulla pariatur. Lorem ipsum 
+dolor sit amet, consectetur.
+
+SLIDE 21
+Use this slide for a large block of text. Lorem ipsum 
+dolor sit amet, consectetur adipiscing elit, sed do 
+eiusmod tempor incididunt ut labore et dolore 
+magna aliqua. Ut enim ad minim veniam, quis 
+nostrud exercitation ullamco laboris nisi ut aliquip 
+ex ea commodo consequat. Duis aute irure dolor in 
+reprehenderit in voluptate velit esse.
+These subheads can 
+be two lines max
+
+SLIDE 22
+●Bullet one goes here
+●Bullet two goes here and can be freakishly 
+long, but avoid when possible
+●Add space after list item for main bullets
+●Bullets should have 1.5 line spacing
+○
+Sub bullet, yay!
+○
+Oh sweet, another one
+20pt bullets,
+25pt text
+11pt bullets,
+16pt text
+
+SLIDE 23
+Example with slide title
+●Bullet one goes here
+●Bullet two goes here
+●Bullet three goes here
+●Bullet four goes here
+
+SLIDE 24
+Example with slide title, but what if it’s 
+two lines of text?
+●Bullet one goes here
+●Bullet two goes here
+●Bullet three goes here
+●Bullet four goes here
+
+SLIDE 25
+Simple statement or 
+quote goes here, lorem 
+ipsum dolor sit amet 
+adipiscing elit sed do 
+eiusmod lorem.
+Editable Location 
+Track
+
+SLIDE 26
+Simple statement or 
+quote goes here, lorem 
+ipsum dolor sit amet 
+adipiscing elit sed do 
+eiusmod lorem.
+Editable Location 
+Track
+
+SLIDE 27
+Simple statement or 
+quote goes here, lorem 
+ipsum dolor sit amet 
+adipiscing elit sed do 
+eiusmod lorem.
+Editable Location 
+Track
+
+SLIDE 28
+Simple statement or 
+quote goes here, lorem 
+ipsum dolor sit amet 
+adipiscing elit sed do 
+eiusmod lorem.
+Editable Location 
+Track
+
+SLIDE 29
+Simple statement or 
+quote goes here, lorem 
+ipsum dolor sit amet 
+adipiscing elit sed do 
+eiusmod lorem.
+Editable Location 
+Track
+
+SLIDE 30
+Use more than
+of this large number slide
+50%
+
+SLIDE 31
+
+SLIDE 32
+
+SLIDE 33
+Half screen speaker
+Presenter slides are a great way to engage your 
+audience by showing the presenter on on the 
+right half of the screen and graphics on the left.
+When designing presenter slides make sure your 
+graphics never cross the centerline. This will 
+make sure there is enough space to fit both the 
+presenter and the graphic.
+If your content is too large to fit on a presenter 
+slide or is better for the learner with more space, 
+please use a full-screen slide instead.
+
+SLIDE 34
+Simple quote or 
+statement goes here. 
+Ideally limit to four or 
+five lines max.
+
+SLIDE 35
+Simple quote or 
+statement goes here. 
+Ideally limit to four or 
+five lines max.
+
+SLIDE 36
+Use more than
+Of this number slide
+
+SLIDE 37
+Use more than
+of this large number slide
+50%
+
+SLIDE 38
+Use more than
+of this large number slide
+50%
+
+SLIDE 39
+Use more than
+of this large number slide
+50%
+
+SLIDE 40
+Use more than
+of this large number slide
+50%
+
+SLIDE 41
+Use more than
+of this large number slide
+50%
+
+SLIDE 42
+Simple quote or 
+statement goes here. 
+Ideally limit to four or 
+five lines max.
+
+SLIDE 43
+Single line title
+Simple quote or statement 
+goes here. Ideally limit to 
+four or five lines max.
+
+SLIDE 44
+Title goes here, 
+can be two lines
+Simple quote or statement 
+goes here. Ideally limit to 
+four or five lines max.
+
+SLIDE 45
+Single line title
+●
+Bullet one goes here
+●
+Bullet two goes here
+●
+Bullet three goes here
+●
+Bullet one goes here
+
+SLIDE 46
+Title goes here, 
+can be two lines
+●
+Bullet one goes here
+●
+Bullet two goes here
+●
+Bullet three goes here
+●
+Bullet one goes here
+
+SLIDE 47
+Quote or short text 
+goes here, adjust box 
+size to match content
+Name Lastname
+Title, Company
+Editable Location
+Track
+
+SLIDE 48
+Charts
+
+SLIDE 49
+Caption
+Caption
+Caption
+Caption
+Caption
+Label
+Label
+Label
+Label
+Label
+Large Box
+Medium Box
+Labels
+Only use colored labels on 
+corresponding medium box color 
+(blue with pastel blue etc.)
+Arrows
+Chart Elements
+
+SLIDE 50
+Short 
+Label
+Short 
+Label
+Short 
+Label
+Short 
+Label
+Short 
+Label
+Short 
+Label
+Short 
+Label
+Short 
+Label
+Short 
+Label
+Short 
+Label
+Short 
+Label
+Short 
+Label
+Short 
+Label
+Short 
+Label
+Short 
+Label
+Short 
+Label
+Short 
+Label
+Short 
+Label
+Simple Chart
+
+SLIDE 51
+All-Purpose Chart
+Short Label
+Step C
+Step B
+Step A
+Step E
+Step D
+
+SLIDE 52
+Big Portfolio Chart
+Label Three
+Label Two
+Label One
+Label Four
+Short Label
+Short Label
+Short Label
+Short Label
+Short Label
+Short Label
+Short Label
+Short Label
+Short Label
+Short Label
+Short Label
+Short Label
+
+SLIDE 53
+Process Chart
+Column Label
+Column Label
+Column Label
+Column Label
+Caption
+Two Lines
+Caption
+Two Lines
+Caption
+Two Lines
+Caption
+Two Lines
+Caption
+Two Lines
+Caption
+Two Lines
+Caption
+Two Lines
+Caption
+Two Lines
+Caption
+Two Lines
+Caption
+Two Lines
+Group Label
+
+SLIDE 54
+Flow-Style Chart
+Bridge Caption
+Bridge Caption
+Bridge Caption
+Bridge Caption
+No
+Start
+Two or three line 
+caption
+Step A
+Step B
+Step C
+Step D
+Step E
+Step F
+End
+Decision 
+Node?
+
+SLIDE 55
+Group Chart
+Short 
+Label
+Short 
+Label
+Short 
+Label
+Short 
+Label
+Short 
+Label
+Short 
+Label
+Short 
+Label
+
+SLIDE 56
+Process Chart
+A
+B
+C
+D
+E
+Layer One
+Item A
+Item B
+Item C
+Short Label
+Short Label
+Short Label
+Short Label
+
+SLIDE 57
+Chart Title
+2012
+2014
+2016
+2018
+2020
+Caption 3
+Two Lines
+Caption 5
+Two Lines
+Caption 2
+Two Lines
+Caption 4
+Two Lines
+Caption 7
+Two Lines
+Caption 6
+Two Lines
+Caption 8
+Two Lines
+Caption 9
+Two Lines
+
+SLIDE 58
+Device Frames
+
+SLIDE 59
+WIREFRAME - MOBILE
+Right click and 
+“replace image”
+Right click and 
+“replace image”
+
+SLIDE 60
+WIREFRAME - TABLET
+Right click and 
+“replace image”
+Right click and 
+“replace image”
+
+SLIDE 61
+WIREFRAME - WEAR OS
+Right click and 
+“replace image”
+
+SLIDE 62
+DEVICE FRAME - PIXEL 8
+Right click and 
+“replace image”
+Right click and 
+“replace image”
+
+SLIDE 63
+DEVICE FRAME - PIXEL FOLD
+Right click and 
+“replace image”
+Right click and 
+“replace image”
+
+SLIDE 64
+DEVICE FRAME - iPHONE 14
+Right click and 
+“replace image”
+Right click and 
+“replace image”
+
+SLIDE 65
+DEVICE FRAME - TABLET
+Right click and 
+“replace image”
+Right click and 
+“replace image”
+
+SLIDE 66
+DEVICE FRAME - WEAR OS
+Right click and 
+“replace image”
+
+SLIDE 67
+DEVICE FRAME - CHROMEBOOK PLUS
+Right click and 
+“replace image”
+
+SLIDE 68
+DEVICE FRAME - PIXELBOOK GO
+Right click and 
+“replace image”
+
+SLIDE 69
+Logos & Icons
+
+SLIDE 70
+LOGO LIBRARY - CAN BE SCALED TO ANY SIZE
+
+SLIDE 71
+Americas
+APAC
+EMEA
+US
+MX
+CA
+AR
+AU
+BO
+BR
+CL
+CO
+CR
+EC
+SV
+GT
+HN
+NI
+PA
+PE
+UY
+ES
+NL
+DE
+IT
+CH
+IE
+HK
+ID
+IN
+AU
+JP
+KR
+MY
+NZ
+PH
+SG
+TH
+TW
+BE
+GB
+PT
+AT
+FR
+Nordics
+FLAGS - CAN BE SCALED TO ANY SIZE

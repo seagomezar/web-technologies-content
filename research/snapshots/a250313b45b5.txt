@@ -1,0 +1,100 @@
+Collapse sidebar
+Issues
+Change the
+issues
+type filter
+Issues
+New issue
+Search issues
+is
+:
+issue
+state
+:
+open
+is:issue state:open
+Clear filter
+Search
+Issues
+Open
+9
+(
+9
+)
+Closed
+Author
+Labels
+Projects
+Milestones
+Assignees
+Types
+Newest
+Comfortable display density
+Compact display density
+Proposal: define the multimodal (text/image/audio/video) extension path
+explainers-by-googlers/semantic-embedder-api#12
+·
+Filter by author
+hemanth
+opened
+on Jul 17, 2026
+Proposal: include truncated and tokenCount statistics in v1
+explainers-by-googlers/semantic-embedder-api#9
+·
+Filter by author
+hemanth
+opened
+on Jul 16, 2026
+1
+Proposal: expose vector dimensions and dtype in metadata
+explainers-by-googlers/semantic-embedder-api#8
+·
+Filter by author
+hemanth
+opened
+on Jul 16, 2026
+Proposal: AbortSignal and progress for batch embed()
+explainers-by-googlers/semantic-embedder-api#7
+·
+Filter by author
+hemanth
+opened
+on Jul 16, 2026
+Proposal: taskType to express query/document asymmetry and report whether it was honored
+explainers-by-googlers/semantic-embedder-api#6
+·
+Filter by author
+hemanth
+opened
+on Jul 16, 2026
+Proposal: compare() method with a guaranteed L2-normalized output
+explainers-by-googlers/semantic-embedder-api#5
+·
+Filter by author
+hemanth
+opened
+on Jul 16, 2026
+Dev interest in using the Embedding API
+explainers-by-googlers/semantic-embedder-api#3
+·
+Filter by author
+KenjiBaheux
+opened
+on Jun 9, 2026
+2
+Model updates might require embeddings recalculation, how would you find out?
+explainers-by-googlers/semantic-embedder-api#2
+·
+Filter by author
+tomayac
+opened
+on Jun 3, 2026
+5
+Native Chunking of Large Documents
+explainers-by-googlers/semantic-embedder-api#1
+·
+Filter by author
+JacobGo
+opened
+on May 28, 2026
+2

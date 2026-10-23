@@ -1,0 +1,121 @@
+CHROME
+	
+
+	Built-in AI Early Preview Program
+Enabling MTP in Gemma v4
+	Authors
+	Deepti Bogadi
+Kenji Baheux
+Jaewon Lee
+	Last-updated
+	Oct 21, 2026
+See changelog.
+	Intro
+Thanks for participating in our Early Preview Program for built-in AI capabilities (Google I/O 2026 talk). As always we are eager to hear your feedback about this program and our APIs.
+
+
+📣
+	Know of other folks who would love to join this program? Or perhaps you got access to this document from a friend? 
+
+
+Sign up to get the latest updates directly in your inbox.
+	
+
+This guide provides instructions for members of the Early Preview Program (EPP) to test Multi-Token Prediction (MTP)—a form of speculative decoding— in Gemma 4 across Chrome's Built-in AI APIs.
+
+
+MTP accelerates on-device LLM inference by pairing Gemma 4 with a lightweight drafter model to generate candidate tokens and verify them in parallel.
+Initial Setup and Configuration
+To begin testing, ensure you are using Chrome Version 156+ (specifically 156.0.8064.0+); use Chrome Canary to get nightly updates. You must manually enable the following experimental flag to access MTP:
+
+
+* Speculative Decoding (MTP): Enable chrome://flags/#on-device-model-speculative-decoding (or #built-in-ai-mtp)
+   * Enables speculative decoding performance enhancements for Built-in AI APIs. Also enables requisite Gemma 4 and Sampling Mode features. 
+   * Summarizer API sessions automatically use greedy sampling with MTP by default.
+   * Prompt API sessions use MTP when greedy sampling is specified via {samplingMode: "most-predictable"} at session creation. Non-greedy sessions run with standard decoding.
+* Baseline Comparison (No MTP): Enable chrome://flags/#gemma4-for-built-in-ai
+   *  Use this flag (without the on-device-model-speculative-decoding flag) to evaluate baseline throughput and quality parity without MTP.
+MTP for the Summarizer API
+Performance and Sampling Behavior
+When chrome://flags/#on-device-model-speculative-decoding is enabled, Summarizer API sessions automatically use MTP to achieve meaningful speedups in most cases.
+
+
+Note that this may have subtle effects on summarization behavior, because it changes the baseline stochastic sampling (e.g. temperature=1, topK=64) to greedy sampling (temperature=0, topK=1). Our internal evaluations show predominantly positive results for summary quality and consistency.
+Interaction with the Experimental preference Parameter
+For developers testing the experimental preference parameter, MTP acceleration is active when preference is set to "auto" (the default) or explicitly set to "capability". Selecting preference: "speed" does not leverage MTP acceleration, as this mode loads a separate, small expert model optimized for faster execution with a limited set of capabilities. Compare the “speed” results against MTP with the larger model and share your findings!
+
+
+Example usage
+The examples below show basic usage of the Summarizer API with MTP acceleration enabled by default, as well as how to configure the optional preference parameter. For details on the Summarizer API itself, refer to full developer documentation.
+
+
+// Make a summarizer with default preference (MTP enabled behind flag).
+const summarizer = await Summarizer.create({ type: "key-points", format: "markdown", length: "medium" });
+const keyPoints = await summarizer.summarize(myText);
+console.log(keyPoints);
+
+
+// Make a summarizer with "capability" preference leveraging MTP acceleration (with flag enabled)
+const advancedSummarizer = await Summarizer.create({ preference: "capability", type: "headline", sharedContext: myContext });
+const headline = await advancedSummarizer.summarize(myText);
+console.log(headline);
+MTP for the Prompt API
+When chrome://flags/#on-device-model-speculative-decoding is enabled, Prompt API sessions configured with samplingMode: "most-predictable" use MTP to achieve meaningful speedups in most cases (default sessions stay on "balanced" and use standard decoding).
+Altering the sampling mode can affect responses. "most-predictable" uses greedy sampling (temperature=0, topK=1) instead of stochastic sampling (e.g. temperature=1, topK=64). Our internal evaluations show predominantly positive results for many predictable tasks. 
+Interaction with the Experimental samplingMode Parameter
+For developers testing the experimental samplingMode parameter (automatically enabled by the MTP flag and also available as an Origin Trial), MTP is only active when samplingMode is explicitly set to 'most-predictable'.
+
+
+We welcome feedback on whether default sessions should maximize throughput via MTP greedy sampling or preserve stochastic sampling.
+
+
+Example usage
+The examples below show basic usage of the Prompt API with MTP acceleration. For additional details, refer to the full developer documentation.
+
+
+// Default Prompt API session uses "balanced" sampling (standard decoding, no MTP)
+const session = await LanguageModel.create();
+const result = await session.prompt("Extract key action items and owners: " + myText);
+console.log(result);
+
+
+// Prompt API session explicitly configured for MTP via "most-predictable" (with flag enabled)
+const customSession = await LanguageModel.create({ samplingMode: "most-predictable" });
+const output = await customSession.prompt("Extract key action items and owners: " + myText);
+console.log(output);
+Testing and Feedback
+We encourage partners to compare the quality and performance of MTP against baseline Gemma 4 (dev trial chrome://flags/#gemma4-for-built-in-ai) using equivalent API options. Feedback is especially appreciated for the Summarizer API, where we are explicitly changing default sampling parameters for a stable API's implementation to greedy sampling.
+
+
+Key areas to observe:
+*  Warm decode throughput: Tokens per second (Tok/s) and completion time on long outputs.
+* Cold start latency
+* Quality parity for Summarizer API: Verification of summary accuracy and structure under greedy sampling.
+
+
+Please provide feedback through the following channels:
+
+
+* Technical Issues: File bug reports for any quality or implementation issues.
+   * Summarizer: https://issues.chromium.org/issues/new?component=1617227&priority=P2&type=bug&template=2168238&noWizard=true
+   * Prompt: https://issues.chromium.org/issues/new?component=1583624&priority=P2&type=bug&template=2168238&noWizard=true
+* API feedback: For feedback on the API’s ergonomics, consider filing issues on the relevant repository within the W3C web machine learning working group.
+   * Summarizer: https://github.com/webmachinelearning/writing-assistance-apis/issues
+   * Prompt API: https://github.com/webmachinelearning/prompt-api/issues  
+* Other feedback: For other questions or issues, reach out directly by sending an email to the mailing list owners (chrome-ai-dev-preview+owners@chromium.org). We’ll do our best to be as responsive as possible or update existing documents when more appropriate.
+Appendix
+FAQ
+Participation in the Early Preview Program
+Opt-out and unsubscribe
+To opt-out from the Early Preview Program, simply send an email to:
+* chrome-ai-dev-preview+unsubscribe@chromium.org.
+Opt-in
+If you know someone who would like to join the program, ask them to complete the sign-up form at:
+* goo.gle/chrome-ai-dev-preview-join
+Other updates
+Links to all previous updates and surveys we’ve sent can be found in The Context Index also available via goo.gle/chrome-ai-dev-preview-index
+Changelog
+Date
+	Changes
+	Oct 21, 2026
+	* Initial version for MTP (Speculative Decoding) in Gemma 4.

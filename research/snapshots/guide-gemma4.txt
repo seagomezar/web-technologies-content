@@ -1,0 +1,61 @@
+CHROME
+	
+
+	Built-in AI Early Preview Program
+Gemma 4 
+	Authors
+	Deepti Bogadi
+Kenji Baheux
+	Last-updated
+	Aug 25, 2026
+See changelog.
+	Intro
+This guide provides instructions for members of the Built-in AI Early Preview Program (EPP) to test the Gemma 4 model with the following built-in AI APIs: Prompt API, Summarizer API, Writer API, and Rewriter API.
+Initial Setup and Configuration
+To begin testing, ensure you are using the latest version of Chrome Canary.
+
+
+* Version Requirement: Chrome Canary version 153.0.8009.0 or higher to access the necessary flags. The latest version is recommended to ensure access to the latest fixes as support for Gemma 4 is still under development.
+* Experimental Flags: Open a new tab in Chrome Canary, and navigate to chrome://flags/#gemma4-for-built-in-ai and change the flag to Enabled
+Specifications
+The current implementation of Gemma 4 for Built-in AI offers the same capabilities as those provided by the current model (i.e. Gemini Nano v3) including Multimodal Input (audio / image) and Structured Output.
+
+
+Gemma 4 represents a major architectural leap forward, offering significant improvements over previous generation models, most notably in efficiency. In this initial implementation, we’ve observed up to 70% increase in token-per-second throughput, translating to a much faster, snappier user experience.
+
+
+Looking ahead, Gemma 4 also introduces native support for advanced function calling, which we look forward to bringing to the Prompt API in the near future to enable more capable, agentic workflows.
+Testing and Feedback
+We encourage you to validate this model’s performance and quality across real-world scenarios. This is our first wave of Gemma 4 dev trials, so you can expect further improvements based on your feedback.
+
+
+* Feedback Channels:
+   * EPP Survey: Share your observations via the Gemma 4 feedback survey.
+   * Bug Reports: Technical issues can be filed at the Chromium issue tracker.
+Appendix
+FAQ
+Participation in the Early Preview Program
+Opt-out and unsubscribe
+To opt-out from the Early Preview Program, simply send an email to:
+* chrome-ai-dev-preview+unsubscribe@chromium.org.
+Opt-in
+If you know someone who would like to join the program, ask them to complete the sign-up form at:
+* goo.gle/chrome-ai-dev-preview-join
+Comparing Gemma 4 and Gemini Nano V3
+A single Chrome installation (e.g. Canary) can keep both models downloaded side-by-side for easy comparisons (given adequate disk space).
+Toggle between the models by enabling or disabling chrome://flags/#gemma4-for-built-in-ai and restarting Chrome.
+The next browsing session will use Gemma 4 if the flag is Enabled, or it will use Gemini Nano V3 if the flag is Default or Disabled.
+Enabling Writer and Rewriter APIs
+When Gemma 4 is Enabled, it is used by the Prompt and Summarizer APIs, which are available by default.
+It is also used by the Writer and Rewriter APIs, which are in Developer Trials and made available by enabling additional flags:
+* chrome://flags/#writer-api
+* chrome://flags/#rewriter-api
+Relationship to the Summarizer Performance Preference
+The Summarizer API is experimenting with a performance preference that provides access to a small expert model. When the Gemma 4 flag is Enabled, the implementation selects either Gemma 4 or the small expert model, depending on the preference and other session options.
+Other updates
+Links to all previous updates and surveys we’ve sent can be found in The Context Index also available via goo.gle/chrome-ai-dev-preview-index
+Changelog
+Date
+	Changes
+	Aug 25, 2026
+	* First version.
