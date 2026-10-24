@@ -15,7 +15,7 @@ async function ready(){try{return(await fetch(base)).ok;}catch{return false;}}
 async function load(page,path,lang){await page.goto(`${base}/${path}?lang=${lang}`);await page.evaluate(()=>document.fonts.ready);}
 async function click(page,selector){await page.locator(selector).click();await page.waitForFunction(q=>!document.querySelector(q)?.disabled,selector);}
 try{
- if(!await ready()){server=spawn('python3',['scripts/serve.py'],{cwd:root,stdio:'ignore'});for(let i=0;i<50&&!await ready();i++)await new Promise(r=>setTimeout(r,100));assert(await ready());}
+ if(!await ready()){server=spawn(process.platform==='win32'?'python':'python3',['scripts/serve.py'],{cwd:root,stdio:'ignore'});for(let i=0;i<50&&!await ready();i++)await new Promise(r=>setTimeout(r,100));assert(await ready());}
  for(const topic of topics){for(const key of ['title','subtitle','stage','angle','value','format'])assert(es[topic[key]],`Missing ${topic.id}.${key}`);for(const s of topic.outline)assert(es[s]);for(const d of topic.demos)for(const k of ['title','hook','action','lesson'])assert(es[d[k]],`Missing ${d.id}.${k}`);}
  record('Every proposal field, outline, and all 21 demo descriptions have authored Spanish translations');
  browser=await chromium.launch({channel:'chrome'});

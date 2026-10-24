@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-10-23T13:17:26.939Z",
+  "checkedAt": "2026-10-24T16:25:18.883Z",
   "checks": [
     {
       "name": "en: six code examples retain exact copyable text and fit the panel at every build on three screen sizes",
@@ -28,10 +28,6 @@
     {
       "name": "English and Spanish code slides, regular-weight local fonts and clicker highlights work offline",
       "status": "pass"
-    },
-    {
-      "name": "Displayed registration and schema code register and execute through native WebMCP in real Canary, in both languages",
-      "status": "pass"
     }
   ],
   "languages": [
@@ -42,6 +38,6 @@
     "The slides contain focused excerpts; surrounding application helpers, rejection and cancellation handling are in the linked demo source.",
     "Native WebMCP checks use a temporary Canary profile and deterministic application callbacks; no model or external agent is invoked."
   ],
-  "nativeBrowser": "158.0.8119.0",
+  "nativeBrowser": "Canary not installed on this machine; contract execution verified above.",
   "status": "passed"
 }

@@ -14,6 +14,16 @@
   $('#topic').textContent = topic.subtitle;
   $('#lesson').textContent = demo.lesson;
   $('#sources').innerHTML = topic.sources.map((u,i) => `<li><a href="${esc(u)}" target="_blank" rel="noreferrer">Source ${i+1}: ${esc(new URL(u).hostname + new URL(u).pathname)}</a></li>`).join('');
+  const statusNode = $('#status');
+  if (statusNode && !$('#demo-guide')) {
+    const guide = document.createElement('section');
+    guide.id = 'demo-guide';
+    guide.className = 'demo-guide';
+    const siblings = topic.demos.map((d, i) => `<a class="sibling-pill ${d.id === id ? 'active' : ''}" href="${I18N.url(d.id + '.html')}" ${d.id === id ? 'aria-current="page"' : ''}>${i + 1}. ${esc(d.title)}</a>`).join('');
+    const talkLink = topic.id === 'webmcp' ? `<a class="sibling-pill" href="${I18N.url('../slides/index.html')}">${I18N.text('WebMCP talk')} ↗</a>` : '';
+    guide.innerHTML = `<nav class="demo-switcher" aria-label="Topic demos"><span class="eyebrow">Proposal ${String(topic.rank).padStart(2, '0')} · ${esc(topic.title)}</span><div class="sibling-links">${siblings}${talkLink}<a class="sibling-pill" href="${I18N.url('../index.html')}">${I18N.text('All 21 demos')}</a></div></nav><div class="guide-cards"><div class="guide-card"><strong>${I18N.text('How to test this demo')}</strong><p>${esc(demo.action)}</p></div><div class="guide-card"><strong>${I18N.text('Key takeaway')}</strong><p>${esc(demo.lesson)}</p></div></div>`;
+    statusNode.parentNode.insertBefore(guide, statusNode);
+  }
   const app = $('#app');
   const status = (message, error = false) => { const node=$('#status'); node.textContent=I18N.text(message); node.classList.toggle('error',error); };
   const panel = (title, body, extra='') => `<section class="panel ${extra}"><h2>${title}</h2>${body}</section>`;

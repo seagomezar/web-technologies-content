@@ -2,7 +2,7 @@
 from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
 from pathlib import Path
 from threading import Thread
-import os
+import os, signal, time
 
 root=Path(__file__).resolve().parents[1]
 os.chdir(root)
@@ -16,7 +16,10 @@ for s in servers:
     Thread(target=s.serve_forever,daemon=True).start()
 print('Content lab: http://localhost:8080\nIframe second origin: http://localhost:8081',flush=True)
 try:
-    import signal
-    signal.pause()
+    if hasattr(signal,'pause'):
+        signal.pause()
+    else:
+        while True:
+            time.sleep(3600)
 except KeyboardInterrupt:
     for s in servers:s.shutdown()

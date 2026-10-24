@@ -27,6 +27,10 @@
       "Propuesta $1"
     ],
     [
+      "^Proposal (\\d+) · (.+)$",
+      "Propuesta  · "
+    ],
+    [
       "^CSV lines: (.+)\\.$",
       "Líneas del CSV: $1."
     ],

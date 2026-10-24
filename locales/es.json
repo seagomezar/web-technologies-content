@@ -522,5 +522,20 @@
   "browser RAG WebGPU": "navegador RAG WebGPU",
   "music procedural edge AI": "música procedural IA en el dispositivo",
   "architecture context engineering": "arquitectura ingeniería de contexto",
-  "engineering leadership": "liderazgo de ingeniería"
+  "engineering leadership": "liderazgo de ingeniería",
+  "Try:": "Prueba:",
+  "Takeaway:": "Aprendizaje:",
+  "How to test this demo": "Cómo probar este demo",
+  "Key takeaway": "Aprendizaje clave",
+  "All 21 demos": "Los 21 demos",
+  "WebMCP talk": "Charla WebMCP",
+  "Topic demos": "Demos del tema",
+  "Quick test presets:": "Pruebas rápidas con un clic:",
+  "Valid: models": "Válido: models",
+  "Valid: browserdj": "Válido: browserdj",
+  "Unknown ID: missing": "ID desconocido: missing",
+  "Wrong type: 123": "Tipo inválido: 123",
+  "Valid query": "Consulta válida",
+  "Empty query (error)": "Consulta vacía (error)",
+  "Broken JSON": "JSON mal formado"
 }

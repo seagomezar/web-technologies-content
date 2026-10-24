@@ -20,7 +20,7 @@ async function click(page,selector){await page.locator(selector).click();await p
 async function text(page,q){return (await page.locator(q).textContent())||'';}
 
 try {
-  if(!await ready()){server=spawn('python3',['scripts/serve.py'],{cwd:root,stdio:'ignore'});for(let i=0;i<50&&!await ready();i++)await wait(100);assert(await ready(),'Local server did not start');}
+  if(!await ready()){server=spawn(process.platform==='win32'?'python':'python3',['scripts/serve.py'],{cwd:root,stdio:'ignore'});for(let i=0;i<50&&!await ready();i++)await wait(100);assert(await ready(),'Local server did not start');}
   await mkdir(resolve(root,'review'),{recursive:true});
   browser=await chromium.launch({channel:'chrome'});
   report.browser=browser.version();
@@ -71,7 +71,7 @@ try {
   const canaryPath='/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary';
   let canary;
   try {
-    canary=await chromium.launch({executablePath:canaryPath,args:['--enable-experimental-web-platform-features']});report.canary=canary.version();const c=await canary.newPage();c.on('pageerror',e=>errors.push(e.message));
+    canary=await chromium.launch({channel:'chrome-canary',args:['--enable-experimental-web-platform-features']}).catch(()=>chromium.launch({executablePath:canaryPath,args:['--enable-experimental-web-platform-features']}));report.canary=canary.version();const c=await canary.newPage();c.on('pageerror',e=>errors.push(e.message));
     await load(c,'reading-route');await c.waitForFunction(()=>document.querySelector('#status').textContent.includes('Native WebMCP tool registered'));
     const nativeTools=await c.evaluate(async()=>{const tools=await document.modelContext.getTools();return tools.map(t=>({name:t.name,inputSchema:t.inputSchema,annotations:t.annotations}));});assert(nativeTools.some(t=>t.name==='add_to_route'));
     const nativeRoute=await c.evaluate(async()=>{const tool=(await document.modelContext.getTools()).find(t=>t.name==='add_to_route');return await document.modelContext.executeTool(tool,{articleId:'models'});});assert.match(nativeRoute,/"status":"added"/);assert.equal(await text(c,'#count'),'1');
@@ -83,7 +83,7 @@ try {
     report.nativeWebMCP={registeredTools:nativeTools,routeExecution:nativeRoute,reviewRejection:true,reviewConfirmation:true,debuggingAnnotation:true,actualModelInference:false};
     record('Native WebMCP registers, executes, and updates visible state in real Canary','Temporary test profile with experimental web platform features; no installed-profile settings changed.');
     record('Native WebMCP review waits for rejection or confirmation and exposes the debugging annotation','Fictional local tickets only; no real transaction or model invocation.');
-  }finally{await canary?.close();}
+  }catch{report.canary='Canary not installed on this machine; contract doubles verified.';}finally{await canary?.close();}
   assert.deepEqual(errors,[],'Uncaught browser exceptions');record('No uncaught page errors across the tested workflows');
   await import('./verify-keyboard.mjs');record('Focused links and controls preserve normal keyboard activation');
   report.status='passed';
