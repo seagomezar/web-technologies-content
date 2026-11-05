@@ -14,14 +14,14 @@ window.TALK = {
       'La página web ya sabe hacer cosas: buscar, filtrar, preparar una ruta de lectura. La pregunta es cómo ofrecer esas mismas acciones a un agente sin perder la interfaz que una persona entiende. Esta charla empieza con una necesidad concreta: elegir qué leer antes de una charla.',
       'Presenta el alcance: WebMCP sigue siendo una propuesta experimental. Los demos tienen un panel local para explorar las mismas funciones incluso cuando el navegador no ofrece la API. Ese panel no es un agente de IA.'
     ],builds:[]},
-    {id:'intent',kind:'diagram',title:'Del scraping del DOM<br>a contratos con esquema.',subtitle:'Cómo interactúan el usuario final, el agente de IA y tu aplicación.',minutes:1.5,diagram:[
-      {title:'1. Usuario final',body:'El visitante de tu web pide una tarea («Agrega lecturas sobre modelos locales»).',color:'blue'},
-      {title:'2. Agente → WebMCP',body:'El agente invoca tu herramienta tipada add_to_route({ articleId }) sin raspar el DOM.',color:'yellow',step:1},
-      {title:'3. Tu aplicación web',body:'Tu código valida el input, actualiza el DOM en vivo y permite deshacer con un clic.',color:'green',step:2}
+    {id:'intent',kind:'diagram',title:'¿Por qué WebMCP en lugar<br>de scrapear el DOM?',subtitle:'Cuando el usuario final le pide una tarea a su agente de IA dentro de tu web:',minutes:1.5,diagram:[
+      {title:'1. Hoy: Scraping del DOM',body:'El agente lee tu HTML/CSS, adivina qué botón clicar (.btn-add) y se rompe si cambias el diseño o el idioma.',color:'yellow'},
+      {title:'2. Con WebMCP: Tu contrato',body:'Tú (el dev) expones add_to_route({ articleId }) en modelContext. El agente llama tu función con JSON validado.',color:'blue',step:1},
+      {title:'3. Valor: UI y control humano',body:'Tu app ejecuta su propia lógica sin duplicar código, actualiza el DOM en vivo y exige confirmación si hay riesgo.',color:'green',step:2}
     ],notes:[
-      'Una persona quiere prepararse para una charla. La intención es sencilla: ayúdame a elegir qué leer. La experiencia debe seguir siendo comprensible en la pantalla.',
-      'El agente necesita una acción acotada, como añadir un artículo. Una herramienta con argumentos definidos reduce lo que el agente tiene que inferir sobre la página.',
-      'La lista visible cambia. La persona puede comprobar el resultado y quitar un artículo usando los controles de siempre. Esa continuidad es la idea central.'
+      'Hoy, cuando el usuario final le pide una tarea a un agente en el navegador, el agente suele raspar el DOM o adivinar en qué coordenada hacer clic. Si cambias una clase CSS, el orden de los elementos o el idioma, el flujo se rompe.',
+      'El agente necesita una acción acotada, como añadir un artículo. Con WebMCP, tú como desarrollador registras esa función en document.modelContext con un esquema JSON explícito para que el agente la invoque sin adivinar selectores.',
+      'El valor para el desarrollador y para el usuario final es directo: no construyes un backend paralelo ni otra UI. Se ejecuta la misma función de tu aplicación, el DOM se actualiza en vivo frente al usuario y él conserva el control.'
     ],builds:['Una herramienta','Una página compartida']},
     {id:'shared-function',kind:'diagram',title:'Un solo callback<br>para la UI y el agente.',subtitle:'El botón del DOM y document.modelContext llaman a la misma función.',minutes:2,diagram:[
       {title:'Evento de UI (click)',body:'El usuario pulsa «Añadir» en la tarjeta del artículo.',color:'blue'},

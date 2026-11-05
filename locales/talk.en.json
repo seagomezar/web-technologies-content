@@ -20,23 +20,23 @@
     },
     {
       "id": "intent",
-      "title": "From DOM scraping<br>to schema contracts.",
-      "subtitle": "How the end user, the AI agent, and your web app interact.",
+      "title": "Why WebMCP instead<br>of scraping the DOM?",
+      "subtitle": "When an end user asks their browser AI agent to do a task inside your web app:",
       "diagram": [
         {
-          "title": "1. End User",
-          "body": "Your site's visitor asks for a task (“Add articles about local models”).",
-          "color": "blue"
+          "title": "1. Today: DOM Scraping",
+          "body": "The agent reads your HTML/CSS, guesses which button to click (.btn-add), and breaks whenever you change the UI.",
+          "color": "yellow"
         },
         {
-          "title": "2. AI Agent → WebMCP",
-          "body": "The agent calls your typed tool add_to_route({ articleId }) instead of scraping the DOM.",
-          "color": "yellow",
+          "title": "2. With WebMCP: Your Contract",
+          "body": "You (the dev) expose add_to_route({ articleId }) in modelContext. The agent calls your function with validated JSON.",
+          "color": "blue",
           "step": 1
         },
         {
-          "title": "3. Your Web App",
-          "body": "Your code validates the input, updates the live DOM, and lets the user undo in one click.",
+          "title": "3. Value: Shared UI & Control",
+          "body": "Your app runs its own business logic without duplicate code, updates the live DOM, and requires human confirmation.",
           "color": "green",
           "step": 2
         }
@@ -46,9 +46,9 @@
         "A shared page"
       ],
       "notes": [
-        "A person wants to prepare for a talk. The intention is simple: help me choose what to read. The experience should remain understandable on screen.",
-        "The agent needs a bounded action, such as adding an article. A tool with defined arguments reduces what the agent must infer about the page.",
-        "The visible list changes. The person can inspect the result and remove an article with the usual controls. That continuity is the central idea."
+        "Today, when an end user asks a browser agent to perform a task, the agent usually scrapes the DOM or guesses where to click. If you change a CSS class, layout, or language, that automation breaks.",
+        "The agent needs a bounded action, such as adding an article. With WebMCP, you as the developer register that function on document.modelContext with an explicit JSON schema so the agent calls it directly without guessing selectors.",
+        "The value for both developer and end user is immediate: you do not build a parallel backend or duplicate UI. Your app executes its own function, the visible DOM updates live in front of the user, and the user stays in control."
       ]
     },
     {
