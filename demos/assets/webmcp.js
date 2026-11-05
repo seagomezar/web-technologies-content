@@ -19,8 +19,13 @@
     name,
     description: I18N.text(description),
     inputSchema,
-    execute,
-    annotations
+    annotations: {
+      readOnlyHint: false,
+      untrustedContentHint: false,
+      consequentialHint: false,
+      ...annotations
+    },
+    execute
   });
   async function register(tool) {
     definitions.push(tool);
@@ -408,7 +413,19 @@
         showToast(copy.toastError(err.error), 'warn');
         return err;
       }
-      const a = articles.find(item => item.id === args.articleId);
+      const rawId = args.articleId.trim().toLowerCase();
+      const a = articles.find(item =>
+        item.id === rawId ||
+        item.title.toLowerCase() === rawId ||
+        item.displayTitle.toLowerCase() === rawId ||
+        (rawId.includes('modelo') && item.id === 'models') ||
+        (rawId.includes('small model') && item.id === 'models') ||
+        (rawId.includes('browserdj') && item.id === 'browserdj') ||
+        (rawId.includes('patron') && item.id === 'patterns') ||
+        (rawId.includes('pattern') && item.id === 'patterns') ||
+        (rawId.includes('ownership') && item.id === 'ownership') ||
+        (rawId.includes('responsabilidad') && item.id === 'ownership')
+      );
       if (!a) {
         const err = { error: 'Unknown articleId. Valid values: models, browserdj, patterns, ownership.', code: 'UNKNOWN_ARTICLE', retryable: true };
         showToast(copy.toastError(err.error), 'warn');
@@ -434,13 +451,15 @@
       card(
         'add_to_route',
         'Add an article to the reading route (lista de blog posts por leer). Articles: "models" (Small models, thoughtful design / Modelos pequeños, diseño cuidadoso), "browserdj" (Inside BrowserDJ / Dentro de BrowserDJ), "patterns" (From prompts to patterns / De prompts a patrones), "ownership" (Ownership beyond the code / Responsabilidad más allá del código).',
-        schema({
-          articleId: {
-            type: 'string',
-            enum: articles.map(a => a.id),
-            description: 'Article ID: "models" (modelos pequeños / small models), "browserdj", "patterns", or "ownership".'
+        {
+          type: 'object',
+          properties: {
+            articleId: {
+              type: 'string',
+              description: 'Article ID: "models" (modelos pequeños / small models), "browserdj", "patterns", or "ownership".'
+            }
           }
-        }),
+        },
         args => add(args, 'tool')
       )
     );
