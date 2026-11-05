@@ -1,13 +1,25 @@
 /* Expanded after the three opening mockups were rendered and shown. */
 TALK.slides.push(
-  {id:'intent',kind:'diagram',title:'¿Por qué WebMCP en lugar<br>de scrapear el DOM?',subtitle:'Prompt del usuario final: <strong>«Agrega a mi ruta el artículo sobre modelos pequeños»</strong>',minutes:1.5,diagram:[
-    {title:'1. Hoy: Scraping del DOM',body:'El agente busca ese texto en tu HTML, adivina qué botón clicar (.btn-add) y se rompe si cambias la UI.',color:'yellow'},
+  {id:'browser-broker',kind:'flow',flowType:'broker',title:'¿Desde qué LLM o agente se envía el prompt?',minutes:1,sources:[
+    {title:'Opción A · LLM integrado en el navegador',color:'blue',chips:['Gemini en Chrome','Gemini Nano','Gemma 4'],body:'El usuario escribe el prompt en el panel del navegador; el modelo corre local o en la nube del browser.'},
+    {title:'Opción B · Agente externo conectado',color:'yellow',step:1,chips:['Claude','Antigravity','Codex','Cursor'],body:'El agente externo se conecta al browser vía extensión o puente MCP en vez de raspar con Playwright.'}
+  ],hub:{badge:'BROKER DEL NAVEGADOR',title:'navigator.modelContext',points:[
+    'Descubre herramientas de la pestaña activa',
+    'Valida argumentos con JSON Schema',
+    'Sirve tanto a LLMs locales como externos'
+  ]},target:{badge:'TU APLICACIÓN WEB',title:'registerTool({ execute })',body:'Agrega el artículo sobre "modelos pequeños" a tu lista de blog posts por leer en vivo.'},notes:[
+    'Segunda pregunta clave: ¿desde dónde escribe ese prompt el usuario final? ¿Desde Gemini Nano en Chrome o desde Claude, Antigravity o Codex? La respuesta es que WebMCP sirve para ambos porque es agnóstico al modelo.',
+    'En la Opción A, el usuario usa un asistente integrado en el navegador o un modelo local como Gemini Nano o Gemma 4. En la Opción B, usa un agente externo como Claude, Antigravity o Codex conectado al navegador mediante una extensión o puente MCP.',
+    'En ambos casos, el navegador actúa como intermediario a través de navigator.modelContext: valida el contrato JSON y ejecuta tu función directamente en la pestaña abierta.'
+  ],builds:['Dos orígenes de prompt','Ejecución en tu pestaña']},
+  {id:'intent',kind:'diagram',title:'¿Por qué WebMCP en lugar de scrapear el DOM?',subtitle:'<span class="gemini-prompt"><strong>«Quiero que agregues a mi lista de blog posts por leer el artículo sobre "modelos pequeños"»</strong></span>',minutes:1.5,diagram:[
+    {title:'1. Hoy: Scraping del DOM',body:'El agente busca «modelos pequeños» en tu HTML, adivina qué botón clicar (.btn-add) y se rompe si cambias la UI.',color:'yellow'},
     {title:'2. Con WebMCP: Tu contrato',body:'Tú (el dev) expones add_to_route({ articleId: "models" }) en modelContext. El agente llama tu función directa.',color:'blue',step:1},
-    {title:'3. Valor: UI y control humano',body:'Tu app ejecuta su propia lógica sin duplicar código, actualiza el DOM en vivo y exige confirmación si hay riesgo.',color:'green',step:2}
+    {title:'3. Valor: UI y control humano',body:'Tu app agrega el post a tu lista de blog posts por leer en el DOM en vivo y exige confirmación si hay riesgo.',color:'green',step:2}
   ],notes:[
-    'Hoy, cuando el usuario final le pide una tarea a un agente en el navegador, el agente suele raspar el DOM o adivinar en qué coordenada hacer clic. Si cambias una clase CSS, el orden de los elementos o el idioma, el flujo se rompe.',
+    'Hoy, cuando el usuario final le pide a un agente agregar a su lista de blog posts por leer el artículo sobre "modelos pequeños", el agente suele raspar el DOM o adivinar en qué coordenada hacer clic. Si cambias una clase CSS o el diseño, el flujo se rompe.',
     'El agente necesita una acción acotada, como añadir un artículo. Con WebMCP, tú como desarrollador registras esa función en document.modelContext con un esquema JSON explícito para que el agente la invoque sin adivinar selectores.',
-    'El valor para el desarrollador y para el usuario final es directo: no construyes un backend paralelo ni otra UI. Se ejecuta la misma función de tu aplicación, el DOM se actualiza en vivo frente al usuario y él conserva el control.'
+    'El valor para el desarrollador y para el usuario final es directo: no construyes un backend paralelo ni otra UI. Se ejecuta la misma función de tu aplicación, la lista de blog posts por leer se actualiza en vivo y el usuario conserva el control.'
   ],builds:['Una herramienta','Una página compartida']},
   {id:'shared-function',kind:'diagram',title:'Un solo callback<br>para la UI y el agente.',subtitle:'El botón del DOM y document.modelContext llaman a la misma función.',minutes:2,diagram:[
     {title:'Evento de UI (click)',body:'El usuario pulsa «Añadir» en la tarjeta del artículo.',color:'blue'},
@@ -22,7 +34,7 @@ TALK.slides.push(
     'Ejecutar add_to_route con {"articleId":"models"} y verificar que el contador sube a 1.',
     'Eliminar ese artículo con el botón «Quitar» del DOM para confirmar que comparten el mismo array.',
     'Enviar {"articleId":"missing"} y observar el retorno UNKNOWN_ARTICLE con retryable: true.'
-  ],minutes:3,builds:[],notes:[
+  ],minutes:2.5,builds:[],notes:[
     'Abre Ruta de lectura. Explica que los metadatos del catálogo son ejemplos curados. Primero añade Modelos pequeños desde la consola local con articleId models. La ruta visible recibe el artículo. Después elimina ese mismo artículo con el botón ordinario.\n\nPrueba un identificador inexistente para mostrar el error útil. La consola llama directamente la función; no simula comprensión del lenguaje. Si has preparado un navegador con WebMCP, muestra la herramienta registrada con el inspector o con un agente compatible.\n\nPlan de contingencia: si el agente o la API no están disponibles, continúa con la consola y explica la diferencia de forma explícita. El objetivo de la demo es comprobar el contrato y el estado compartido.'
   ]},
   {
@@ -102,7 +114,7 @@ TALK.slides.push(
     'Preparar una solicitud de 2 entradas: el panel de revisión se actualiza sin añadir registros confirmados.',
     'Pulsar «Rechazar» para comprobar que la promesa se resuelve como rejected sin efectos secundarios.',
     'Preparar de nuevo y pulsar «Confirmar»: solo el evento click del usuario confirma el estado.'
-  ],minutes:3,builds:[],notes:[
+  ],minutes:2.5,builds:[],notes:[
     'Abre El último clic. Aclara que todos los tickets son ficticios: no se hace una reserva, un cobro ni una petición a un servicio externo. Prepara dos tickets y muestra que no existe una solicitud confirmada. Rechaza la propuesta.\n\nPrepara una segunda solicitud y confirma con el botón visible. El historial local cambia solo después de esa decisión. Una anotación describe el tipo de acción para el cliente que consume herramientas; la aplicación debe seguir imponiendo su propia frontera de revisión.\n\nSi tienes un cliente WebMCP preparado, muestra la herramienta que solicita la revisión. Nunca presentes la alerta del cliente como una propiedad garantizada de todos los agentes.'
   ]},
   {

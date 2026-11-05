@@ -63,31 +63,52 @@
       return `<div class="title-layout"><div class="title-copy"><h1>${slide.title}</h1><p class="subhead">${slide.subtitle}</p><p class="speaker">${slide.speaker}</p></div>${portrait}</div>`;
     }
     if(slide.kind==='diagram'){
-      return `<h2>${slide.title}</h2><p class="subhead">${slide.subtitle}</p><div class="diagram-row">${slide.diagram.map((d,i)=>`${i?'<span class="arrow build '+(d.step>state.step?'pending':'')+'" aria-hidden="true">'+(d.arrow||'→')+'</span>':''}<div class="diagram-card ${d.color} ${d.step?'build':''} ${d.step>state.step?'pending':''}" ${d.step>state.step?'aria-hidden="true"':''}><strong>${d.title}</strong><span class="diagram-label">${d.body}</span></div>`).join('')}</div>`;
+      const geminiSvg=`<svg class="gemini-icon" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><defs><linearGradient id="gemini-grad-diag" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#1b72e8"/><stop offset="52%" stop-color="#9b72cb"/><stop offset="100%" stop-color="#d96570"/></linearGradient></defs><path fill="url(#gemini-grad-diag)" d="M12 1.8c.5 5.4 4.8 9.7 10.2 10.2-5.4.5-9.7 4.8-10.2 10.2-.5-5.4-4.8-9.7-10.2-10.2C7.2 11.5 11.5 7.2 12 1.8Z"/></svg>`;
+      const sub=String(slide.subtitle||'').replace('<span class="gemini-prompt">',`<span class="gemini-prompt">${geminiSvg}`);
+      const singleLine=!String(slide.title||'').includes('<br');
+      return `<h2${singleLine?' class="single-line"':''}>${slide.title}</h2><p class="subhead">${sub}</p><div class="diagram-row">${slide.diagram.map((d,i)=>`${i?'<span class="arrow build '+(d.step>state.step?'pending':'')+'" aria-hidden="true">'+(d.arrow||'→')+'</span>':''}<div class="diagram-card ${d.color} ${d.step?'build':''} ${d.step>state.step?'pending':''}" ${d.step>state.step?'aria-hidden="true"':''}><strong>${d.title}</strong><span class="diagram-label">${d.body}</span></div>`).join('')}</div>`;
     }
     if(slide.kind==='flow'){
       const es=I18N.lang==='es';
+      const geminiSvg=`<svg class="gemini-icon" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><defs><linearGradient id="gemini-grad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#1b72e8"/><stop offset="52%" stop-color="#9b72cb"/><stop offset="100%" stop-color="#d96570"/></linearGradient></defs><path fill="url(#gemini-grad)" d="M12 1.8c.5 5.4 4.8 9.7 10.2 10.2-5.4.5-9.7 4.8-10.2 10.2-.5-5.4-4.8-9.7-10.2-10.2C7.2 11.5 11.5 7.2 12 1.8Z"/></svg>`;
+      const promptText=es?'Quiero que agregues a mi lista de blog posts por leer el artículo sobre "modelos pequeños"':'I want you to add the article about "small models" to my blog posts reading list';
       if(slide.flowType==='lanes'){
         const activeIdx=flowAnim.lanesStep;
-        const stepLabels=es?['Paso 1/4 · Prompt','Paso 2/4 · Agente','Paso 3/4 · Llamada','Paso 4/4 · Efecto en UI']:['Step 1/4 · Prompt','Step 2/4 · Agent','Step 3/4 · Call','Step 4/4 · UI Effect'];
-        const traces=es?[
-          ['Prompt en app externa: «Agrega Modelos pequeños»','Cliente fuera del browser selecciona tool remota','POST /mcp (servidor aparte, otra sesión)','⚠️ Tu pestaña web sigue en Ruta (0): no se entera'],
-          ['Prompt con tu web abierta: «Agrega Modelos pequeños»','Agente descubre tool en document.modelContext','execute({ articleId: "models" }) en tu propio JS','✅ DOM actualizado en vivo: Ruta (1) · «Modelos pequeños»']
-        ]:[
-          ['Prompt in external app: “Add Small Models”','External client selects remote MCP server tool','POST /mcp (separate server & auth session)','⚠️ Open web tab stays at Route (0): unaware of change'],
-          ['Prompt with web app open: “Add Small Models”','Agent discovers tool on document.modelContext','execute({ articleId: "models" }) runs in your JS','✅ Live DOM updated: Route (1) · “Small Models”']
-        ];
-        return `<h2>${slide.title}</h2><div class="flow-toolbar"><span class="prompt-chip">💬 Prompt: <strong>«${es?'Agrega a mi ruta el artículo sobre modelos pequeños':'Add the small models article to my route'}»</strong></span><span class="flow-loop-badge">${stepLabels[activeIdx]}</span></div><div class="flow-lanes">${slide.lanes.map((lane,lIdx)=>`<div class="flow-lane ${lane.tone} ${lane.step?'build':''} ${lane.step>state.step?'pending':''}" ${lane.step>state.step?'aria-hidden="true"':''}><div class="flow-lane-head"><strong>${lane.title}</strong><span class="flow-trace-pill ${lIdx===1&&activeIdx===3?'trace-ok':lIdx===0&&activeIdx===3?'trace-warn':''}">${traces[lIdx][activeIdx]}</span><span class="flow-Verdict ${lane.verdictTone}">${lane.verdict}</span></div><div class="flow-nodes">${lane.nodes.map((n,idx)=>`${idx?`<span class="flow-edge ${idx<=activeIdx?'is-lit':''} ${idx===activeIdx?'is-pulsing':''}"><em>${n.edge||''}</em><span class="edge-track"><span class="edge-dot"></span>→</span></span>`:''}<div class="flow-node ${idx===activeIdx?'is-active-node':idx<activeIdx?'is-visited-node':''}"><span class="flow-node-title">${n.title}</span><span class="flow-node-sub">${n.sub}</span></div>`).join('')}</div></div>`).join('')}</div>`;
+        const traceById={
+          legacy:es?[
+            'Prompt en cliente externo: agregar artículo sobre "modelos pequeños"',
+            'Cliente fuera del browser selecciona tool remota',
+            'POST /mcp (servidor aparte, otra sesión)',
+            '⚠️ Tu pestaña web sigue en 0 blog posts: no se entera'
+          ]:[
+            'Prompt in external client: add article about "small models"',
+            'External client selects remote MCP server tool',
+            'POST /mcp (separate server & auth session)',
+            '⚠️ Open web tab stays at 0 blog posts: unaware of change'
+          ],
+          webmcp:es?[
+            'Prompt con tu blog abierto: agregar artículo sobre "modelos pequeños"',
+            'Agente descubre tool en document.modelContext',
+            'execute({ articleId: "models" }) en tu propio JS',
+            '✅ DOM en vivo: Lista por leer (1) · «Modelos pequeños»'
+          ]:[
+            'Prompt with blog open: add article about "small models"',
+            'Agent discovers tool on document.modelContext',
+            'execute({ articleId: "models" }) runs in your JS',
+            '✅ Live DOM: Reading list (1) · “Small models”'
+          ]
+        };
+        const heading=slide.flowOnly?'':`<h2 class="single-line">${slide.title}</h2>`;
+        return `${heading}<div class="flow-toolbar"><span class="prompt-chip">${geminiSvg}<span>Prompt: <strong>«${escape(promptText)}»</strong></span></span></div><div class="flow-lanes ${slide.flowOnly?'flow-lanes-single':''}">${slide.lanes.map(lane=>{const isWeb=lane.id==='webmcp';const traces=traceById[lane.id]||traceById.legacy;return `<div class="flow-lane ${lane.tone} ${lane.step?'build':''} ${lane.step>state.step?'pending':''}" ${lane.step>state.step?'aria-hidden="true"':''}><div class="flow-lane-head"><strong>${lane.title}</strong><span class="flow-trace-pill ${isWeb&&activeIdx===3?'trace-ok':!isWeb&&activeIdx===3?'trace-warn':''}">${traces[activeIdx]}</span><span class="flow-Verdict ${lane.verdictTone}">${lane.verdict}</span></div><div class="flow-nodes">${lane.nodes.map((n,idx)=>`${idx?`<span class="flow-edge ${idx<=activeIdx?'is-lit':''} ${idx===activeIdx?'is-pulsing':''}"><em>${n.edge||''}</em><span class="edge-track"><span class="edge-dot"></span>→</span></span>`:''}<div class="flow-node ${idx===activeIdx?'is-active-node':idx<activeIdx?'is-visited-node':''}"><span class="flow-node-title">${n.title}</span><span class="flow-node-sub">${n.sub}</span></div>`).join('')}</div></div>`;}).join('')}</div>`;
       }
       if(slide.flowType==='broker'){
         const srcIdx=flowAnim.brokerSource;
         const bStep=flowAnim.brokerStep;
         const activeAgentName=srcIdx===0?'Gemini Nano / Chrome':'Claude / Antigravity';
-        const phaseLabel=es?(srcIdx===0?'Simulando Opción A · LLM en Browser':'Simulando Opción B · Agente externo'):(srcIdx===0?'Simulating Option A · Browser LLM':'Simulating Option B · External Agent');
-        return `<h2>${slide.title}</h2><div class="flow-toolbar"><span class="prompt-chip">💬 Prompt: <strong>«${es?'Agrega a mi ruta el artículo sobre modelos pequeños':'Add the small models article to my route'}»</strong></span><span class="flow-loop-badge">${phaseLabel}</span></div><div class="flow-broker"><div class="broker-sources">${slide.sources.map((src,idx)=>`<div class="broker-card ${src.color} ${src.step?'build':''} ${src.step>state.step?'pending':''} ${srcIdx===idx?'is-selected-source':'is-dimmed-source'} ${srcIdx===idx&&bStep===0?'is-active-node':''}" ${src.step>state.step?'aria-hidden="true"':''}><div class="broker-card-head"><strong>${src.title}</strong><span class="source-state-badge">${srcIdx===idx?(es?'ORIGEN ACTIVO':'ACTIVE SOURCE'):(es?'EN ESPERA':'STANDBY')}</span></div><div class="chip-row">${src.chips.map(c=>`<span class="chip">${c}</span>`).join('')}</div><span class="diagram-label">${src.body}</span></div>`).join('')}</div><span class="flow-join build ${state.step<1?'pending':''} ${bStep>=1?'is-lit':''} ${bStep===1?'is-pulsing':''}" aria-hidden="true"><em>prompt</em>⇉</span><div class="broker-hub build ${state.step<1?'pending':''} ${bStep===1?'is-active-node':''}" ${state.step<1?'aria-hidden="true"':''}><span class="hub-badge">${slide.hub.badge}</span><strong>${slide.hub.title}</strong><pre class="hub-code"><code>// ${activeAgentName}
+        return `<h2 class="single-line">${slide.title}</h2><div class="flow-toolbar"><span class="prompt-chip">${geminiSvg}<span>Prompt: <strong>«${escape(promptText)}»</strong></span></span></div><div class="flow-broker"><div class="broker-sources">${slide.sources.map((src,idx)=>`<div class="broker-card ${src.color} ${src.step?'build':''} ${src.step>state.step?'pending':''} ${srcIdx===idx?'is-selected-source':'is-dimmed-source'} ${srcIdx===idx&&bStep===0?'is-active-node':''}" ${src.step>state.step?'aria-hidden="true"':''}><div class="broker-card-head"><strong>${src.title}</strong><span class="source-state-badge">${srcIdx===idx?(es?'ORIGEN ACTIVO':'ACTIVE SOURCE'):(es?'EN ESPERA':'STANDBY')}</span></div><div class="chip-row">${src.chips.map(c=>`<span class="chip">${c}</span>`).join('')}</div><span class="diagram-label">${src.body}</span></div>`).join('')}</div><span class="flow-join build ${state.step<1?'pending':''} ${bStep>=1?'is-lit':''} ${bStep===1?'is-pulsing':''}" aria-hidden="true"><em>prompt</em>⇉</span><div class="broker-hub build ${state.step<1?'pending':''} ${bStep===1?'is-active-node':''}" ${state.step<1?'aria-hidden="true"':''}><span class="hub-badge">${slide.hub.badge}</span><strong>${slide.hub.title}</strong><pre class="hub-code"><code>// ${activeAgentName}
 callTool("add_to_route", {
   articleId: "models"
-}) // ✓ JSON Schema OK</code></pre><ul class="hub-list">${slide.hub.points.map(p=>`<li>${p}</li>`).join('')}</ul></div><span class="flow-join build ${state.step<2?'pending':''} ${bStep>=2?'is-lit':''} ${bStep===2?'is-pulsing':''}" aria-hidden="true"><em>execute</em>→</span><div class="broker-target green build ${state.step<2?'pending':''} ${bStep===2?'is-active-node':''}" ${state.step<2?'aria-hidden="true"':''}><span class="hub-badge">${slide.target.badge}</span><strong>${slide.target.title}</strong><div class="mini-dom-preview"><div class="mini-dom-bar"><span>🌐 reading-route.html</span><strong>${es?'Ruta':'Route'}: ${flowAnim.routeAdded?1:0}</strong></div><div class="mini-dom-body">${flowAnim.routeAdded?`<div class="mini-dom-item"><span>✓ ${es?'Modelos pequeños en la web':'Small models on the web'}</span><span class="mini-dom-btn">${es?'Añadido':'Added'}</span></div>`:`<div class="mini-dom-empty"><span>${es?'Esperando ejecución de tool…':'Waiting for tool execution…'}</span><span class="mini-dom-btn">0</span></div>`}</div></div><span class="diagram-label">${slide.target.body}</span></div></div>`;
+}) // ✓ JSON Schema OK</code></pre><ul class="hub-list">${slide.hub.points.map(p=>`<li>${p}</li>`).join('')}</ul></div><span class="flow-join build ${state.step<2?'pending':''} ${bStep>=2?'is-lit':''} ${bStep===2?'is-pulsing':''}" aria-hidden="true"><em>execute</em>→</span><div class="broker-target green build ${state.step<2?'pending':''} ${bStep===2?'is-active-node':''}" ${state.step<2?'aria-hidden="true"':''}><span class="hub-badge">${slide.target.badge}</span><strong>${slide.target.title}</strong><div class="mini-dom-preview"><div class="mini-dom-bar"><span>🌐 reading-route.html</span><strong>${es?'Por leer':'To read'}: ${flowAnim.routeAdded?1:0}</strong></div><div class="mini-dom-body">${flowAnim.routeAdded?`<div class="mini-dom-item"><span>✓ ${es?'Artículo: «Modelos pequeños»':'Article: “Small models”'}</span><span class="mini-dom-btn">${es?'Añadido':'Added'}</span></div>`:`<div class="mini-dom-empty"><span>${es?'Esperando ejecución de tool…':'Waiting for tool execution…'}</span><span class="mini-dom-btn">0</span></div>`}</div></div><span class="diagram-label">${slide.target.body}</span></div></div>`;
       }
     }
     if(slide.kind==='demo'){

@@ -20,49 +20,54 @@
     },
     {
       "id": "mcp-vs-webmcp",
-      "title": "Server MCP vs.<br>Browser WebMCP.",
-      "subtitle": "Where the tool runs defines who holds the session and who sees the result.",
+      "title": "Server MCP vs. Browser WebMCP.",
       "lanes": [
         {
+          "id": "legacy",
           "title": "Traditional MCP · Server / Backend",
           "verdict": "No shared screen or browser session",
           "verdictTone": "warn",
           "tone": "yellow",
           "nodes": [
-            { "title": "1. User", "sub": "Prompts external client" },
+            { "title": "1. User", "sub": "Asks to add a blog post to read" },
             { "edge": "prompt", "title": "2. LLM Client", "sub": "Claude · IDE · CLI" },
             { "edge": "JSON-RPC", "title": "3. MCP Server", "sub": "Separate service & auth" },
             { "edge": "API / SQL", "title": "4. Database", "sub": "Open web tab stays unaware" }
           ]
-        },
+        }
+      ],
+      "builds": [],
+      "notes": [
+        "Before looking at code, let's see how traditional server MCP works: when the user asks an external client to add the article about 'small models' to their blog posts reading list, the agent talks to a separate MCP server. The user's open web tab shares neither that session nor the screen update."
+      ]
+    },
+    {
+      "id": "webmcp-lane",
+      "flowOnly": true,
+      "title": "WebMCP · Inside the active browser tab.",
+      "lanes": [
         {
+          "id": "webmcp",
           "title": "WebMCP · Inside the active browser tab",
           "verdict": "Same session & live DOM",
           "verdictTone": "ok",
           "tone": "blue",
-          "step": 1,
           "nodes": [
-            { "title": "1. End User", "sub": "With your web app open" },
-            { "edge": "prompt", "title": "2. Browser Agent", "sub": "Built-in or connected LLM" },
-            { "edge": "modelContext", "title": "3. Your Web App (JS)", "sub": "Reuses your frontend code" },
-            { "edge": "render", "title": "4. Live DOM", "sub": "Sees & confirms on screen" }
+            { "title": "1. End User", "sub": "With your blog open on screen" },
+            { "edge": "prompt", "title": "2. Browser Agent", "sub": "Gemini · Claude · Extension" },
+            { "edge": "modelContext", "title": "3. Your Web App (JS)", "sub": "Runs add_to_route({ articleId })" },
+            { "edge": "render", "title": "4. Live DOM", "sub": "Reading list updated live" }
           ]
         }
       ],
-      "builds": [
-        "A tool",
-        "A shared page"
-      ],
+      "builds": [],
       "notes": [
-        "Before looking at code, let's clarify a key question: how does WebMCP differ from traditional backend MCP? In traditional MCP, the agent talks to a separate server; the user's open web tab never sees what happened, and you have to maintain a second service and auth flow.",
-        "The agent needs to act where the person already is. With WebMCP, tools are registered inside the active browser tab, reusing the user's authenticated session and your frontend state.",
-        "When the tool executes, it updates the exact same DOM the end user is looking at, without duplicating backend services or building a second UI."
+        "With WebMCP, that exact same prompt ('I want you to add the article about small models to my blog posts reading list') happens on the active browser tab: the agent invokes the tool registered in document.modelContext, reuses the user's session, and updates the live DOM."
       ]
     },
     {
       "id": "browser-broker",
-      "title": "Which LLM or agent<br>sends the prompt?",
-      "subtitle": "WebMCP is model-agnostic: the browser acts as the broker to your active tab.",
+      "title": "Which LLM or agent sends the prompt?",
       "sources": [
         {
           "title": "Option A · Built-in Browser LLM",
@@ -90,7 +95,7 @@
       "target": {
         "badge": "YOUR WEB APP",
         "title": "registerTool({ execute })",
-        "body": "Executes your JS function inside the user's active session and updates the live DOM in real time."
+        "body": "Adds the article about \"small models\" to your blog posts reading list in the live DOM."
       },
       "builds": [
         "Two prompt origins",
@@ -104,12 +109,12 @@
     },
     {
       "id": "intent",
-      "title": "Why WebMCP instead<br>of scraping the DOM?",
-      "subtitle": "End-user prompt: <strong>“Add the article about small models to my reading route”</strong>",
+      "title": "Why WebMCP instead of scraping the DOM?",
+      "subtitle": "<span class=\"gemini-prompt\"><strong>“I want you to add the article about 'small models' to my blog posts reading list”</strong></span>",
       "diagram": [
         {
           "title": "1. Today: DOM Scraping",
-          "body": "The agent searches your HTML for that text, guesses which button to click (.btn-add), and breaks if your UI changes.",
+          "body": "The agent searches your HTML for “small models”, guesses which button to click (.btn-add), and breaks if your UI changes.",
           "color": "yellow"
         },
         {
@@ -120,7 +125,7 @@
         },
         {
           "title": "3. Value: Shared UI & Control",
-          "body": "Your app runs its own business logic without duplicate code, updates the live DOM, and requires human confirmation.",
+          "body": "Your app adds the post to the live blog posts reading list in the DOM and requires human confirmation for sensitive actions.",
           "color": "green",
           "step": 2
         }
