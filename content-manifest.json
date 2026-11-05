@@ -3,17 +3,17 @@
     "id": "webmcp",
     "rank": 1,
     "color": "#c3ecf6",
-    "title": "Your website has tools, too",
-    "subtitle": "WebMCP: a shared interface for people and agents",
-    "stage": "Experimental platform; publish as a practical lab",
-    "angle": "Turn a personal website into a useful collaborator: an agent can find a talk, prepare a reading route, and stage an action while the visitor sees every change.",
-    "value": "Adds an agent interaction chapter to your existing browser AI work. The reading-route demo could become a real feature on your site.",
-    "format": "Architecture article + 30-minute hands-on talk + a reusable tool-design checklist",
+    "title": "WebMCP: Page Tools for Browser Agents",
+    "subtitle": "document.modelContext, shared UI state, and human confirmation",
+    "stage": "Developer Trial · document.modelContext",
+    "angle": "Expose existing page functions as typed tools so browser agents interact through validated callbacks instead of brittle DOM scraping.",
+    "value": "Demonstrates how a single application function can serve both standard UI events and structured agent tool calls.",
+    "format": "Architecture guide + 30-minute talk deck + 3 interactive WebMCP demos",
     "outline": [
-      "Start with a visitor goal: find three things to read before a talk.",
-      "Connect a structured tool to the same function used by a button.",
-      "Validate arguments, return useful errors, and keep state visible.",
-      "Explain consequentialHint and debugging without treating annotations as authorization."
+      "Bind UI buttons and registerTool() to the same state-update function.",
+      "Validate inputs with JSON Schema and return structured error codes with retryable.",
+      "Hold consequential actions in a pending Promise until the user confirms in the UI.",
+      "Separate read-only developer diagnostics using debugging: true."
     ],
     "rows": [
       14,
@@ -30,24 +30,24 @@
     "demos": [
       {
         "id": "reading-route",
-        "title": "Reading Route",
-        "hook": "Build a personal reading trail with a typed page tool.",
-        "action": "Add an article through the tool console, then remove it through the ordinary interface.",
-        "lesson": "An agent and a human share application state."
+        "title": "Shared State (add_to_route)",
+        "hook": "Register a page tool that mutates the same reading list used by UI buttons.",
+        "action": "Run add_to_route from the tool console, remove the item via the UI button, then test an invalid articleId.",
+        "lesson": "UI controls and WebMCP tools should share one validation and state layer."
       },
       {
         "id": "consent-cart",
-        "title": "The Last Click",
-        "hook": "A playful ticket cart where a tool prepares an action and a person completes it.",
-        "action": "Stage a ticket request, reject it, then stage another and confirm it.",
-        "lesson": "A consequential hint describes behavior; application code still enforces review."
+        "title": "User Confirmation Gate",
+        "hook": "Pause a tool execution Promise until the user clicks Confirm or Reject.",
+        "action": "Stage a request, click Reject to verify nothing commits, then stage again and click Confirm.",
+        "lesson": "consequentialHint is metadata only; confirmation must be enforced in application code."
       },
       {
         "id": "tool-observatory",
-        "title": "Tool Observatory",
-        "hook": "Inspect tool schemas, annotations, and error traces in a miniature flight recorder.",
-        "action": "Filter debugging tools, run valid JSON, and try malformed arguments.",
-        "lesson": "Tools need useful errors, a clear audience, and observable behavior."
+        "title": "Schema & Error Inspector",
+        "hook": "Inspect registered JSON Schemas, debugging annotations, and error responses.",
+        "action": "Run a valid query, test an empty query vs. malformed JSON, and toggle debugging tools.",
+        "lesson": "Distinguish JSON parsing errors from recoverable application errors."
       }
     ]
   },
@@ -55,17 +55,17 @@
     "id": "lifecycle",
     "rank": 2,
     "color": "#ccf6c5",
-    "title": "AI starts before the first token",
-    "subtitle": "Model lifecycle, graceful degradation, and embedded demos",
-    "stage": "Current APIs with device and browser constraints",
-    "angle": "The feature is the entire journey: capability detection, a deliberate download, progress, cancellation, and an ordinary usable interface when the model is absent.",
-    "value": "Turns the architectural thesis in your small-model article into a production-focused companion people can copy and test.",
-    "format": "Implementation guide + failure-state gallery + reusable lifecycle helper",
+    "title": "Session Lifecycle & Permissions Policy",
+    "subtitle": "availability(), streaming cancellation, and cross-origin iframe delegation",
+    "stage": "Chrome Built-in AI APIs",
+    "angle": "Handle capability states, user-initiated model preparation, AbortController cancellation, and iframe Permissions-Policy headers.",
+    "value": "Provides reusable patterns for session management, memory cleanup, and embedded cross-origin demos.",
+    "format": "Implementation reference + 3 lifecycle & policy demos",
     "outline": [
-      "Detect APIs without starting a download.",
-      "Request model creation from a user action.",
-      "Stream, cancel, and release sessions.",
-      "Test cross-origin policy and publish accurate setup instructions."
+      "Check availability() without triggering automatic model downloads.",
+      "Create sessions on explicit user action and monitor downloadprogress.",
+      "Pass an AbortSignal to promptStreaming() and destroy sessions on completion.",
+      "Delegate access to cross-origin iframes via allow=\"language-model\"."
     ],
     "rows": [
       16,
@@ -85,24 +85,24 @@
     "demos": [
       {
         "id": "model-concierge",
-        "title": "Model Concierge",
-        "hook": "An airport-style departure board for local AI capabilities.",
-        "action": "Inspect the actual browser, then explicitly prepare one model.",
-        "lesson": "Availability is a state machine, not a boolean."
+        "title": "API Availability Inspector",
+        "hook": "Query availability() across LanguageModel, Summarizer, Translator, and Detector.",
+        "action": "Click Check Browser APIs to inspect current status, then test session creation.",
+        "lesson": "Always check availability() before calling create()."
       },
       {
         "id": "stream-garden",
-        "title": "Stream Garden",
-        "hook": "Grow an answer one chunk at a time, then prune it with Cancel.",
-        "action": "Run the labeled rehearsal, cancel midway, then try native streaming.",
-        "lesson": "Cancellation and session cleanup belong in the user experience."
+        "title": "Streaming & AbortController",
+        "hook": "Stream incremental output and abort an active generation mid-stream.",
+        "action": "Start the simulated or native stream and click Cancel midway to test AbortSignal handling.",
+        "lesson": "Pass an AbortSignal to streaming calls and destroy the session in a finally block."
       },
       {
         "id": "iframe-passport",
-        "title": "Iframe Passport",
-        "hook": "Two local origins reveal whether an embedded AI feature has permission.",
-        "action": "Load the second-origin frame with and without language-model delegation.",
-        "lesson": "A working top-level API does not guarantee that an embedded demo works."
+        "title": "Cross-Origin Iframe Policy",
+        "hook": "Test Permissions-Policy delegation for language-model inside an iframe.",
+        "action": "Load the iframe probe with and without allow=\"language-model\" enabled.",
+        "lesson": "Embedded frames require explicit Permissions-Policy delegation to access Built-in AI."
       }
     ]
   },
@@ -110,17 +110,17 @@
     "id": "retrieval",
     "rank": 3,
     "color": "#ffe7a5",
-    "title": "Search by meaning, answer with evidence",
-    "subtitle": "SemanticEmbedder, retrieval, and source-grounded answers",
-    "stage": "SemanticEmbedder developer trial; desktop Canary setup",
-    "angle": "Upgrade your existing in-memory RAG story by making retrieval observable: compare words with meaning, inspect neighbors, and show precisely what evidence an answer can use.",
-    "value": "A concrete follow-up to your browser RAG article rather than another introduction to RAG. The search demo is a candidate for your website archive.",
-    "format": "Deep technical article + searchable notebook + retrieval evaluation examples",
+    "title": "On-Device Embeddings & Grounded RAG",
+    "subtitle": "SemanticEmbedder, cosine similarity, and threshold-gated prompting",
+    "stage": "Developer Trial · SemanticEmbedder",
+    "angle": "Compare lexical word overlap against on-device vector embeddings, inspect similarity thresholds, and gate RAG prompts on retrieved evidence.",
+    "value": "Shows how to combine SemanticEmbedder task types with LanguageModel prompting in client-side RAG pipelines.",
+    "format": "Technical walkthrough + 3 retrieval & grounding demos",
     "outline": [
-      "Build an in-memory index with retrieval-document embeddings.",
-      "Embed queries with retrieval-query and compare with cosine similarity.",
-      "Keep embedding spaces consistent and reindex when the model changes.",
-      "Show source passages and refuse an answer when evidence is weak."
+      "Index documents with taskType: \"retrieval-document\" and queries with \"retrieval-query\".",
+      "Compute cosine similarity and re-index whenever the embedding model changes.",
+      "Use taskType: \"semantic-similarity\" for pairwise deduplication.",
+      "Abstain from calling LanguageModel when no passage clears the similarity threshold."
     ],
     "rows": [
       12
@@ -132,24 +132,24 @@
     "demos": [
       {
         "id": "meaning-compass",
-        "title": "Meaning Compass",
-        "hook": "Search a miniature article archive by a question rather than a keyword.",
-        "action": "Compare the explicit word-overlap baseline with live native embeddings.",
-        "lesson": "Use retrieval task hints and expose the ranking."
+        "title": "Semantic vs. Lexical Search",
+        "hook": "Rank passages by cosine similarity vs. deterministic word overlap.",
+        "action": "Run lexical search and native embedding search on the same query to compare rankings.",
+        "lesson": "Use retrieval-document and retrieval-query task hints when generating embeddings."
       },
       {
         "id": "duplicate-constellation",
-        "title": "Duplicate Constellation",
-        "hook": "Move a similarity threshold and watch related notes connect.",
-        "action": "Add a note, compare word overlap, and compute native semantic similarities.",
-        "lesson": "Similarity is continuous and thresholds require evidence."
+        "title": "Pairwise Similarity Matrix",
+        "hook": "Compute all-pairs similarity scores across short notes and filter by threshold.",
+        "action": "Add a note, compute similarity scores, and adjust the threshold slider.",
+        "lesson": "Cosine similarity thresholds must be calibrated to the specific embedding model."
       },
       {
         "id": "evidence-window",
-        "title": "Evidence Window",
-        "hook": "See the passages offered to a grounded answer before asking the model.",
-        "action": "Retrieve sources, choose the evidence floor, then request a cited draft.",
-        "lesson": "Retrieval quality and answer quality need separate inspection."
+        "title": "Threshold-Gated RAG",
+        "hook": "Inspect retrieved passages and block generation when similarity falls below the floor.",
+        "action": "Run retrieval, raise the threshold until 0 passages match, and verify drafting is disabled.",
+        "lesson": "Gate LLM generation on retrieval quality so weak matches abstain early."
       }
     ]
   },
@@ -157,17 +157,17 @@
     "id": "performance",
     "rank": 4,
     "color": "#f8d8d8",
-    "title": "Faster, at which step?",
-    "subtitle": "Measure local inference before promising a speedup",
-    "stage": "Gemma 4, MTP, and preference settings are developer trials",
-    "angle": "Separate model preparation, first chunk, total generation, and output quality. Reproduce the experiment rather than repeating an announcement percentage.",
-    "value": "Adds reproducible measurement to the performance claims around BrowserDJ and local models, giving the site a reference-quality lab.",
-    "format": "Benchmark article + downloadable measurements + experiment protocol",
+    "title": "Latency Profiling & Context Budgets",
+    "subtitle": "Setup vs. first-chunk timing, Summarizer options, and measureContextUsage()",
+    "stage": "Developer Trial · Gemma 4 / MTP / Summarizer",
+    "angle": "Instrument session creation time, time-to-first-chunk, total generation time, Summarizer option constraints, and token usage.",
+    "value": "Replaces anecdotal speed claims with structured client-side telemetry and runtime context checks.",
+    "format": "Benchmark methodology + 3 profiling & validation demos",
     "outline": [
-      "Record the device, browser, flags, sampling mode, and input.",
-      "Separate setup time from first-chunk and total generation time.",
-      "Compare equivalent configurations across browser restarts.",
-      "Inspect quality as well as medians; do not equate speed preference with MTP."
+      "Record session setup, first-chunk latency, and total generation time separately.",
+      "Export JSON trial logs with browser version and configuration metadata.",
+      "Validate Summarizer preference: \"speed\" constraints (English, key-points/tldr, short/medium).",
+      "Query session.contextWindow and measureContextUsage() at runtime."
     ],
     "rows": [
       10,
@@ -187,24 +187,24 @@
     "demos": [
       {
         "id": "latency-lens",
-        "title": "Latency Lens",
-        "hook": "A flight recorder for model setup, first chunk, and completed output.",
-        "action": "Run actual native trials, export JSON, and compare labeled browser configurations.",
-        "lesson": "A single completion time cannot explain a faster experience."
+        "title": "Streaming Latency Profiler",
+        "hook": "Measure setupMs, firstChunkMs, generationMs, and chars/sec on native sessions.",
+        "action": "Run a native streaming trial and export the recorded JSON telemetry.",
+        "lesson": "Separate cold session initialization from warm token generation latency."
       },
       {
         "id": "preference-kitchen",
-        "title": "Preference Kitchen",
-        "hook": "An option mixer that explains why speed and capability recipes differ.",
-        "action": "Try an incompatible speed recipe, fix it, and run the native Summarizer.",
-        "lesson": "The speed expert has a restricted option set and does not use MTP."
+        "title": "Summarizer Option Validator",
+        "hook": "Check option compatibility for Summarizer speed vs. capability modes.",
+        "action": "Inspect the default incompatible combination, click Apply Valid Speed Options, and compare.",
+        "lesson": "The Summarizer speed specialist only supports English key-points/tldr in short/medium lengths."
       },
       {
         "id": "context-backpack",
-        "title": "Context Backpack",
-        "hook": "Pack source notes into the real session context budget.",
-        "action": "Select notes and measure their actual context usage when the API is present.",
-        "lesson": "Query runtime context capacity instead of hard-coding historical limits."
+        "title": "Context Window Token Counter",
+        "hook": "Measure prompt token consumption against session.contextWindow.",
+        "action": "Toggle context passages and run measureContextUsage() to inspect token counts.",
+        "lesson": "Read contextWindow and measureContextUsage() dynamically instead of hardcoding token limits."
       }
     ]
   },
@@ -212,17 +212,17 @@
     "id": "recipes",
     "rank": 5,
     "color": "#c3ecf6",
-    "title": "From rigid APIs to recipes you can evaluate",
-    "subtitle": "Writing workflows over the foundational Prompt API",
-    "stage": "Migration design; deprecation remains an archive proposal",
-    "angle": "Build a small prompt-recipe layer with explicit inputs, output contracts, and evaluation. Keep the writer in control of facts and style.",
-    "value": "Extends your pattern-versus-jargon article with a practical example of when a thin abstraction earns its complexity.",
-    "format": "Migration walkthrough + recipe cards + quality review rubric",
+    "title": "Prompt Templates & Task Polyfills",
+    "subtitle": "Structured prompt builders, citation checks, and Task API comparisons",
+    "stage": "Prompt API & Task API Polyfills",
+    "angle": "Build explicit prompt templates over LanguageModel, verify output identifiers, and compare custom prompts against Summarizer.",
+    "value": "Shows when to use a dedicated Task API versus a custom prompt template over LanguageModel.",
+    "format": "Implementation patterns + 3 prompt engineering demos",
     "outline": [
-      "Describe the archive consultation as a proposal, not a completed deprecation.",
-      "Compare task APIs, prompt builders, and app-owned recipes.",
-      "Separate content facts from style preferences.",
-      "Evaluate generated drafts with observable checks and human review."
+      "Separate user data from system instructions in reusable prompt builders.",
+      "Validate generated outputs against input reference IDs ([R1], [R2]).",
+      "Compare Summarizer.summarize() against custom LanguageModel prompts on identical inputs.",
+      "Keep human review in the loop before publishing generated text."
     ],
     "rows": [
       8,
@@ -238,24 +238,24 @@
     "demos": [
       {
         "id": "voice-remix",
-        "title": "Voice Remix",
-        "hook": "Turn a style choice into an inspectable writing recipe.",
-        "action": "Adjust tone and audience, inspect the prompt, and generate a native draft.",
-        "lesson": "App-owned style is clearer when the recipe is visible."
+        "title": "Parameterized Rewrite Prompt",
+        "hook": "Assemble a constrained rewrite prompt from tone and audience parameters.",
+        "action": "Change Tone and Audience, inspect the assembled prompt string, and run generation.",
+        "lesson": "Keep prompt templates inspectable and separate source data from instructions."
       },
       {
         "id": "release-kitchen",
-        "title": "Release Kitchen",
-        "hook": "Turn three verified changes into a short release note with fact checks.",
-        "action": "Edit the facts, choose a format, draft, and inspect missing identifiers.",
-        "lesson": "A fluent draft still needs a check against the input facts."
+        "title": "Changelog Citation Checker",
+        "hook": "Draft release notes from tagged items ([R1]–[R3]) and verify cited IDs.",
+        "action": "Test duplicate IDs to see validation fail, then generate a draft and check cited tags.",
+        "lesson": "Pair generative drafting with deterministic post-checks on required identifiers."
       },
       {
         "id": "recipe-arena",
-        "title": "Recipe Arena",
-        "hook": "Compare a task summary and a custom prompt on the same source.",
-        "action": "Run both native paths and score their outputs yourself.",
-        "lesson": "Evaluate abstraction choices on the same task and evidence."
+        "title": "Summarizer vs. Custom Prompt",
+        "hook": "Compare Summarizer API output with a custom LanguageModel prompt side by side.",
+        "action": "Run both native paths on the same passage and record your evaluation.",
+        "lesson": "Benchmark task-specific APIs against custom prompts on your own domain text."
       }
     ]
   },
@@ -263,17 +263,17 @@
     "id": "languages",
     "rank": 6,
     "color": "#ccf6c5",
-    "title": "Your user should not have to switch languages",
-    "subtitle": "Language detection, translation, and reviewed proofreading",
-    "stage": "Detector and Translator documented; Proofreader developer trial",
-    "angle": "A bilingual support experience that keeps the original message visible and gives the writer control over translation and corrections.",
-    "value": "Connects your Spanish-speaking audience with your work on communication products, using a useful product flow instead of another chat wrapper.",
-    "format": "Product-engineering article + bilingual support mini-apps",
+    "title": "Translation, Detection & Proofreading",
+    "subtitle": "Translator, LanguageDetector, and Proofreader API workflows",
+    "stage": "Translator & Detector Stable/Origin · Proofreader Trial",
+    "angle": "Combine on-device language detection, bidirectional translation, and reviewable proofreading while preserving the user’s original text.",
+    "value": "Practical UI patterns for multilingual inputs without auto-overwriting user text.",
+    "format": "UI pattern guide + 3 multilingual API demos",
     "outline": [
-      "Keep the original text and make translation an explicit action.",
-      "Detect language but expose uncertainty on short mixed text.",
-      "Check language-pair availability before promising a translation.",
-      "Keep proofreading English-only for the reviewed expert preview and review edits."
+      "Check Translator language-pair availability before initiating translation.",
+      "Display LanguageDetector candidate rankings and confidence scores.",
+      "Keep original text visible alongside translated or proofread output.",
+      "Let users accept or reject Proofreader corrections explicitly."
     ],
     "rows": [
       10,
@@ -289,24 +289,24 @@
     "demos": [
       {
         "id": "bilingual-relay",
-        "title": "Bilingual Relay",
-        "hook": "A two-lane support conversation with the original always visible.",
-        "action": "Translate a Spanish message to English or reverse the language pair.",
-        "lesson": "Translation should preserve context and writer control."
+        "title": "Bidirectional Translator",
+        "hook": "Check language-pair availability and translate between Spanish and English.",
+        "action": "Check pair availability, run native translation, and switch direction.",
+        "lesson": "Preserve the source message alongside its translation so users can verify accuracy."
       },
       {
         "id": "language-radar",
-        "title": "Language Radar",
-        "hook": "A confidence board for messages that mix languages.",
-        "action": "Compare long, short, and mixed messages with the native detector.",
-        "lesson": "Confidence needs interpretation; it is not a guarantee."
+        "title": "Language Detector Confidence",
+        "hook": "Inspect ranked language candidates on long, short, and code-switched inputs.",
+        "action": "Switch between the long, short, and mixed samples and run native detection.",
+        "lesson": "Short or mixed-language strings produce lower-confidence candidate distributions."
       },
       {
         "id": "proofread-review",
-        "title": "The Red Pen",
-        "hook": "Review a local proofreader’s suggestions before applying them.",
-        "action": "Proofread English text, inspect the proposed correction, then accept or reject it.",
-        "lesson": "Corrections belong to the author, not an automatic rewrite."
+        "title": "Proofreader Diff & Review",
+        "hook": "Run on-device English proofreading and accept or discard the proposed fix.",
+        "action": "Run proofreading, test Keep Original, then run again and click Accept Correction.",
+        "lesson": "Stage grammar corrections for review instead of silently mutating the user’s input."
       }
     ]
   },
@@ -314,17 +314,17 @@
     "id": "decisions",
     "rank": 7,
     "color": "#ffe7a5",
-    "title": "A semantic if needs an escape route",
-    "subtitle": "Structured decisions, abstention, and evaluation",
-    "stage": "Concept exploration using Prompt API; no Decisions API implementation claimed",
-    "angle": "Use the archive’s intent-to-prototype as a question: how should an application behave when a model cannot make a reliable categorical decision?",
-    "value": "Adds an evidence-driven design essay to your pattern series, with measurable behavior instead of announcing an API that has no verified callable contract.",
-    "format": "Exploratory article + decision review board + a small evaluation set",
+    "title": "Structured Output & Abstention Routing",
+    "subtitle": "JSON Schema responseConstraint, deterministic rules, and review lanes",
+    "stage": "Prompt API responseConstraint",
+    "angle": "Use LanguageModel with JSON Schema responseConstraint for classification, combine it with deterministic rules, and route ambiguous cases to human review.",
+    "value": "Concrete implementation of structured classification with an explicit abstention/review lane.",
+    "format": "Architecture guide + 3 structured decision demos",
     "outline": [
-      "Distinguish an intent-to-prototype from a shipped API.",
-      "Use structured Prompt API output for today’s experiment.",
-      "Separate model judgment from deterministic business rules.",
-      "Evaluate incorrect decisions and abstentions; never call a model score calibrated confidence."
+      "Enforce output structure with responseConstraint JSON Schema.",
+      "Include an explicit review/abstain enum value for ambiguous inputs.",
+      "Combine deterministic regex/length rules with model classification.",
+      "Measure accepted error rate vs. abstention coverage on a labeled test set."
     ],
     "rows": [
       15
@@ -336,24 +336,24 @@
     "demos": [
       {
         "id": "issue-router",
-        "title": "Issue Switchboard",
-        "hook": "Route a support issue while keeping an explicit review lane.",
-        "action": "Compare a transparent keyword baseline and a structured native model decision.",
-        "lesson": "An abstention is a valid output."
+        "title": "JSON Schema Ticket Router",
+        "hook": "Classify support messages into billing, technical, or review with responseConstraint.",
+        "action": "Run the deterministic keyword baseline, then compare with native structured classification.",
+        "lesson": "Always include an explicit review/abstain category in classification schemas."
       },
       {
         "id": "comment-airlock",
-        "title": "Comment Airlock",
-        "hook": "Preview a moderation decision without publishing or deleting anything.",
-        "action": "Change the comment and escalation rules, then inspect the proposed route.",
-        "lesson": "A model recommendation and an application action are separate steps."
+        "title": "Rule + Model Pre-Moderation",
+        "hook": "Combine deterministic link/length checks with structured Prompt API routing.",
+        "action": "Test a comment containing a URL with deterministic rules and native classification.",
+        "lesson": "Enforce hard invariants with deterministic code before consulting a language model."
       },
       {
         "id": "abstention-lab",
-        "title": "Abstention Lab",
-        "hook": "Compare coverage and error on a labeled set of ambiguous messages.",
-        "action": "Adjust a word-margin threshold, inspect errors, then evaluate native decisions.",
-        "lesson": "Measure selective coverage and accepted errors without inventing confidence."
+        "title": "Abstention vs. Error Evaluator",
+        "hook": "Evaluate coverage, abstentions, and accepted errors across 8 labeled test cases.",
+        "action": "Run the baseline evaluator, adjust the margin slider, and inspect per-item results.",
+        "lesson": "Routing uncertain cases to review reduces accepted errors at the cost of coverage."
       }
     ]
   }

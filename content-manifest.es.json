@@ -3,17 +3,17 @@
     "id": "webmcp",
     "rank": 1,
     "color": "#c3ecf6",
-    "title": "Tu web también tiene herramientas",
-    "subtitle": "WebMCP: una interfaz compartida para personas y agentes",
-    "stage": "Plataforma experimental; publicar como laboratorio práctico",
-    "angle": "Convierte un sitio personal en un colaborador útil: un agente puede encontrar una charla, preparar una ruta de lectura y proponer una acción mientras el visitante ve cada cambio.",
-    "value": "Añade la interacción con agentes a tu trabajo sobre IA en el navegador. La ruta de lectura podría convertirse en una función real de tu sitio.",
-    "format": "Artículo de arquitectura + charla práctica de 30 minutos + lista reutilizable para diseñar herramientas",
+    "title": "WebMCP: herramientas de página para agentes del navegador",
+    "subtitle": "document.modelContext, estado de UI compartido y confirmación humana",
+    "stage": "Prueba para desarrolladores · document.modelContext",
+    "angle": "Expone las funciones existentes de la página como herramientas tipadas para que los agentes interactúen mediante callbacks validados en lugar de raspar el DOM.",
+    "value": "Demuestra cómo una sola función de la aplicación puede atender tanto eventos estándar de la interfaz como llamadas estructuradas del agente.",
+    "format": "Guía de arquitectura + presentación de 30 minutos + 3 demos interactivos de WebMCP",
     "outline": [
-      "Empieza por el objetivo del visitante: encontrar tres lecturas antes de una charla.",
-      "Conecta una herramienta estructurada a la misma función que usa un botón.",
-      "Valida los argumentos, devuelve errores útiles y mantén visible el estado.",
-      "Explica consequentialHint y debugging sin tratar las anotaciones como autorización."
+      "Vincula los botones de la interfaz y registerTool() a la misma función de actualización de estado.",
+      "Valida las entradas con JSON Schema y devuelve códigos de error estructurados con retryable.",
+      "Mantén las acciones con impacto en una Promise pendiente hasta que el usuario confirme en la interfaz.",
+      "Separa las herramientas de diagnóstico de solo lectura usando debugging: true."
     ],
     "rows": [
       14,
@@ -30,24 +30,24 @@
     "demos": [
       {
         "id": "reading-route",
-        "title": "Ruta de lectura",
-        "hook": "Construye una ruta de lectura personal con una herramienta de página con tipos definidos.",
-        "action": "Añade un artículo desde la consola de herramientas y elimínalo con la interfaz habitual.",
-        "lesson": "Un agente y una persona comparten el estado de la aplicación."
+        "title": "Estado compartido (add_to_route)",
+        "hook": "Registra una herramienta de página que modifica la misma lista de lectura que usan los botones de la interfaz.",
+        "action": "Ejecuta add_to_route desde la consola, elimina el elemento con el botón de la interfaz y prueba un articleId inválido.",
+        "lesson": "Los controles de la interfaz y las herramientas WebMCP deben compartir una sola capa de validación y estado."
       },
       {
         "id": "consent-cart",
-        "title": "El último clic",
-        "hook": "Un carrito de entradas donde una herramienta prepara la acción y una persona la completa.",
-        "action": "Prepara una solicitud de entradas, recházala y después prepara y confirma otra.",
-        "lesson": "Una anotación de consecuencias describe el comportamiento; el código de la aplicación sigue imponiendo la revisión."
+        "title": "Compuerta de confirmación del usuario",
+        "hook": "Pausa la Promise de ejecución de la herramienta hasta que el usuario pulse Confirmar o Rechazar.",
+        "action": "Prepara una solicitud, pulsa Rechazar para verificar que nada se confirma y luego prepara otra y pulsa Confirmar.",
+        "lesson": "consequentialHint es solo metadato; la confirmación debe imponerse en el código de la aplicación."
       },
       {
         "id": "tool-observatory",
-        "title": "Observatorio de herramientas",
-        "hook": "Inspecciona esquemas, anotaciones y registros de errores en una pequeña caja negra.",
-        "action": "Filtra las herramientas de depuración, ejecuta JSON válido y prueba argumentos mal formados.",
-        "lesson": "Las herramientas necesitan errores útiles, una audiencia clara y un comportamiento observable."
+        "title": "Inspector de esquemas y errores",
+        "hook": "Inspecciona los JSON Schemas registrados, las anotaciones debugging y las respuestas de error.",
+        "action": "Ejecuta una consulta válida, compara una consulta vacía frente a JSON mal formado y activa las herramientas debugging.",
+        "lesson": "Distingue los errores de sintaxis JSON de los errores recuperables de la aplicación."
       }
     ]
   },
@@ -55,17 +55,17 @@
     "id": "lifecycle",
     "rank": 2,
     "color": "#ccf6c5",
-    "title": "La IA empieza antes del primer token",
-    "subtitle": "Ciclo de vida del modelo, alternativas sin IA y demos integrados",
-    "stage": "APIs actuales con restricciones de dispositivo y navegador",
-    "angle": "La función abarca todo el recorrido: detectar capacidades, decidir la descarga, mostrar el progreso, cancelar y ofrecer una interfaz útil cuando falta el modelo.",
-    "value": "Convierte la tesis de tu artículo sobre modelos pequeños en una guía para producción que se puede copiar y probar.",
-    "format": "Guía de implementación + galería de estados de error + utilidad reutilizable para el ciclo de vida",
+    "title": "Ciclo de vida de sesiones y Permissions-Policy",
+    "subtitle": "availability(), cancelación de streaming y delegación en iframes entre orígenes",
+    "stage": "APIs de IA integrada en Chrome",
+    "angle": "Gestiona los estados de disponibilidad, la preparación del modelo iniciada por el usuario, la cancelación con AbortController y las cabeceras Permissions-Policy en iframes.",
+    "value": "Proporciona patrones reutilizables para gestión de sesiones, liberación de memoria y demos integrados entre orígenes.",
+    "format": "Referencia de implementación + 3 demos de ciclo de vida y políticas",
     "outline": [
-      "Detecta las APIs sin iniciar una descarga.",
-      "Solicita crear el modelo a partir de una acción del usuario.",
-      "Transmite respuestas, cancela y libera las sesiones.",
-      "Prueba la política entre orígenes y publica instrucciones de configuración precisas."
+      "Comprueba availability() sin iniciar descargas automáticas del modelo.",
+      "Crea sesiones tras una acción explícita del usuario y supervisa downloadprogress.",
+      "Pasa un AbortSignal a promptStreaming() y destruye la sesión al terminar.",
+      "Delega el acceso a iframes de otro origen mediante allow=\"language-model\"."
     ],
     "rows": [
       16,
@@ -85,24 +85,24 @@
     "demos": [
       {
         "id": "model-concierge",
-        "title": "Recepción de modelos",
-        "hook": "Un tablero de salidas para las capacidades de IA local.",
-        "action": "Inspecciona el navegador real y prepara un modelo de forma explícita.",
-        "lesson": "La disponibilidad es una máquina de estados, no un booleano."
+        "title": "Inspector de disponibilidad de APIs",
+        "hook": "Consulta availability() en LanguageModel, Summarizer, Translator y Detector.",
+        "action": "Pulsa Comprobar APIs del navegador para inspeccionar el estado actual y probar la creación de sesión.",
+        "lesson": "Comprueba siempre availability() antes de llamar a create()."
       },
       {
         "id": "stream-garden",
-        "title": "Jardín de respuestas",
-        "hook": "Haz crecer una respuesta fragmento a fragmento y detenla con Cancelar.",
-        "action": "Ejecuta el ensayo identificado, cancélalo a mitad y prueba la transmisión nativa.",
-        "lesson": "La cancelación y la liberación de sesiones forman parte de la experiencia del usuario."
+        "title": "Streaming y AbortController",
+        "hook": "Transmite la salida de forma incremental y aborta una generación activa a mitad del stream.",
+        "action": "Inicia el stream simulado o nativo y pulsa Cancelar a mitad para probar el manejo de AbortSignal.",
+        "lesson": "Pasa un AbortSignal a las llamadas en streaming y destruye la sesión en un bloque finally."
       },
       {
         "id": "iframe-passport",
-        "title": "Pasaporte del iframe",
-        "hook": "Dos orígenes locales muestran si una función de IA integrada tiene permiso.",
-        "action": "Carga el marco del segundo origen con y sin delegación de language-model.",
-        "lesson": "Que una API funcione en la página principal no garantiza que funcione dentro de un marco."
+        "title": "Política de iframes entre orígenes",
+        "hook": "Prueba la delegación de Permissions-Policy para language-model dentro de un iframe.",
+        "action": "Carga la prueba de iframe con y sin allow=\"language-model\" activado.",
+        "lesson": "Los marcos incrustados requieren delegación explícita de Permissions-Policy para acceder a la IA integrada."
       }
     ]
   },
@@ -110,17 +110,17 @@
     "id": "retrieval",
     "rank": 3,
     "color": "#ffe7a5",
-    "title": "Buscar por significado, responder con evidencia",
-    "subtitle": "SemanticEmbedder, recuperación y respuestas basadas en fuentes",
-    "stage": "Prueba para desarrolladores de SemanticEmbedder; configuración de Canary de escritorio",
-    "angle": "Amplía tu artículo de RAG en memoria con recuperación observable: compara palabras y significado, inspecciona los vecinos y muestra qué evidencia puede usar una respuesta.",
-    "value": "Una continuación concreta de tu artículo de RAG en el navegador. La búsqueda podría incorporarse al archivo de tu sitio.",
-    "format": "Artículo técnico en profundidad + cuaderno con búsqueda + ejemplos de evaluación de recuperación",
+    "title": "Embeddings en el dispositivo y RAG fundamentado",
+    "subtitle": "SemanticEmbedder, similitud coseno y prompts condicionados por umbral",
+    "stage": "Prueba para desarrolladores · SemanticEmbedder",
+    "angle": "Compara la coincidencia léxica de palabras frente a embeddings vectoriales en el dispositivo, inspecciona umbrales de similitud y condiciona los prompts RAG a la evidencia recuperada.",
+    "value": "Muestra cómo combinar los tipos de tarea de SemanticEmbedder con LanguageModel en flujos RAG del lado del cliente.",
+    "format": "Guía técnica + 3 demos de recuperación y fundamentación",
     "outline": [
-      "Construye un índice en memoria con embeddings de tipo retrieval-document.",
-      "Genera embeddings de consultas con retrieval-query y compara con similitud coseno.",
-      "Mantén la coherencia del espacio de embeddings y reconstruye el índice cuando cambie el modelo.",
-      "Muestra los fragmentos de las fuentes y abstente de responder cuando la evidencia sea débil."
+      "Indexa documentos con taskType: \"retrieval-document\" y consultas con \"retrieval-query\".",
+      "Calcula la similitud coseno y vuelve a indexar cuando cambie el modelo de embeddings.",
+      "Usa taskType: \"semantic-similarity\" para deduplicación por pares.",
+      "Abstente de llamar a LanguageModel cuando ningún fragmento supere el umbral de similitud."
     ],
     "rows": [
       12
@@ -132,24 +132,24 @@
     "demos": [
       {
         "id": "meaning-compass",
-        "title": "Brújula del significado",
-        "hook": "Busca en un pequeño archivo de artículos mediante una pregunta.",
-        "action": "Compara la referencia identificada de coincidencia de palabras con embeddings nativos reales.",
-        "lesson": "Usa las indicaciones de tarea de recuperación y muestra la clasificación."
+        "title": "Búsqueda semántica vs. léxica",
+        "hook": "Clasifica fragmentos por similitud coseno frente a coincidencia determinista de palabras.",
+        "action": "Ejecuta la búsqueda léxica y la búsqueda con embeddings nativos sobre la misma consulta para comparar rankings.",
+        "lesson": "Usa las indicaciones de tarea retrieval-document y retrieval-query al generar embeddings."
       },
       {
         "id": "duplicate-constellation",
-        "title": "Constelación de duplicados",
-        "hook": "Mueve un umbral de similitud y observa cómo se conectan las notas relacionadas.",
-        "action": "Añade una nota, compara palabras coincidentes y calcula similitudes semánticas nativas.",
-        "lesson": "La similitud es continua y los umbrales necesitan evidencia."
+        "title": "Matriz de similitud por pares",
+        "hook": "Calcula la similitud entre todos los pares de notas breves y filtra por umbral.",
+        "action": "Añade una nota, calcula las puntuaciones de similitud y ajusta el control de umbral.",
+        "lesson": "Los umbrales de similitud coseno deben calibrarse para el modelo de embeddings específico."
       },
       {
         "id": "evidence-window",
-        "title": "Ventana de evidencia",
-        "hook": "Revisa los fragmentos que recibirá la respuesta antes de consultar al modelo.",
-        "action": "Recupera fuentes, elige el umbral de evidencia y solicita un borrador con citas.",
-        "lesson": "La calidad de la recuperación y la de la respuesta necesitan evaluaciones separadas."
+        "title": "RAG con umbral de evidencia",
+        "hook": "Inspecciona los fragmentos recuperados y bloquea la generación cuando la similitud cae por debajo del umbral.",
+        "action": "Ejecuta la recuperación, sube el umbral hasta que coincidan 0 fragmentos y verifica que la generación se desactiva.",
+        "lesson": "Condiciona la generación del LLM a la calidad de recuperación para abstenerse ante coincidencias débiles."
       }
     ]
   },
@@ -157,17 +157,17 @@
     "id": "performance",
     "rank": 4,
     "color": "#f8d8d8",
-    "title": "Más rápido, ¿en qué parte?",
-    "subtitle": "Mide la inferencia local antes de prometer una mejora de velocidad",
-    "stage": "Gemma 4, MTP y las preferencias de rendimiento están en pruebas para desarrolladores",
-    "angle": "Separa la preparación del modelo, el primer fragmento, la generación total y la calidad. Reproduce el experimento antes de repetir el porcentaje de un anuncio.",
-    "value": "Añade mediciones reproducibles a las afirmaciones sobre BrowserDJ y los modelos locales, con un laboratorio de referencia para el sitio.",
-    "format": "Artículo de medición + resultados descargables + protocolo experimental",
+    "title": "Perfilado de latencia y presupuesto de contexto",
+    "subtitle": "Tiempo de inicialización vs. primer fragmento, opciones de Summarizer y measureContextUsage()",
+    "stage": "Prueba para desarrolladores · Gemma 4 / MTP / Summarizer",
+    "angle": "Instrumenta el tiempo de creación de sesión, el tiempo hasta el primer fragmento, la generación total, las restricciones de Summarizer y el uso de tokens.",
+    "value": "Sustituye afirmaciones anecdóticas de velocidad por telemetría estructurada en el cliente y comprobaciones de contexto en ejecución.",
+    "format": "Metodología de medición + 3 demos de perfilado y validación",
     "outline": [
-      "Registra el dispositivo, el navegador, los flags, el modo de muestreo y la entrada.",
-      "Separa la preparación, la espera hasta el primer fragmento y la generación total.",
-      "Compara configuraciones equivalentes reiniciando el navegador entre ellas.",
-      "Revisa la calidad y las medianas; no equipares la preferencia speed con MTP."
+      "Registra por separado la creación de sesión, la latencia del primer fragmento y el tiempo total de generación.",
+      "Exporta registros de pruebas en JSON con la versión del navegador y metadatos de configuración.",
+      "Valida las restricciones de Summarizer preference: \"speed\" (inglés, key-points/tldr, short/medium).",
+      "Consulta session.contextWindow y measureContextUsage() en tiempo de ejecución."
     ],
     "rows": [
       10,
@@ -187,24 +187,24 @@
     "demos": [
       {
         "id": "latency-lens",
-        "title": "Lupa de latencia",
-        "hook": "Una caja negra para la preparación del modelo, el primer fragmento y la respuesta completa.",
-        "action": "Ejecuta pruebas nativas reales, exporta JSON y compara configuraciones identificadas del navegador.",
-        "lesson": "Un único tiempo total no explica una experiencia más rápida."
+        "title": "Perfilador de latencia en streaming",
+        "hook": "Mide setupMs, firstChunkMs, generationMs y caracteres/s en sesiones nativas.",
+        "action": "Ejecuta una prueba de streaming nativo y exporta la telemetría JSON registrada.",
+        "lesson": "Separa la inicialización en frío de la sesión de la latencia de generación de tokens."
       },
       {
         "id": "preference-kitchen",
-        "title": "Cocina de preferencias",
-        "hook": "Un mezclador de opciones que explica las diferencias entre las recetas speed y capability.",
-        "action": "Prueba una receta speed incompatible, corrígela y ejecuta Summarizer nativo.",
-        "lesson": "El modelo experto speed tiene opciones restringidas y no usa MTP."
+        "title": "Validador de opciones de Summarizer",
+        "hook": "Comprueba la compatibilidad de opciones entre los modos speed y capability de Summarizer.",
+        "action": "Inspecciona la combinación incompatible por defecto, aplica las opciones válidas para speed y compara.",
+        "lesson": "El modelo especialista speed de Summarizer solo admite key-points/tldr en inglés con longitud short o medium."
       },
       {
         "id": "context-backpack",
-        "title": "Mochila de contexto",
-        "hook": "Organiza las notas dentro del presupuesto real de contexto de la sesión.",
-        "action": "Selecciona notas y mide su uso real del contexto cuando la API esté disponible.",
-        "lesson": "Consulta la capacidad de contexto en ejecución en lugar de fijar límites históricos."
+        "title": "Contador de tokens de la ventana de contexto",
+        "hook": "Mide el consumo de tokens del prompt frente a session.contextWindow.",
+        "action": "Activa o desactiva fragmentos de contexto y ejecuta measureContextUsage() para inspeccionar el recuento de tokens.",
+        "lesson": "Lee contextWindow y measureContextUsage() dinámicamente en lugar de fijar límites de tokens en el código."
       }
     ]
   },
@@ -212,17 +212,17 @@
     "id": "recipes",
     "rank": 5,
     "color": "#c3ecf6",
-    "title": "De APIs rígidas a recetas que puedes evaluar",
-    "subtitle": "Flujos de escritura sobre la API fundamental Prompt",
-    "stage": "Diseño de migración; la retirada sigue siendo una propuesta del archivo",
-    "angle": "Construye una pequeña capa de recetas con entradas explícitas, contratos de salida y evaluación. El autor conserva el control de los hechos y el estilo.",
-    "value": "Amplía tu artículo sobre patrones y jerga con un ejemplo práctico de cuándo se justifica una pequeña abstracción.",
-    "format": "Guía de migración + fichas de recetas + criterios de revisión de calidad",
+    "title": "Plantillas de prompt y polyfills de tareas",
+    "subtitle": "Constructores de prompts estructurados, verificación de citas y comparativa de APIs de tareas",
+    "stage": "Prompt API y polyfills de APIs de tareas",
+    "angle": "Construye plantillas de prompt explícitas sobre LanguageModel, verifica identificadores de salida y compara prompts personalizados frente a Summarizer.",
+    "value": "Muestra cuándo usar una API de tarea dedicada frente a una plantilla de prompt personalizada sobre LanguageModel.",
+    "format": "Patrones de implementación + 3 demos de ingeniería de prompts",
     "outline": [
-      "Describe la consulta del archivo como una propuesta, sin afirmar que la retirada se haya completado.",
-      "Compara APIs de tareas, constructores de prompts y recetas de la aplicación.",
-      "Separa los hechos de las preferencias de estilo.",
-      "Evalúa los borradores mediante comprobaciones observables y revisión humana."
+      "Separa los datos del usuario de las instrucciones del sistema en constructores de prompts reutilizables.",
+      "Valida las salidas generadas frente a los IDs de referencia de entrada ([R1], [R2]).",
+      "Compara Summarizer.summarize() frente a prompts personalizados de LanguageModel con entradas idénticas.",
+      "Mantén la revisión humana antes de publicar texto generado."
     ],
     "rows": [
       8,
@@ -238,24 +238,24 @@
     "demos": [
       {
         "id": "voice-remix",
-        "title": "Mezcla de voz",
-        "hook": "Convierte una elección de estilo en una receta de escritura que se pueda inspeccionar.",
-        "action": "Ajusta el tono y la audiencia, inspecciona el prompt y genera un borrador nativo.",
-        "lesson": "El estilo definido por la aplicación es más claro cuando la receta está visible."
+        "title": "Prompt de reescritura parametrizado",
+        "hook": "Construye un prompt de reescritura acotado a partir de parámetros de tono y audiencia.",
+        "action": "Cambia el tono y la audiencia, inspecciona el prompt ensamblado y ejecuta la generación.",
+        "lesson": "Mantén visibles las plantillas de prompt y separa los datos fuente de las instrucciones."
       },
       {
         "id": "release-kitchen",
-        "title": "Cocina de novedades",
-        "hook": "Convierte tres cambios verificados en una nota de versión breve con comprobaciones.",
-        "action": "Edita los hechos, elige un formato, genera el borrador e inspecciona los identificadores que faltan.",
-        "lesson": "Un borrador fluido también debe contrastarse con los hechos de entrada."
+        "title": "Verificador de citas en notas de versión",
+        "hook": "Redacta notas de versión a partir de elementos etiquetados ([R1]–[R3]) y verifica los IDs citados.",
+        "action": "Prueba IDs duplicados para ver fallar la validación y luego genera un borrador y comprueba las etiquetas citadas.",
+        "lesson": "Combina la redacción generativa con comprobaciones deterministas posteriores sobre los identificadores requeridos."
       },
       {
         "id": "recipe-arena",
-        "title": "Duelo de recetas",
-        "hook": "Compara un resumen de tarea y un prompt propio sobre la misma fuente.",
-        "action": "Ejecuta ambas opciones nativas y evalúa sus resultados.",
-        "lesson": "Evalúa las abstracciones con la misma tarea y evidencia."
+        "title": "Summarizer vs. Prompt personalizado",
+        "hook": "Compara la salida de Summarizer API con un prompt personalizado de LanguageModel lado a lado.",
+        "action": "Ejecuta ambas vías nativas sobre el mismo texto y registra tu evaluación.",
+        "lesson": "Compara las APIs específicas de tarea frente a prompts personalizados con textos de tu propio dominio."
       }
     ]
   },
@@ -263,17 +263,17 @@
     "id": "languages",
     "rank": 6,
     "color": "#ccf6c5",
-    "title": "Tu usuario no debería cambiar de idioma",
-    "subtitle": "Detección de idioma, traducción y corrección revisada",
-    "stage": "Detector y Translator documentados; Proofreader en prueba para desarrolladores",
-    "angle": "Una experiencia de soporte bilingüe que mantiene visible el mensaje original y deja al autor controlar la traducción y las correcciones.",
-    "value": "Conecta a tu audiencia hispanohablante con tu trabajo en productos de comunicación mediante un flujo útil.",
-    "format": "Artículo de ingeniería de producto + miniaplicaciones de soporte bilingüe",
+    "title": "Traducción, detección y corrección de textos",
+    "subtitle": "Flujos de trabajo con las APIs Translator, LanguageDetector y Proofreader",
+    "stage": "Translator y Detector estables · Proofreader en prueba",
+    "angle": "Combina detección de idioma en el dispositivo, traducción bidireccional y corrección revisable conservando el texto original del usuario.",
+    "value": "Patrones prácticos de interfaz para entradas multilingües sin sobrescribir automáticamente el texto del usuario.",
+    "format": "Guía de patrones de UI + 3 demos de APIs multilingües",
     "outline": [
-      "Conserva el texto original y haz de la traducción una acción explícita.",
-      "Detecta el idioma y muestra la incertidumbre en textos breves o mixtos.",
-      "Comprueba la disponibilidad del par de idiomas antes de prometer una traducción.",
-      "Mantén la corrección en inglés para la versión experta revisada y revisa los cambios."
+      "Comprueba la disponibilidad del par de idiomas en Translator antes de iniciar la traducción.",
+      "Muestra la clasificación de candidatos de LanguageDetector y sus puntuaciones de confianza.",
+      "Mantén visible el texto original junto a la salida traducida o corregida.",
+      "Permite al usuario aceptar o rechazar explícitamente las correcciones de Proofreader."
     ],
     "rows": [
       10,
@@ -289,24 +289,24 @@
     "demos": [
       {
         "id": "bilingual-relay",
-        "title": "Relevo bilingüe",
-        "hook": "Una conversación de soporte en dos idiomas con el original siempre visible.",
-        "action": "Traduce un mensaje del español al inglés o invierte el par de idiomas.",
-        "lesson": "La traducción debe preservar el contexto y el control del autor."
+        "title": "Traductor bidireccional",
+        "hook": "Comprueba la disponibilidad del par de idiomas y traduce entre español e inglés.",
+        "action": "Comprueba la disponibilidad del par, ejecuta la traducción nativa y cambia la dirección.",
+        "lesson": "Conserva el mensaje original junto a su traducción para que el usuario pueda verificar la precisión."
       },
       {
         "id": "language-radar",
-        "title": "Radar de idiomas",
-        "hook": "Un panel de estimaciones para mensajes que mezclan idiomas.",
-        "action": "Compara mensajes largos, cortos y mixtos con el detector nativo.",
-        "lesson": "La confianza necesita interpretación; no es una garantía."
+        "title": "Confianza de LanguageDetector",
+        "hook": "Inspecciona los candidatos de idioma clasificados en textos largos, cortos y con cambio de código.",
+        "action": "Alterna entre los ejemplos largo, corto y mixto y ejecuta la detección nativa.",
+        "lesson": "Los textos cortos o con mezcla de idiomas producen distribuciones de candidatos con menor confianza."
       },
       {
         "id": "proofread-review",
-        "title": "El bolígrafo rojo",
-        "hook": "Revisa las sugerencias del corrector local antes de aplicarlas.",
-        "action": "Corrige un texto en inglés, inspecciona la propuesta y acéptala o recházala.",
-        "lesson": "Las correcciones son decisión del autor."
+        "title": "Revisión y diff con Proofreader",
+        "hook": "Ejecuta la corrección en inglés en el dispositivo y acepta o descarta el cambio propuesto.",
+        "action": "Ejecuta la corrección, prueba Conservar original y luego ejecuta de nuevo y pulsa Aplicar corrección.",
+        "lesson": "Previsualiza las correcciones gramaticales para revisión en lugar de modificar silenciosamente la entrada del usuario."
       }
     ]
   },
@@ -314,17 +314,17 @@
     "id": "decisions",
     "rank": 7,
     "color": "#ffe7a5",
-    "title": "Un if semántico necesita una salida de emergencia",
-    "subtitle": "Decisiones estructuradas, abstención y evaluación",
-    "stage": "Exploración con Prompt API; no se afirma implementar Decisions API",
-    "angle": "Usa la intención de prototipar del archivo como pregunta: ¿cómo debe actuar una aplicación cuando el modelo no puede tomar una decisión categórica fiable?",
-    "value": "Añade a tu serie de patrones un ensayo basado en evidencia con comportamiento medible, sin anunciar una API cuyo contrato invocable no está verificado.",
-    "format": "Artículo exploratorio + panel de revisión de decisiones + pequeño conjunto de evaluación",
+    "title": "Salida estructurada y enrutamiento con abstención",
+    "subtitle": "responseConstraint con JSON Schema, reglas deterministas y vías de revisión",
+    "stage": "responseConstraint de Prompt API",
+    "angle": "Usa LanguageModel con responseConstraint JSON Schema para clasificación, combínalo con reglas deterministas y envía los casos ambiguos a revisión humana.",
+    "value": "Implementación concreta de clasificación estructurada con una vía explícita de abstención y revisión.",
+    "format": "Guía de arquitectura + 3 demos de decisiones estructuradas",
     "outline": [
-      "Distingue una intención de prototipar de una API publicada.",
-      "Usa la salida estructurada de Prompt API para el experimento actual.",
-      "Separa el juicio del modelo de las reglas de negocio deterministas.",
-      "Evalúa las decisiones incorrectas y las abstenciones; no llames confianza calibrada a una puntuación del modelo."
+      "Impone la estructura de salida con un JSON Schema en responseConstraint.",
+      "Incluye un valor explícito de revisión/abstención en el enum para entradas ambiguas.",
+      "Combina reglas deterministas de expresiones regulares y longitud con la clasificación del modelo.",
+      "Mide la tasa de error aceptado frente a la cobertura de abstención en un conjunto de prueba etiquetado."
     ],
     "rows": [
       15
@@ -336,24 +336,24 @@
     "demos": [
       {
         "id": "issue-router",
-        "title": "Central de incidencias",
-        "hook": "Clasifica una incidencia de soporte con una vía explícita de revisión.",
-        "action": "Compara una referencia transparente por palabras clave con una decisión estructurada del modelo nativo.",
-        "lesson": "Abstenerse es una salida válida."
+        "title": "Enrutador de tickets con JSON Schema",
+        "hook": "Clasifica mensajes de soporte en billing, technical o review usando responseConstraint.",
+        "action": "Ejecuta la referencia determinista por palabras clave y compárala con la clasificación estructurada nativa.",
+        "lesson": "Incluye siempre una categoría explícita de revisión/abstención en los esquemas de clasificación."
       },
       {
         "id": "comment-airlock",
-        "title": "Esclusa de comentarios",
-        "hook": "Revisa una decisión de moderación sin publicar ni eliminar nada.",
-        "action": "Cambia el comentario y las reglas de escalado e inspecciona la clasificación propuesta.",
-        "lesson": "La recomendación del modelo y la acción de la aplicación son pasos separados."
+        "title": "Premoderación con reglas + modelo",
+        "hook": "Combina comprobaciones deterministas de enlaces y longitud con enrutamiento estructurado de Prompt API.",
+        "action": "Prueba un comentario que contenga una URL con las reglas deterministas y la clasificación nativa.",
+        "lesson": "Impone las reglas invariantes con código determinista antes de consultar a un modelo de lenguaje."
       },
       {
         "id": "abstention-lab",
-        "title": "Laboratorio de abstención",
-        "hook": "Compara cobertura y error con un conjunto etiquetado de mensajes ambiguos.",
-        "action": "Ajusta el umbral de diferencia entre palabras, inspecciona los errores y evalúa las decisiones nativas.",
-        "lesson": "Mide la cobertura selectiva y los errores aceptados sin inventar confianza."
+        "title": "Evaluador de abstención vs. error",
+        "hook": "Evalúa la cobertura, las abstenciones y los errores en 8 casos de prueba etiquetados.",
+        "action": "Ejecuta el evaluador de referencia, ajusta el margen e inspecciona los resultados por elemento.",
+        "lesson": "Enviar los casos inciertos a revisión reduce los errores aceptados a cambio de menor cobertura automática."
       }
     ]
   }

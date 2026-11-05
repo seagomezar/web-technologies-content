@@ -1,5 +1,5 @@
 {
-  "title": "Your website has tools, too",
+  "title": "WebMCP: Browser Tools with Shared UI State",
   "defaults": {
     "structure": "One hands-on talk around WebMCP and three demos",
     "language": "English",
@@ -9,22 +9,8 @@
     {
       "id": "opening",
       "title": "Your website<br>has tools, too.",
-      "subtitle": "WebMCP: people and agents<br>in the same interface.",
+      "subtitle": "WebMCP: exposing application functions<br>to agents without duplicating your UI.",
       "speaker": "Sebastián Gómez · Google Developer Expert (Web Technologies)",
-      "highlights": [
-        {
-          "label": "01 · Shared state",
-          "text": "The human button and the agent tool call the exact same function."
-        },
-        {
-          "label": "02 · Deliberate review",
-          "text": "Staging an action never means confirming it without the person."
-        },
-        {
-          "label": "03 · Observable contracts",
-          "text": "JSON Schema, actionable errors, and graceful fallback."
-        }
-      ],
       "builds": [],
       "notes": [
         "A web page already knows how to search, filter, and prepare a reading route. How can we offer those same actions to an agent while preserving an interface that a person understands? This talk starts with a concrete need: choosing what to read before a talk.\n\nSet the scope: WebMCP is still experimental. The demos include a local console for exploring the same functions when the browser does not expose the API. That console is not an AI agent."
@@ -32,27 +18,23 @@
     },
     {
       "id": "intent",
-      "title": "One intention.<br>One visible action.",
-      "subtitle": "“Help me choose what to read before the talk.”",
-      "takeaway": "No fragile DOM scraping: the agent invokes a typed action and the person sees the update on screen.",
+      "title": "From DOM scraping<br>to schema contracts.",
+      "subtitle": "The agent invokes a typed function; the user keeps visual control of the page.",
       "diagram": [
         {
-          "meta": "1 · Human intent",
-          "title": "A person",
-          "body": "Expresses the goal and keeps visual control of the page.",
+          "title": "1. User",
+          "body": "States the goal and inspects changes directly in the page UI.",
           "color": "blue"
         },
         {
-          "meta": "2 · WebMCP contract",
-          "title": "A tool",
-          "body": "Accepts typed arguments (add_to_route) without scraping DOM selectors.",
+          "title": "2. WebMCP Tool",
+          "body": "Accepts validated arguments (add_to_route) without brittle DOM selectors.",
           "color": "yellow",
           "step": 1
         },
         {
-          "meta": "3 · Synchronized UI",
-          "title": "The same page",
-          "body": "Updates the visible route and lets the user remove items in one click.",
+          "title": "3. Shared Page State",
+          "body": "Updates the on-screen list and allows one-click removal.",
           "color": "green",
           "step": 2
         }
@@ -69,27 +51,23 @@
     },
     {
       "id": "shared-function",
-      "title": "The same function<br>moves the interface.",
-      "subtitle": "The button and the tool share state and rules.",
-      "takeaway": "Do not build a second app for the agent: reuse your existing validation and rendering logic.",
+      "title": "One callback for both<br>the UI and the agent.",
+      "subtitle": "The DOM button and document.modelContext invoke the exact same function.",
       "diagram": [
         {
-          "meta": "Human entry point (UI)",
-          "title": "Button",
-          "body": "Direct visitor click on the article card.",
+          "title": "UI Event (click)",
+          "body": "User clicks “Add” on the article card.",
           "color": "blue"
         },
         {
-          "meta": "Application core",
-          "title": "addToRoute()",
-          "body": "Validates ID → prevents duplicates → updates state & DOM.",
+          "title": "addToRoute(args)",
+          "body": "Validates ID, prevents duplicates, and re-renders the view.",
           "color": "yellow",
           "step": 1
         },
         {
-          "meta": "Agent entry point (WebMCP)",
-          "title": "Tool",
-          "body": "document.modelContext invokes the exact same structured callback.",
+          "title": "registerTool({ execute })",
+          "body": "Browser invokes the exact same application callback.",
           "color": "green",
           "step": 2,
           "arrow": "←"
@@ -107,25 +85,13 @@
     },
     {
       "id": "demo-route",
-      "title": "Build a route<br>people can see.",
-      "subtitle": "Add with a tool. Remove with a button.",
-      "demoTitle": "Reading Route",
-      "walkthrough": [
-        {
-          "step": "Step 1 · Valid tool call",
-          "title": "Run add_to_route",
-          "body": "Send {\"articleId\":\"models\"} from the local console or agent and watch the reading counter update."
-        },
-        {
-          "step": "Step 2 · Shared control",
-          "title": "Remove from the UI",
-          "body": "Remove that same article with the ordinary “Remove” button to verify UI and tool share state."
-        },
-        {
-          "step": "Step 3 · Actionable error",
-          "title": "Test an unknown ID",
-          "body": "Send {\"articleId\":\"missing\"} and inspect UNKNOWN_ARTICLE with retryable: true."
-        }
+      "title": "Shared State:<br>add_to_route.",
+      "subtitle": "Add via the WebMCP tool, remove via the DOM button.",
+      "demoTitle": "Shared State (add_to_route)",
+      "steps": [
+        "Call add_to_route with {\"articleId\":\"models\"} and verify the counter increments to 1.",
+        "Remove that article using the DOM “Remove” button to confirm both share the same state array.",
+        "Pass {\"articleId\":\"missing\"} and inspect the structured UNKNOWN_ARTICLE error (retryable: true)."
       ],
       "builds": [],
       "notes": [
@@ -135,14 +101,14 @@
     {
       "id": "errors",
       "kind": "code",
-      "title": "Errors with<br>a next step.",
-      "subtitle": "Return a code and a way to continue.",
+      "title": "Structured errors<br>with retryable.",
+      "subtitle": "Return a stable error code so the caller can self-correct.",
       "builds": [
         "A clear next step"
       ],
       "stepCallouts": [
-        "1. Catch unknown inputs before mutating state and return a stable application error code.",
-        "2. Explain valid options and set retryable: true so the calling agent can self-correct."
+        "Reject unknown IDs before mutating state and return a stable error code.",
+        "Specify how to fix the argument and set retryable: true."
       ],
       "notes": [
         "This is an excerpt of Reading Route's error response. article is the result of looking up the supplied identifier. When it is absent, the function returns an object without changing the route. UNKNOWN_ARTICLE is a stable application code, not a universal error shape defined by WebMCP.",
@@ -161,21 +127,21 @@
           5
         ]
       ],
-      "codeLabel": "Excerpt · reading-route"
+      "codeLabel": "demos/assets/webmcp.js · reading-route"
     },
     {
       "id": "tool-design",
       "kind": "code",
-      "title": "Register<br>one action.",
-      "subtitle": "The same callback the page uses.",
+      "title": "Registering on<br>modelContext.",
+      "subtitle": "Stable name, enum-constrained inputSchema, and the shared add callback.",
       "builds": [
         "A bounded contract",
         "An observable result"
       ],
       "stepCallouts": [
-        "1. Give the tool a stable name and a clear description of when an agent should choose it.",
-        "2. Constrain articleId with JSON Schema and an enum built from the live catalog IDs.",
-        "3. Point execute to the exact same add() function used by the page's buttons."
+        "Provide name and description so the agent knows when to select the tool.",
+        "Constrain articleId with a JSON Schema enum built from live catalog IDs.",
+        "Pass the application's add function directly to execute."
       ],
       "notes": [
         "This registration uses document.modelContext.registerTool and awaits its promise. add_to_route is a stable name; the description explains when to select the tool. This excerpt assumes support was already detected. We will cover that check and registration errors later.",
@@ -201,29 +167,17 @@
           10
         ]
       ],
-      "codeLabel": "Excerpt · reading-route"
+      "codeLabel": "demos/assets/webmcp.js · reading-route"
     },
     {
       "id": "demo-consent",
-      "title": "Preparing does not<br>mean confirming.",
-      "subtitle": "The final action remains deliberate.",
-      "demoTitle": "The Last Click",
-      "walkthrough": [
-        {
-          "step": "Step 1 · Stage the request",
-          "title": "Pause before execution",
-          "body": "Stage 2 fictional tickets: the tool updates the review box while the confirmed ledger stays empty."
-        },
-        {
-          "step": "Step 2 · Test rejection",
-          "title": "Discard safely",
-          "body": "Click “Reject” to verify the user can abort the staged request with zero side effects."
-        },
-        {
-          "step": "Step 3 · Explicit confirmation",
-          "title": "The last click is human",
-          "body": "Stage again and click “Confirm”: only that deliberate human click resolves the tool promise."
-        }
+      "title": "Explicit confirmation<br>before execution.",
+      "subtitle": "The tool stages the request; the human click resolves the Promise.",
+      "demoTitle": "User Confirmation Gate",
+      "steps": [
+        "Stage a request for 2 tickets: the review panel updates while the confirmed ledger remains empty.",
+        "Click “Reject” to verify the tool Promise resolves as rejected with zero side effects.",
+        "Stage again and click “Confirm”: only the user's click event commits the state change."
       ],
       "builds": [],
       "notes": [
@@ -233,14 +187,14 @@
     {
       "id": "annotations",
       "kind": "code",
-      "title": "The app waits<br>for your click.",
-      "subtitle": "The annotation describes. Your app decides.",
+      "title": "Pending Promise<br>until confirmed.",
+      "subtitle": "consequentialHint informs the client; the Promise enforces the gate.",
       "builds": [
         "The rule lives in the application"
       ],
       "stepCallouts": [
-        "1. consequentialHint: true signals impact to the client, but never grants automatic permission.",
-        "2. The returned Promise stays pending until the person clicks Confirm or Reject in the UI."
+        "consequentialHint: true is descriptive metadata, not an access control.",
+        "new Promise pauses execution until the UI button calls finishReview."
       ],
       "notes": [
         "The Last Click registers requestReview with these annotations. consequentialHint describes a consequence without granting permission or imposing identical confirmation behavior across clients. This is an excerpt: the full registration passes the annotation object alongside the name, description, schema, and callback.",
@@ -264,19 +218,19 @@
           11
         ]
       ],
-      "codeLabel": "Excerpt · consent-cart"
+      "codeLabel": "demos/assets/webmcp.js · consent-cart"
     },
     {
       "id": "debugging",
       "kind": "code",
-      "title": "Tools for<br>developers.",
-      "subtitle": "debugging identifies the intended audience.",
+      "title": "readOnlyHint &<br>debugging annotations.",
+      "subtitle": "Tag diagnostic tools separately from user-facing actions.",
       "builds": [
         "Distinguish development use"
       ],
       "stepCallouts": [
-        "1. Expose a diagnostic tool to inspect internal state without mutating application data.",
-        "2. readOnlyHint and debugging tag its developer audience to separate it from visitor actions."
+        "Expose a read-only state snapshot for debugging internal state.",
+        "Set readOnlyHint: true and debugging: true to separate diagnostic tools."
       ],
       "notes": [
         "This excerpt defines inspect_state with an empty schema and a read callback. inspectState stands for the demo callback returning a snapshot with time and proposal count; it is application logic, not another browser API. Register this tool using the same registration pattern we just saw.",
@@ -297,29 +251,17 @@
           9
         ]
       ],
-      "codeLabel": "Excerpt · tool-observatory"
+      "codeLabel": "demos/assets/webmcp.js · tool-observatory"
     },
     {
       "id": "demo-observatory",
-      "title": "Look at what<br>the tool exposes.",
-      "subtitle": "Schema, annotations, and results in view.",
-      "demoTitle": "Tool Observatory",
-      "walkthrough": [
-        {
-          "step": "Step 1 · Valid query",
-          "title": "Inspect schema & trace",
-          "body": "Run find_demo with {\"query\":\"browser\"} and inspect the schema, annotations, and timing in the flight recorder."
-        },
-        {
-          "step": "Step 2 · Two failure layers",
-          "title": "App error vs. broken JSON",
-          "body": "Try {\"query\":\"\"} (returns INVALID_QUERY) and then malformed JSON (SyntaxError before calling the tool)."
-        },
-        {
-          "step": "Step 3 · Audience filter",
-          "title": "Reveal debugging tools",
-          "body": "Check “Include developer tools” to expose inspect_state (debugging: true) and run it with {}."
-        }
+      "title": "Inspecting schemas,<br>errors, and traces.",
+      "subtitle": "Distinguish validation errors, JSON syntax failures, and debug tools.",
+      "demoTitle": "Schema & Error Inspector",
+      "steps": [
+        "Call find_demo with {\"query\":\"browser\"} and inspect its inputSchema, annotations, and latency.",
+        "Compare {\"query\":\"\"} (structured INVALID_QUERY error) against malformed JSON (SyntaxError).",
+        "Enable “Include debugging: true tools” to reveal and execute inspect_state."
       ],
       "builds": [],
       "notes": [
@@ -329,16 +271,16 @@
     {
       "id": "types",
       "kind": "code",
-      "title": "An explicit<br>contract.",
-      "subtitle": "Required fields. Valid values. No extras.",
+      "title": "Input validation<br>with JSON Schema.",
+      "subtitle": "Required properties and additionalProperties: false.",
       "builds": [
         "Validate incoming data",
         "Test what happens"
       ],
       "stepCallouts": [
-        "1. Wrap properties in an object JSON Schema so the agent knows the exact input shape.",
-        "2. Require every declared key and reject invented fields with additionalProperties: false.",
-        "3. Pair declarative schema bounds with runtime checks inside your tool callback."
+        "Build an object JSON Schema from the declared property map.",
+        "Mark all keys as required and reject undeclared fields.",
+        "Pair declarative schema bounds with runtime checks in your callback."
       ],
       "notes": [
         "This is the schema helper used to register add_to_route. It takes a property map and returns an object JSON Schema. It is a small application function, not a function that WebMCP adds to the browser.",
@@ -366,21 +308,21 @@
           6
         ]
       ],
-      "codeLabel": "Excerpt · reading-route"
+      "codeLabel": "demos/assets/webmcp.js · reading-route"
     },
     {
       "id": "fallback",
       "kind": "code",
-      "title": "The buttons<br>still work.",
-      "subtitle": "Register when supported. Keep the interface.",
+      "title": "Feature detection<br>& UI fallback.",
+      "subtitle": "Render the UI first; register only when registerTool exists.",
       "builds": [
         "Conditional registration",
         "A useful interface"
       ],
       "stepCallouts": [
-        "1. Render the human UI first: the page works 100% before any agent API is checked.",
-        "2. Feature-detect document.modelContext?.registerTool at runtime before registering.",
-        "3. Catch registration errors cleanly without removing or breaking ordinary page controls."
+        "Render standard DOM controls before checking for WebMCP support.",
+        "Feature-detect document.modelContext?.registerTool at runtime.",
+        "Catch registration errors without breaking the user interface."
       ],
       "notes": [
         "The first line renders ordinary controls before attempting registration. render, tool, and status are application pieces. This excerpt runs in an async context, like the demo's registration helper. Without WebMCP support, the page already lets people add and remove readings.",
@@ -406,28 +348,25 @@
           10
         ]
       ],
-      "codeLabel": "Excerpt · reading-route"
+      "codeLabel": "demos/assets/webmcp.js · reading-route"
     },
     {
       "id": "limits",
-      "eyebrow": "The proposal's scope",
-      "title": "A visited page.<br>A shared context.",
-      "subtitle": "Discovering tools requires visiting the page.",
-      "cards": [
+      "eyebrow": "Architectural scope",
+      "title": "Document-context<br>boundaries.",
+      "subtitle": "WebMCP tools exist only while the document is open in an active tab.",
+      "specs": [
         {
-          "badge": "Current scope",
-          "title": "Inside the active tab",
-          "body": "Tools live on document.modelContext while the visitor is on the page, not as a headless background server."
+          "term": "Tab-scoped lifecycle",
+          "detail": "document.modelContext exposes tools on the active document, not as a headless background MCP server."
         },
         {
-          "badge": "Human surface",
-          "title": "No invisible side effects",
-          "body": "WebMCP shines when the person sees every state change on screen and can continue with normal controls."
+          "term": "Synchronized UI surface",
+          "detail": "Every tool invocation updates visible state so the user can inspect or undo via standard DOM controls."
         },
         {
-          "badge": "Model-agnostic",
-          "title": "Contract ≠ local LLM",
-          "body": "Registering a tool does not download a model: the consuming agent may run on-device or in the cloud."
+          "term": "Model-agnostic contract",
+          "detail": "Registering a tool defines the browser interface; the calling agent may run locally or in the cloud."
         }
       ],
       "builds": [
@@ -440,24 +379,21 @@
     },
     {
       "id": "first-step",
-      "eyebrow": "Your next experiment",
-      "title": "Start with<br>one useful action.",
-      "subtitle": "One intention. One contract. One visible change.",
-      "cards": [
+      "eyebrow": "Implementation checklist",
+      "title": "Exposing your first<br>WebMCP tool.",
+      "subtitle": "Wrap an existing UI handler in three concrete steps.",
+      "specs": [
         {
-          "badge": "Step 1",
-          "title": "Pick one real action",
-          "body": "Start with filtering, searching, or building a reading list that visitors already use on your site."
+          "term": "1. Isolate the UI handler",
+          "detail": "Extract the function that already filters, searches, or updates state from your click/submit listeners."
         },
         {
-          "badge": "Step 2",
-          "title": "Bound schema & errors",
-          "body": "Use enum, required, and additionalProperties: false, and return actionable error codes with retryable."
+          "term": "2. Define inputSchema",
+          "detail": "Declare strict types, enum arrays for known IDs, required keys, and additionalProperties: false."
         },
         {
-          "badge": "Step 3",
-          "title": "Gate consequential steps",
-          "body": "Whenever an action confirms or commits changes, keep the Promise pending until the human clicks Confirm."
+          "term": "3. Gate consequential actions",
+          "detail": "When a tool commits or mutates critical state, keep the returned Promise pending until user confirmation."
         }
       ],
       "builds": [],
@@ -467,24 +403,21 @@
     },
     {
       "id": "takeaway",
-      "eyebrow": "The idea to take home",
-      "title": "One useful action.<br>One shared page.",
-      "subtitle": "The visitor can see, review, and continue.",
-      "cards": [
+      "eyebrow": "Technical summary",
+      "title": "Single state for both<br>the UI and agent tools.",
+      "subtitle": "Strict schemas, human confirmation gates, and progressive enhancement.",
+      "specs": [
         {
-          "badge": "Single state",
-          "title": "Button + tool = 1 function",
-          "body": "Never maintain two separate codepaths: the same function validates, updates state, and re-renders the UI."
+          "term": "Shared callback",
+          "detail": "The DOM button and registerTool({ execute }) invoke the exact same validation and state logic."
         },
         {
-          "badge": "Real safety",
-          "title": "Annotations do not authorize",
-          "body": "consequentialHint and debugging inform the client, but business rules live in your application code."
+          "term": "Annotations do not authorize",
+          "detail": "consequentialHint, readOnlyHint, and debugging are descriptive hints; your app enforces security."
         },
         {
-          "badge": "Resilience",
-          "title": "Progressive enhancement",
-          "body": "When a browser does not expose WebMCP, the page remains 100% usable through its standard controls."
+          "term": "Progressive enhancement",
+          "detail": "When document.modelContext is absent, the application remains 100% functional via standard controls."
         }
       ],
       "builds": [],
@@ -494,30 +427,29 @@
     },
     {
       "id": "questions",
-      "eyebrow": "Let's talk",
-      "title": "Which action on your site<br>would you share first?",
-      "subtitle": "Questions · examples · design decisions",
-      "cards": [
+      "eyebrow": "Resources & Q&A",
+      "title": "Which function in your app<br>would you expose first?",
+      "subtitle": "Interactive demos, source code, and technical references.",
+      "links": [
         {
-          "badge": "Demos 01–03",
-          "title": "Try the 3 WebMCP demos",
-          "body": "Open Reading Route, The Last Click, and Tool Observatory directly in your browser.",
-          "href": "../demos/reading-route.html",
-          "linkText": "Open Reading Route ↗"
+          "label": "Demo 01 · reading-route",
+          "href": "../demos/reading-route.html"
         },
         {
-          "badge": "Full lab",
-          "title": "7 proposals · 21 experiments",
-          "body": "Explore model lifecycle, SemanticEmbedder, latency, Prompt API recipes, translation, and decisions.",
-          "href": "../index.html",
-          "linkText": "Open the gallery ↗"
+          "label": "Demo 02 · consent-cart",
+          "href": "../demos/consent-cart.html"
         },
         {
-          "badge": "Sources & code",
-          "title": "Verified evidence",
-          "body": "Review all 20 EPP archive communications, TypeScript contracts, and complete source code.",
-          "href": "../research/topic-review.md",
-          "linkText": "Read source review ↗"
+          "label": "Demo 03 · tool-observatory",
+          "href": "../demos/tool-observatory.html"
+        },
+        {
+          "label": "Full Lab Gallery (21 demos)",
+          "href": "../index.html"
+        },
+        {
+          "label": "Implementation Notes & References",
+          "href": "../research/topic-review.md"
         }
       ],
       "builds": [],

@@ -1,5 +1,6 @@
 (() => {
   const mockup=document.body.dataset.mockup==='true';
+  if(window.self!==window.top)document.body.classList.add('embedded-preview');
   const slides=mockup?TALK.slides.slice(0,3):TALK.slides;
   const params=new URLSearchParams(location.search);
   const city=params.get('city')||TALK.defaults.city;
@@ -22,33 +23,32 @@
   }
   function stepBanner(slide){
     const total=slide.builds.length;
-    if(!total&&!slide.stepCallouts?.length)return '';
-    const label=state.step===0?(I18N.lang==='es'?'Vista inicial':'Initial view'):slide.builds[state.step-1];
     const callout=slide.stepCallouts?.[state.step]||'';
-    return `<div class="code-step-banner"><span class="step-pill">${I18N.lang==='es'?'Paso':'Step'} ${state.step+1}/${total+1} · ${escape(label)}</span>${callout?`<span class="step-callout">${escape(callout)}</span>`:''}</div>`;
+    if(!callout&&!total)return '';
+    const prefix=`${state.step+1}/${total+1}`;
+    return `<div class="code-step-banner"><span class="step-index">${prefix}</span><span class="step-callout">${escape(callout||slide.builds[state.step-1]||'')}</span></div>`;
   }
   function body(slide){
     if(slide.kind==='code'){
       const focus=slide.codeFocus[state.step]||[];
-      return `<div class="code-copy"><h2>${slide.title}</h2><p class="subhead">${slide.subtitle}</p><div class="code-links"><a href="${I18N.url('../demos/'+escape(slide.codeDemo)+'.html')}" target="_blank" rel="noopener">${I18N.lang==='es'?'Ver demo':'Open demo'} ↗</a><a href="../demos/assets/webmcp.js" target="_blank" rel="noopener">${I18N.lang==='es'?'Ver código':'Source'} ↗</a></div></div><div class="code-example"><p class="code-label">${escape(slide.codeLabel)}</p><pre class="code-window" aria-label="${I18N.lang==='es'?'Ejemplo de JavaScript':'JavaScript example'}"><code lang="${I18N.lang}">${slide.code.split('\n').map((line,i)=>`<span class="code-line${focus.includes(i+1)?' is-focused':''}" data-line="${i+1}">${codeLine(line)}</span>`).join('\n')}</code></pre>${stepBanner(slide)}</div>`;
+      return `<div class="code-copy"><h2>${slide.title}</h2><p class="subhead">${slide.subtitle}</p><div class="code-links"><a href="${I18N.url('../demos/'+escape(slide.codeDemo)+'.html')}" target="_blank" rel="noopener">${I18N.lang==='es'?'Abrir demo':'Open demo'} ↗</a><a href="../demos/assets/webmcp.js" target="_blank" rel="noopener">${I18N.lang==='es'?'Código fuente':'Source'} ↗</a></div></div><div class="code-example"><p class="code-label">${escape(slide.codeLabel)}</p><pre class="code-window" aria-label="${I18N.lang==='es'?'Ejemplo de JavaScript':'JavaScript example'}"><code lang="${I18N.lang}">${slide.code.split('\n').map((line,i)=>`<span class="code-line${focus.includes(i+1)?' is-focused':''}" data-line="${i+1}">${codeLine(line)}</span>`).join('\n')}</code></pre>${stepBanner(slide)}</div>`;
     }
     if(slide.kind==='title'){
-      const highlights=slide.highlights?.length?`<div class="title-highlights">${slide.highlights.map(h=>`<div class="highlight-card"><strong>${escape(h.label)}</strong><span>${escape(h.text)}</span></div>`).join('')}</div>`:'';
-      return `<h1>${slide.title}</h1><p class="subhead">${slide.subtitle}</p><p class="speaker">${slide.speaker}</p>${highlights}`;
+      return `<h1>${slide.title}</h1><p class="subhead">${slide.subtitle}</p><p class="speaker">${slide.speaker}</p>`;
     }
     if(slide.kind==='diagram'){
-      const takeaway=slide.takeaway?`<div class="slide-takeaway">${escape(slide.takeaway)}</div>`:'';
-      return `<h2>${slide.title}</h2><p class="subhead">${slide.subtitle}</p><div class="diagram-row">${slide.diagram.map((d,i)=>`${i?'<span class="arrow build '+(d.step>state.step?'pending':'')+'" aria-hidden="true">'+(d.arrow||'→')+'</span>':''}<div class="diagram-card ${d.color} ${d.step?'build':''} ${d.step>state.step?'pending':''}" ${d.step>state.step?'aria-hidden="true"':''}>${d.meta?`<span class="card-meta">${escape(d.meta)}</span>`:''}<strong>${d.title}</strong><span class="diagram-label">${d.body}</span></div>`).join('')}</div>${takeaway}`;
+      return `<h2>${slide.title}</h2><p class="subhead">${slide.subtitle}</p><div class="diagram-row">${slide.diagram.map((d,i)=>`${i?'<span class="arrow build '+(d.step>state.step?'pending':'')+'" aria-hidden="true">'+(d.arrow||'→')+'</span>':''}<div class="diagram-card ${d.color} ${d.step?'build':''} ${d.step>state.step?'pending':''}" ${d.step>state.step?'aria-hidden="true"':''}><strong>${d.title}</strong><span class="diagram-label">${d.body}</span></div>`).join('')}</div>`;
     }
     if(slide.kind==='demo'){
       const openLabel=I18N.lang==='es'?`Abrir ${slide.demoTitle} ↗`:`Open ${slide.demoTitle} ↗`;
-      const steps=slide.walkthrough?.length?`<div class="demo-walkthrough">${slide.walkthrough.map((w,i)=>`<div class="walkthrough-card ${['blue','yellow','green'][i%3]}"><span class="card-meta">${escape(w.step)}</span><strong>${escape(w.title)}</strong><span class="walkthrough-body">${escape(w.body)}</span></div>`).join('')}</div>`:'';
-      return `<div class="demo-header"><div><p class="eyebrow">Demo ${slide.number}</p><h2>${slide.title}</h2><p class="subhead">${slide.subtitle}</p></div><a class="demo-link" href="${I18N.url('../demos/'+slide.demo+'.html')}" target="_blank" rel="noopener">${escape(openLabel)}</a></div>${steps}`;
+      const steps=slide.steps?.length?`<ol class="demo-steps">${slide.steps.map(s=>`<li>${escape(s)}</li>`).join('')}</ol>`:'';
+      return `<div class="demo-header"><div><p class="eyebrow">Demo ${slide.number} · ${escape(slide.demo)}.html</p><h2>${slide.title}</h2><p class="subhead">${slide.subtitle}</p></div><a class="demo-link" href="${I18N.url('../demos/'+slide.demo+'.html')}" target="_blank" rel="noopener">${escape(openLabel)}</a></div>${steps}`;
     }
     if(slide.kind==='steps')return `<h2>${slide.title}</h2><div class="diagram-row">${slide.items.map((s,i)=>`<div class="diagram-card ${['blue','yellow','green'][i%3]} build ${i>state.step?'pending':''}" ${i>state.step?'aria-hidden="true"':''}><strong>${s.title}</strong><span class="diagram-label">${s.body}</span></div>`).join('')}</div>`;
     if(slide.kind==='statement'){
-      const cards=slide.cards?.length?`<div class="summary-grid">${slide.cards.map((c,i)=>`<div class="summary-card ${['blue','yellow','green'][i%3]}"><span class="card-meta">${escape(c.badge)}</span><strong>${escape(c.title)}</strong><span class="summary-body">${escape(c.body)}</span>${c.href?`<a class="card-link" href="${I18N.url(c.href)}" target="_blank" rel="noopener">${escape(c.linkText)}</a>`:''}</div>`).join('')}</div>`:'';
-      return `<p class="eyebrow">${slide.eyebrow||''}</p><h1 class="compact">${slide.title}</h1><p class="subhead ${slide.builds.length?'build':''} ${state.step<1&&slide.builds.length?'pending':''}">${slide.subtitle}</p>${cards}`;
+      const specs=slide.specs?.length?`<dl class="spec-list">${slide.specs.map(s=>`<div class="spec-row"><dt>${escape(s.term)}</dt><dd>${escape(s.detail)}</dd></div>`).join('')}</dl>`:'';
+      const links=slide.links?.length?`<div class="resource-links">${slide.links.map(l=>`<a class="resource-pill" href="${I18N.url(l.href)}" target="_blank" rel="noopener">${escape(l.label)} ↗</a>`).join('')}</div>`:'';
+      return `<p class="eyebrow">${slide.eyebrow||''}</p><h1 class="compact">${slide.title}</h1><p class="subhead ${slide.builds.length?'build':''} ${state.step<1&&slide.builds.length?'pending':''}">${slide.subtitle}</p>${specs}${links}`;
     }
     return `<h2>${slide.title}</h2><p class="subhead">${slide.subtitle||''}</p>`;
   }
@@ -90,7 +90,6 @@
   }
   function announce(){const message={type:'deck-state',state:{...state},slideCount:slides.length,plannedMinutes:planned,city,session:channelName};channel?.postMessage(message);if(presenter&&!presenter.closed)presenter.postMessage(message,location.origin==='null'?'*':location.origin);}
   function navigate(index,step=0,animate=true){
-    const prevIndex=state.index;
     index=Math.max(0,Math.min(slides.length-1,index));
     step=Math.max(0,Math.min(slides[index].builds.length,step));
     state={...state,index,step};
