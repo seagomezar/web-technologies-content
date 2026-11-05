@@ -8,8 +8,8 @@
   "slides": [
     {
       "id": "opening",
-      "title": "Expose your web app's<br>functions to AI agents",
-      "subtitle": "Without duplicating your UI.",
+      "title": "Your website<br>has tools, too.",
+      "subtitle": "WebMCP: Expose your web app's functions<br>to AI agents without duplicating your UI.",
       "speaker": "Sebastián Gómez · Google Developer Expert (Web Technologies)",
       "photo": "assets/sebastian-gomez.jpg",
       "badge": "assets/gde-web-badge.svg",
