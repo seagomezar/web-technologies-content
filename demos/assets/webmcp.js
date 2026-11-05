@@ -39,8 +39,7 @@
   const schema = properties => ({
     type: 'object',
     properties,
-    required: Object.keys(properties),
-    additionalProperties: false
+    required: Object.keys(properties)
   });
 
   if (id === 'reading-route') {
@@ -431,7 +430,20 @@
     $('#filter').oninput = render;
     window.addToRoute = (args, source = 'tool') => add(args, source);
     render();
-    register(card('add_to_route', 'Add an article to the reading route.', schema({ articleId: { type: 'string', enum: articles.map(a => a.id) } }), args => add(args, 'tool')));
+    register(
+      card(
+        'add_to_route',
+        'Add an article to the reading route (lista de blog posts por leer). Articles: "models" (Small models, thoughtful design / Modelos pequeños, diseño cuidadoso), "browserdj" (Inside BrowserDJ / Dentro de BrowserDJ), "patterns" (From prompts to patterns / De prompts a patrones), "ownership" (Ownership beyond the code / Responsabilidad más allá del código).',
+        schema({
+          articleId: {
+            type: 'string',
+            enum: articles.map(a => a.id),
+            description: 'Article ID: "models" (modelos pequeños / small models), "browserdj", "patterns", or "ownership".'
+          }
+        }),
+        args => add(args, 'tool')
+      )
+    );
   }
 
   if (id === 'consent-cart') {

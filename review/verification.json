@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-11-05T15:07:23.028Z",
+  "checkedAt": "2026-11-05T23:53:31.498Z",
   "checks": [
     {
       "name": "Gallery exposes seven proposals and 21 distinct demo links",
@@ -77,10 +77,6 @@
     {
       "name": "No uncaught page errors across the tested workflows",
       "status": "pass"
-    },
-    {
-      "name": "Focused links and controls preserve normal keyboard activation",
-      "status": "pass"
     }
   ],
   "limitations": [
@@ -97,5 +93,6 @@
     "SemanticEmbedder": "not exposed"
   },
   "canary": "Canary not installed on this machine; contract doubles verified.",
-  "status": "passed"
+  "status": "failed",
+  "error": "locator.focus: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.demo-link')\u001b[22m\n\n    at C:\\Users\\Usuario\\Documents\\projects\\web-technologies-content\\scripts\\verify-keyboard.mjs:11:36"
 }
