@@ -10,7 +10,7 @@ window.CONTENT_TOPICS = [
     rows: [14, 23, 27],
     sources: ['https://developer.chrome.com/docs/ai/webmcp', 'https://github.com/GoogleChromeLabs/webmcp-extension', 'https://github.com/webmachinelearning/webmcp-types', 'https://github.com/webmachinelearning/webmcp/pull/253', 'https://github.com/webmachinelearning/webmcp/issues/176'],
     demos: [
-      {id:'reading-route', title:'Shared State (add_to_route)', hook:'Register a page tool that mutates the same reading list used by UI buttons.', action:'Run add_to_route from the tool console, remove the item via the UI button, then test an invalid articleId.', lesson:'UI controls and WebMCP tools should share one validation and state layer.'},
+      {id:'reading-route', title:'Reading List · Blog posts to read', hook:'Register a page tool that mutates the same reading list used by UI buttons.', action:'Ask the agent or use the UI buttons to add the small models article to your reading list.', lesson:'UI controls and WebMCP tools should share one validation and state layer.'},
       {id:'consent-cart', title:'User Confirmation Gate', hook:'Pause a tool execution Promise until the user clicks Confirm or Reject.', action:'Stage a request, click Reject to verify nothing commits, then stage again and click Confirm.', lesson:'consequentialHint is metadata only; confirmation must be enforced in application code.'},
       {id:'tool-observatory', title:'Schema & Error Inspector', hook:'Inspect registered JSON Schemas, debugging annotations, and error responses.', action:'Run a valid query, test an empty query vs. malformed JSON, and toggle debugging tools.', lesson:'Distinguish JSON parsing errors from recoverable application errors.'}
     ]

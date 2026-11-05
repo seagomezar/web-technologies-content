@@ -30,9 +30,9 @@
     "demos": [
       {
         "id": "reading-route",
-        "title": "Shared State (add_to_route)",
+        "title": "Reading List · Blog posts to read",
         "hook": "Register a page tool that mutates the same reading list used by UI buttons.",
-        "action": "Run add_to_route from the tool console, remove the item via the UI button, then test an invalid articleId.",
+        "action": "Ask the agent or use the UI buttons to add the small models article to your reading list.",
         "lesson": "UI controls and WebMCP tools should share one validation and state layer."
       },
       {

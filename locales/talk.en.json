@@ -197,17 +197,13 @@
     },
     {
       "id": "demo-route",
-      "title": "Shared State:<br>add_to_route.",
-      "subtitle": "Add via the WebMCP tool, remove via the DOM button.",
-      "demoTitle": "Shared State (add_to_route)",
-      "steps": [
-        "Call add_to_route with {\"articleId\":\"models\"} and verify the counter increments to 1.",
-        "Remove that article using the DOM “Remove” button to confirm both share the same state array.",
-        "Pass {\"articleId\":\"missing\"} and inspect the structured UNKNOWN_ARTICLE error (retryable: true)."
-      ],
+      "title": "Reading List: add_to_route.",
+      "subtitle": "Add blog posts to read via the agent or via the UI.",
+      "demoTitle": "Reading List · Blog posts to read",
+      "steps": [],
       "builds": [],
       "notes": [
-        "Open Reading Route. Explain that the catalog metadata is curated sample content. First add Small models from the local console with articleId models. The visible route receives the article. Then remove that same article with the ordinary button.\n\nTry an unknown identifier to show a useful error. The console calls the function directly; it does not simulate language understanding. With a prepared WebMCP browser, inspect the registered tool or use a compatible agent.\n\nContingency: if the agent or API is unavailable, continue with the console and explain the difference explicitly. The demo checks the contract and shared state."
+        "Open the Reading List demo embedded in the slide or in a full tab. If the WebMCP flag is not enabled in the browser, the demo automatically displays the 3 steps to enable chrome://flags. When add_to_route is invoked for the 'small models' article, the reading list updates live with direct visual feedback."
       ]
     },
     {

@@ -30,9 +30,9 @@
     "demos": [
       {
         "id": "reading-route",
-        "title": "Estado compartido (add_to_route)",
+        "title": "Lista de lectura · Blog posts por leer",
         "hook": "Registra una herramienta de página que modifica la misma lista de lectura que usan los botones de la interfaz.",
-        "action": "Ejecuta add_to_route desde la consola, elimina el elemento con el botón de la interfaz y prueba un articleId inválido.",
+        "action": "Pídele al agente o usa los botones de la interfaz para agregar el artículo sobre modelos pequeños a tu lista por leer.",
         "lesson": "Los controles de la interfaz y las herramientas WebMCP deben compartir una sola capa de validación y estado."
       },
       {

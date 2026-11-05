@@ -107,6 +107,10 @@ callTool("add_to_route", {
     }
     if(slide.kind==='demo'){
       const openLabel=I18N.lang==='es'?`Abrir ${slide.demoTitle} ↗`:`Open ${slide.demoTitle} ↗`;
+      if(slide.demo==='reading-route'){
+        const shortOpen=I18N.lang==='es'?'Abrir demo ↗':'Open demo ↗';
+        return `<div class="demo-embed-header"><div><p class="eyebrow">Demo ${slide.number} · ${escape(slide.demo)}.html</p><h2 class="single-line">${clean(slide.title)}</h2><p class="subhead">${slide.subtitle}</p></div><a class="demo-link" href="${I18N.url('../demos/'+slide.demo+'.html')}" target="_blank" rel="noopener">${escape(shortOpen)}</a></div><div class="demo-embed-wrap"><iframe class="demo-embed-frame" src="${I18N.url('../demos/'+slide.demo+'.html')}" title="${escape(slide.demoTitle)}"></iframe></div>`;
+      }
       const steps=slide.steps?.length?`<ol class="demo-steps">${slide.steps.map(s=>`<li>${escape(s)}</li>`).join('')}</ol>`:'';
       return `<div class="demo-header"><div><p class="eyebrow">Demo ${slide.number} · ${escape(slide.demo)}.html</p><h2>${slide.title}</h2><p class="subhead">${slide.subtitle}</p></div><a class="demo-link" href="${I18N.url('../demos/'+slide.demo+'.html')}" target="_blank" rel="noopener">${escape(openLabel)}</a></div>${steps}`;
     }
@@ -138,7 +142,7 @@ callTool("add_to_route", {
     const slide=slides[state.index];
     document.body.style.setProperty('--slide-bg',slide.background||'var(--paper)');
     const stepSuffix=slide.builds.length?` · ${I18N.lang==='es'?'paso':'step'} ${state.step}/${slide.builds.length}`:'';
-    viewport.innerHTML=`<article class="slide" aria-label="${state.index+1} de ${slides.length}"><div class="panel-shape" aria-hidden="true"></div><div class="lockup" aria-label="Web @DevFest ${escape(city)}"><span class="brace" aria-hidden="true">{</span><div class="lockup-copy">Web<br><strong>@DevFest</strong><div class="city">${escape(city)}</div></div><span class="brace" aria-hidden="true">}</span></div><div class="slide-content ${slide.kind==='code'?'code-slide':slide.kind==='title'?'title-slide':slide.kind==='diagram'||slide.kind==='flow'||slide.kind==='steps'||slide.kind==='demo'||slide.kind==='statement'?'wide':''}">${body(slide)}</div><span class="slide-number">${String(state.index+1).padStart(2,'0')} / ${slides.length}${stepSuffix}</span><img class="gdg-logo" src="assets/gdg-logo.png" alt="Google Developer Groups"></article>`;
+    viewport.innerHTML=`<article class="slide" aria-label="${state.index+1} de ${slides.length}"><div class="panel-shape" aria-hidden="true"></div><div class="lockup" aria-label="Web @DevFest ${escape(city)}"><span class="brace" aria-hidden="true">{</span><div class="lockup-copy">Web<br><strong>@DevFest</strong><div class="city">${escape(city)}</div></div><span class="brace" aria-hidden="true">}</span></div><div class="slide-content ${slide.kind==='code'?'code-slide':slide.kind==='title'?'title-slide':slide.kind==='demo'&&slide.demo==='reading-route'?'demo-embed-slide':slide.kind==='diagram'||slide.kind==='flow'||slide.kind==='steps'||slide.kind==='demo'||slide.kind==='statement'?'wide':''}">${body(slide)}</div><span class="slide-number">${String(state.index+1).padStart(2,'0')} / ${slides.length}${stepSuffix}</span><img class="gdg-logo" src="assets/gdg-logo.png" alt="Google Developer Groups"></article>`;
     document.title=`${state.index+1}. ${clean(slide.title)} | ${TALK.title}`;
     const progress=document.querySelector('#progress');
     if(progress){
@@ -194,7 +198,7 @@ callTool("add_to_route", {
     if(event.key.toLowerCase()==='c')document.body.classList.toggle('hide-controls');
     if(event.key.toLowerCase()==='f'){if(document.fullscreenElement)document.exitFullscreen?.();else document.documentElement.requestFullscreen?.();}
   });
-  viewport.addEventListener('click',event=>{if(event.target.closest('a,button,input,select,textarea'))return;if(window.getSelection?.()?.toString())return;next();});
+  viewport.addEventListener('click',event=>{if(event.target.closest('a,button,input,select,textarea,iframe,.demo-embed-wrap'))return;if(window.getSelection?.()?.toString())return;next();});
   viewport.addEventListener('touchstart',event=>{if(event.touches.length===1){touchStartX=event.touches[0].clientX;touchStartY=event.touches[0].clientY;}},{passive:true});
   viewport.addEventListener('touchend',event=>{
     if(touchStartX===null||event.changedTouches.length!==1)return;

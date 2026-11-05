@@ -4,18 +4,21 @@
   const $$ = (q, root = document) => [...root.querySelectorAll(q)];
   const esc = value => String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const id = document.body.dataset.demo;
+  if (window.self !== window.top || new URLSearchParams(location.search).get('embed') === '1') {
+    document.body.classList.add('is-embedded');
+  }
   const topic = CONTENT_TOPICS.find(t => t.demos.some(d => d.id === id));
   const demo = topic?.demos.find(d => d.id === id);
   if (!demo) return;
   document.documentElement.style.setProperty('--accent', topic.color);
   document.title = demo.title + ' | ' + I18N.text('Web AI Lab');
-  $('#title').textContent = demo.title;
-  $('#hook').textContent = demo.hook;
-  $('#topic').textContent = topic.title;
-  $('#lesson').textContent = demo.lesson;
-  $('#sources').innerHTML = topic.sources.map((u,i) => `<li><a href="${esc(u)}" target="_blank" rel="noreferrer">Reference ${i+1}: ${esc(new URL(u).hostname + new URL(u).pathname)}</a></li>`).join('');
+  if ($('#title')) $('#title').textContent = demo.title;
+  if ($('#hook')) $('#hook').textContent = demo.hook;
+  if ($('#topic')) $('#topic').textContent = topic.title;
+  if ($('#lesson')) $('#lesson').textContent = demo.lesson;
+  if ($('#sources')) $('#sources').innerHTML = topic.sources.map((u,i) => `<li><a href="${esc(u)}" target="_blank" rel="noreferrer">Reference ${i+1}: ${esc(new URL(u).hostname + new URL(u).pathname)}</a></li>`).join('');
   const introNode = $('.intro');
-  if (introNode && !$('#demo-guide')) {
+  if (introNode && !$('#demo-guide') && id !== 'reading-route') {
     const nav = document.createElement('nav');
     nav.id = 'demo-guide';
     nav.className = 'demo-switcher';
@@ -25,7 +28,7 @@
     introNode.append(nav);
   }
   const app = $('#app');
-  const status = (message, error = false) => { const node=$('#status'); node.textContent=I18N.text(message); node.classList.toggle('error',error); };
+  const status = (message, error = false) => { const node=$('#status'); if (!node) return; node.textContent=I18N.text(message); node.classList.toggle('error',error); };
   const panel = (title, body, extra='') => `<section class="panel ${extra}"><h2>${title}</h2>${body}</section>`;
   const output = (title='Output') => panel(title,'<span class="result-label" id="mode-label">Ready</span><div id="result" class="output" aria-live="polite">Run an action to inspect the output.</div>');
   const result = (value, label) => { if($('#mode-label')) $('#mode-label').textContent=label; $('#result').textContent=typeof value==='string'?value:JSON.stringify(value,null,2); };

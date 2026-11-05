@@ -36,12 +36,8 @@ TALK.slides.push(
     'Esa función valida el identificador, evita duplicados y actualiza la lista. El estado y las reglas siguen siendo responsabilidad de la aplicación.',
     'El callback de la herramienta usa esa misma función. La conexión al navegador es una capa pequeña alrededor de lógica que ya tiene sentido para la persona.'
   ],builds:['Una función de aplicación','Un segundo punto de entrada']},
-  {id:'demo-route',kind:'demo',number:'01',title:'Estado compartido:<br>add_to_route.',subtitle:'Añadir desde la herramienta, eliminar desde el botón del DOM.',demo:'reading-route',demoTitle:'Estado compartido (add_to_route)',steps:[
-    'Ejecutar add_to_route con {"articleId":"models"} y verificar que el contador sube a 1.',
-    'Eliminar ese artículo con el botón «Quitar» del DOM para confirmar que comparten el mismo array.',
-    'Enviar {"articleId":"missing"} y observar el retorno UNKNOWN_ARTICLE con retryable: true.'
-  ],minutes:2.5,builds:[],notes:[
-    'Abre Ruta de lectura. Explica que los metadatos del catálogo son ejemplos curados. Primero añade Modelos pequeños desde la consola local con articleId models. La ruta visible recibe el artículo. Después elimina ese mismo artículo con el botón ordinario.\n\nPrueba un identificador inexistente para mostrar el error útil. La consola llama directamente la función; no simula comprensión del lenguaje. Si has preparado un navegador con WebMCP, muestra la herramienta registrada con el inspector o con un agente compatible.\n\nPlan de contingencia: si el agente o la API no están disponibles, continúa con la consola y explica la diferencia de forma explícita. El objetivo de la demo es comprobar el contrato y el estado compartido.'
+  {id:'demo-route',kind:'demo',number:'01',title:'Lista de lectura: add_to_route.',subtitle:'Agrega blog posts por leer desde el agente o desde la interfaz.',demo:'reading-route',demoTitle:'Lista de lectura · Blog posts por leer',steps:[],minutes:2.5,builds:[],notes:[
+    'Abre el demo de Lista de lectura embebido en la diapositiva o en pestaña completa. Si la flag de WebMCP no está activa en el navegador, el demo muestra automáticamente los 3 pasos para habilitar chrome://flags. Al invocar add_to_route con el artículo sobre "modelos pequeños", la lista de blog posts por leer se actualiza en vivo con feedback visual directo.'
   ]},
   {
     "id": "errors",

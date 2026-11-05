@@ -3,7 +3,14 @@
 /* Navigation control bar - visible by default so slide navigation is always clear */
 .controlbar{position:fixed;bottom:12px;right:16px;display:flex;align-items:center;gap:6px;opacity:.94;transition:opacity .2s;z-index:20;background:#ffffffeb;padding:6px 8px;border:1.5px solid var(--ink);border-radius:12px;box-shadow:0 4px 14px #0002}.controlbar:hover,.controlbar:focus-within{opacity:1}body.hide-controls .controlbar,body.embedded-preview .controlbar,body.embedded-preview .key-help,body.embedded-preview .language-switch{display:none!important}.controlbar button,.controlbar select{font:600 13px/1.2 'Google Sans',Arial,sans-serif;border:1.5px solid var(--ink);border-radius:8px;background:#fff;color:#1e1e1e;padding:7px 11px;cursor:pointer}.controlbar button:hover:not(:disabled),.controlbar select:hover{background:var(--pastel-blue)}.controlbar button:disabled{opacity:.4;cursor:default}.controlbar select{max-width:210px;font-weight:400}.step-status{font:400 12px/1 'Roboto Mono',monospace;padding:5px 8px;background:var(--pastel-yellow);border:1px solid var(--ink);border-radius:6px;white-space:nowrap}.controlbar button:focus-visible,.controlbar select:focus-visible,.demo-link:focus-visible,.resource-pill:focus-visible{outline:4px solid #4285f4;outline-offset:4px}.progress-rail{position:fixed;left:0;bottom:0;width:100%;height:5px;background:#0002;z-index:19}.progress-rail span{display:block;height:100%;background:#4285f4;transition:width .2s}.key-help{position:fixed;left:16px;bottom:14px;font:12px 'Roboto Mono',monospace;opacity:.75;background:#ffffffd9;padding:4px 10px;border-radius:6px;border:1px solid #ccc;z-index:15;pointer-events:none}body.hide-controls .key-help{opacity:0}.mockup-label{position:fixed;top:10px;left:16px;font:12px 'Roboto Mono',monospace;z-index:9;background:#fff;padding:6px 10px;border:1px solid #999;border-radius:20px}
 /* Code fits the tall right side of the organizer's notched panel. */
-.slide-content.code-slide{inset:0;display:block}
+.slide-content.code-slide,.slide-content.demo-embed-slide{inset:0;display:block}
+.demo-embed-header{position:absolute;left:590px;right:110px;top:92px;display:flex;justify-content:space-between;align-items:center;gap:18px}
+.demo-embed-header .eyebrow{font-size:17px;margin-bottom:2px}
+.demo-embed-header h2.single-line{font-size:38px;line-height:1.08;margin:0 0 4px}
+.demo-embed-header .subhead{font-size:19px;line-height:1.25}
+.demo-embed-header .demo-link{font-size:19px;padding:9px 18px}
+.demo-embed-wrap{position:absolute;left:110px;right:110px;top:298px;height:442px;border:2.5px solid var(--ink);border-radius:20px;overflow:hidden;background:#fff;box-shadow:6px 6px 0 var(--pastel-blue)}
+.demo-embed-frame{width:100%;height:100%;border:0;display:block}
 .code-copy{position:absolute;left:120px;top:310px;width:445px;height:420px;display:flex;flex-direction:column;justify-content:center;gap:18px}
 .code-copy h2{font-size:50px;line-height:1.08}
 .code-copy .subhead{font-size:23px;line-height:1.32;letter-spacing:-.02em}
