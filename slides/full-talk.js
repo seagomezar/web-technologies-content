@@ -1,10 +1,28 @@
 /* Expanded after the three opening mockups were rendered and shown. */
 TALK.slides.push(
+  {id:'intent',kind:'diagram',title:'¿Por qué WebMCP en lugar<br>de scrapear el DOM?',subtitle:'Prompt del usuario final: <strong>«Agrega a mi ruta el artículo sobre modelos pequeños»</strong>',minutes:1.5,diagram:[
+    {title:'1. Hoy: Scraping del DOM',body:'El agente busca ese texto en tu HTML, adivina qué botón clicar (.btn-add) y se rompe si cambias la UI.',color:'yellow'},
+    {title:'2. Con WebMCP: Tu contrato',body:'Tú (el dev) expones add_to_route({ articleId: "models" }) en modelContext. El agente llama tu función directa.',color:'blue',step:1},
+    {title:'3. Valor: UI y control humano',body:'Tu app ejecuta su propia lógica sin duplicar código, actualiza el DOM en vivo y exige confirmación si hay riesgo.',color:'green',step:2}
+  ],notes:[
+    'Hoy, cuando el usuario final le pide una tarea a un agente en el navegador, el agente suele raspar el DOM o adivinar en qué coordenada hacer clic. Si cambias una clase CSS, el orden de los elementos o el idioma, el flujo se rompe.',
+    'El agente necesita una acción acotada, como añadir un artículo. Con WebMCP, tú como desarrollador registras esa función en document.modelContext con un esquema JSON explícito para que el agente la invoque sin adivinar selectores.',
+    'El valor para el desarrollador y para el usuario final es directo: no construyes un backend paralelo ni otra UI. Se ejecuta la misma función de tu aplicación, el DOM se actualiza en vivo frente al usuario y él conserva el control.'
+  ],builds:['Una herramienta','Una página compartida']},
+  {id:'shared-function',kind:'diagram',title:'Un solo callback<br>para la UI y el agente.',subtitle:'El botón del DOM y document.modelContext llaman a la misma función.',minutes:2,diagram:[
+    {title:'Evento de UI (click)',body:'El usuario pulsa «Añadir» en la tarjeta del artículo.',color:'blue'},
+    {title:'addToRoute(args)',body:'Valida ID, previene duplicados y vuelve a renderizar la vista.',color:'yellow',step:1},
+    {title:'registerTool({ execute })',body:'El navegador invoca exactamente el mismo callback de aplicación.',color:'green',step:2,arrow:'←'}
+  ],notes:[
+    'El botón de añadir llama una función de la aplicación. No tenemos que crear una segunda aplicación para el agente.',
+    'Esa función valida el identificador, evita duplicados y actualiza la lista. El estado y las reglas siguen siendo responsabilidad de la aplicación.',
+    'El callback de la herramienta usa esa misma función. La conexión al navegador es una capa pequeña alrededor de lógica que ya tiene sentido para la persona.'
+  ],builds:['Una función de aplicación','Un segundo punto de entrada']},
   {id:'demo-route',kind:'demo',number:'01',title:'Estado compartido:<br>add_to_route.',subtitle:'Añadir desde la herramienta, eliminar desde el botón del DOM.',demo:'reading-route',demoTitle:'Estado compartido (add_to_route)',steps:[
     'Ejecutar add_to_route con {"articleId":"models"} y verificar que el contador sube a 1.',
     'Eliminar ese artículo con el botón «Quitar» del DOM para confirmar que comparten el mismo array.',
     'Enviar {"articleId":"missing"} y observar el retorno UNKNOWN_ARTICLE con retryable: true.'
-  ],minutes:4,builds:[],notes:[
+  ],minutes:3,builds:[],notes:[
     'Abre Ruta de lectura. Explica que los metadatos del catálogo son ejemplos curados. Primero añade Modelos pequeños desde la consola local con articleId models. La ruta visible recibe el artículo. Después elimina ese mismo artículo con el botón ordinario.\n\nPrueba un identificador inexistente para mostrar el error útil. La consola llama directamente la función; no simula comprensión del lenguaje. Si has preparado un navegador con WebMCP, muestra la herramienta registrada con el inspector o con un agente compatible.\n\nPlan de contingencia: si el agente o la API no están disponibles, continúa con la consola y explica la diferencia de forma explícita. El objetivo de la demo es comprobar el contrato y el estado compartido.'
   ]},
   {
@@ -84,7 +102,7 @@ TALK.slides.push(
     'Preparar una solicitud de 2 entradas: el panel de revisión se actualiza sin añadir registros confirmados.',
     'Pulsar «Rechazar» para comprobar que la promesa se resuelve como rejected sin efectos secundarios.',
     'Preparar de nuevo y pulsar «Confirmar»: solo el evento click del usuario confirma el estado.'
-  ],minutes:4,builds:[],notes:[
+  ],minutes:3,builds:[],notes:[
     'Abre El último clic. Aclara que todos los tickets son ficticios: no se hace una reserva, un cobro ni una petición a un servicio externo. Prepara dos tickets y muestra que no existe una solicitud confirmada. Rechaza la propuesta.\n\nPrepara una segunda solicitud y confirma con el botón visible. El historial local cambia solo después de esa decisión. Una anotación describe el tipo de acción para el cliente que consume herramientas; la aplicación debe seguir imponiendo su propia frontera de revisión.\n\nSi tienes un cliente WebMCP preparado, muestra la herramienta que solicita la revisión. Nunca presentes la alerta del cliente como una propiedad garantizada de todos los agentes.'
   ]},
   {

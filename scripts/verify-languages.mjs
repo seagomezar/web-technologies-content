@@ -39,8 +39,8 @@ try{
   await load(page,'demos/iframe-passport.html',lang);await click(page,'#load');await page.waitForFunction(()=>document.querySelector('#probe-result').textContent.includes('languageModelPolicyAllowed'));assert.equal(new URL(await page.locator('#probe').getAttribute('src')).searchParams.get('lang'),lang);assert.equal(await page.frameLocator('#probe').locator('html').getAttribute('lang'),lang);
   record(`${lang}: route, review, select values, validation errors, evaluation metrics and second-origin navigation work`);
   await page.goto(`${base}/slides/index.html?lang=${lang}&city=Bogot%C3%A1&minutes=35&session=language-${lang}#3.2`);
-  assert.equal(await page.evaluate(()=>TALK.language),lang);assert.equal(await page.evaluate(()=>TALK.slides.length),16);assert.equal(await page.evaluate(()=>TALK.slides.reduce((n,s)=>n+s.minutes,0)),30);assert.deepEqual(await page.evaluate(()=>TALK.slides.filter(s=>s.notes.length!==s.builds.length+1).map(s=>s.id)),[]);
-  for(let i=0;i<16;i++){
+  assert.equal(await page.evaluate(()=>TALK.language),lang);assert.equal(await page.evaluate(()=>TALK.slides.length),18);assert.equal(await page.evaluate(()=>TALK.slides.reduce((n,s)=>n+s.minutes,0)),30);assert.deepEqual(await page.evaluate(()=>TALK.slides.filter(s=>s.notes.length!==s.builds.length+1).map(s=>s.id)),[]);
+  for(let i=0;i<18;i++){
    await page.evaluate(i=>deck.navigate(i,TALK.slides[i].builds.length,false),i);
    const outside=await page.evaluate(()=>{const bounds=document.querySelector('.slide').getBoundingClientRect();return [...document.querySelectorAll('.slide-content h1,.slide-content h2,.slide-content p,.diagram-card,.demo-link,.demo-steps,.spec-list,.resource-links')].filter(e=>{const r=e.getBoundingClientRect();return r.left<bounds.left-1||r.right>bounds.right+1||r.top<bounds.top-1||r.bottom>bounds.bottom+1;}).map(e=>e.textContent);});assert.deepEqual(outside,[],`${lang}: slide ${i+1} bounds`);
   }
@@ -49,7 +49,7 @@ try{
   const switchHref=await page.locator(`.language-switch a[lang="${lang==='es'?'en':'es'}"]`).getAttribute('href');const u=new URL(switchHref);assert.equal(u.hash,'#2.2');assert.equal(u.searchParams.get('city'),'Bogotá');assert.equal(u.searchParams.get('minutes'),'35');
   await page.evaluate(()=>deck.navigate(0,0,false));await page.screenshot({path:resolve(root,`review/deck-${lang}.png`)});
   await load(page,'slides/mockups.html',lang);assert.equal(await page.evaluate(()=>TALK.slides.length),3);
-  record(`${lang}: all 16 slides fit, all notes match builds, presenter script and previews use the same language`);
+  record(`${lang}: all 18 slides fit, all notes match builds, presenter script and previews use the same language`);
  }
  const fake=await browser.newContext({reducedMotion:'reduce'});await contractDoubles(fake);const f=await fake.newPage();f.on('pageerror',e=>errors.push(e.message));
  const nativeCases=[['model-concierge','#inspect',async()=>{await click(f,'[data-prepare="LanguageModel"]');}],['stream-garden','#live'],['meaning-compass','#semantic'],['duplicate-constellation','#native'],['evidence-window','#native',async()=>{await click(f,'#draft');}],['latency-lens','#live'],['preference-kitchen','#fix',async()=>{await click(f,'#live');}],['context-backpack','#measure'],['voice-remix','#live'],['release-kitchen','#live'],['recipe-arena','#compare'],['bilingual-relay','#translate'],['language-radar','#detect'],['proofread-review','#proofread'],['issue-router','#native'],['comment-airlock','#native'],['abstention-lab','#native']];

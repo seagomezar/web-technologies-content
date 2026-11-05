@@ -19,6 +19,90 @@
       ]
     },
     {
+      "id": "mcp-vs-webmcp",
+      "title": "Server MCP vs.<br>Browser WebMCP.",
+      "subtitle": "Where the tool runs defines who holds the session and who sees the result.",
+      "lanes": [
+        {
+          "title": "Traditional MCP · Server / Backend",
+          "verdict": "No shared screen or browser session",
+          "verdictTone": "warn",
+          "tone": "yellow",
+          "nodes": [
+            { "title": "1. User", "sub": "Prompts external client" },
+            { "edge": "prompt", "title": "2. LLM Client", "sub": "Claude · IDE · CLI" },
+            { "edge": "JSON-RPC", "title": "3. MCP Server", "sub": "Separate service & auth" },
+            { "edge": "API / SQL", "title": "4. Database", "sub": "Open web tab stays unaware" }
+          ]
+        },
+        {
+          "title": "WebMCP · Inside the active browser tab",
+          "verdict": "Same session & live DOM",
+          "verdictTone": "ok",
+          "tone": "blue",
+          "step": 1,
+          "nodes": [
+            { "title": "1. End User", "sub": "With your web app open" },
+            { "edge": "prompt", "title": "2. Browser Agent", "sub": "Built-in or connected LLM" },
+            { "edge": "modelContext", "title": "3. Your Web App (JS)", "sub": "Reuses your frontend code" },
+            { "edge": "render", "title": "4. Live DOM", "sub": "Sees & confirms on screen" }
+          ]
+        }
+      ],
+      "builds": [
+        "A tool",
+        "A shared page"
+      ],
+      "notes": [
+        "Before looking at code, let's clarify a key question: how does WebMCP differ from traditional backend MCP? In traditional MCP, the agent talks to a separate server; the user's open web tab never sees what happened, and you have to maintain a second service and auth flow.",
+        "The agent needs to act where the person already is. With WebMCP, tools are registered inside the active browser tab, reusing the user's authenticated session and your frontend state.",
+        "When the tool executes, it updates the exact same DOM the end user is looking at, without duplicating backend services or building a second UI."
+      ]
+    },
+    {
+      "id": "browser-broker",
+      "title": "Which LLM or agent<br>sends the prompt?",
+      "subtitle": "WebMCP is model-agnostic: the browser acts as the broker to your active tab.",
+      "sources": [
+        {
+          "title": "Option A · Built-in Browser LLM",
+          "color": "blue",
+          "chips": ["Gemini in Chrome", "Gemini Nano", "Gemma 4"],
+          "body": "The user types the prompt in the browser side panel; the model runs locally on-device or in the browser cloud."
+        },
+        {
+          "title": "Option B · Connected External Agent",
+          "color": "yellow",
+          "step": 1,
+          "chips": ["Claude", "Antigravity", "Codex", "Cursor"],
+          "body": "An external agent connects to the browser via an MCP extension/bridge instead of scraping with Playwright."
+        }
+      ],
+      "hub": {
+        "badge": "BROWSER BROKER",
+        "title": "navigator.modelContext",
+        "points": [
+          "Discovers tools from the active tab",
+          "Validates arguments against JSON Schema",
+          "Serves both local and external LLMs"
+        ]
+      },
+      "target": {
+        "badge": "YOUR WEB APP",
+        "title": "registerTool({ execute })",
+        "body": "Executes your JS function inside the user's active session and updates the live DOM in real time."
+      },
+      "builds": [
+        "Two prompt origins",
+        "Execution in your tab"
+      ],
+      "notes": [
+        "Second key question: where does the end user type that prompt? In a browser LLM like Gemini Nano or Gemma 4, or in an external agent like Claude, Antigravity, or Codex? WebMCP supports both because it is model-agnostic.",
+        "In Option A, the user prompts an in-browser assistant powered by Gemini Nano, Gemma 4, or Gemini in Chrome. In Option B, an external agent like Claude, Antigravity, or Codex connects to the browser tab via an extension or MCP bridge.",
+        "In both cases, the browser acts as the broker via navigator.modelContext: it validates the JSON contract and invokes your function directly inside the active tab."
+      ]
+    },
+    {
       "id": "intent",
       "title": "Why WebMCP instead<br>of scraping the DOM?",
       "subtitle": "End-user prompt: <strong>“Add the article about small models to my reading route”</strong>",
