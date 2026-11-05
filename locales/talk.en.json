@@ -68,19 +68,13 @@
     {
       "id": "browser-broker",
       "title": "Which LLM or agent sends the prompt?",
+      "agentComment": "Gemini Nano / Chrome",
       "sources": [
         {
           "title": "Option A · Built-in Browser LLM",
           "color": "blue",
           "chips": ["Gemini in Chrome", "Gemini Nano", "Gemma 4"],
           "body": "The user types the prompt in the browser side panel; the model runs locally on-device or in the browser cloud."
-        },
-        {
-          "title": "Option B · Connected External Agent",
-          "color": "yellow",
-          "step": 1,
-          "chips": ["Claude", "Antigravity", "Codex", "Cursor"],
-          "body": "An external agent connects to the browser via an MCP extension/bridge instead of scraping with Playwright."
         }
       ],
       "hub": {
@@ -89,7 +83,7 @@
         "points": [
           "Discovers tools from the active tab",
           "Validates arguments against JSON Schema",
-          "Serves both local and external LLMs"
+          "Executes in your page's context"
         ]
       },
       "target": {
@@ -97,14 +91,41 @@
         "title": "registerTool({ execute })",
         "body": "Adds the article about \"small models\" to your blog posts reading list in the live DOM."
       },
-      "builds": [
-        "Two prompt origins",
-        "Execution in your tab"
-      ],
+      "builds": [],
       "notes": [
-        "Second key question: where does the end user type that prompt? In a browser LLM like Gemini Nano or Gemma 4, or in an external agent like Claude, Antigravity, or Codex? WebMCP supports both because it is model-agnostic.",
-        "In Option A, the user prompts an in-browser assistant powered by Gemini Nano, Gemma 4, or Gemini in Chrome. In Option B, an external agent like Claude, Antigravity, or Codex connects to the browser tab via an extension or MCP bridge.",
-        "In both cases, the browser acts as the broker via navigator.modelContext: it validates the JSON contract and invokes your function directly inside the active tab."
+        "First option for sending the prompt: a built-in browser LLM such as Gemini in Chrome, Gemini Nano, or Gemma 4. The user types the prompt in the browser panel and navigator.modelContext invokes your tool in the active tab."
+      ]
+    },
+    {
+      "id": "browser-broker-external",
+      "flowOnly": true,
+      "title": "Option B · Connected External Agent.",
+      "agentComment": "Claude / Antigravity",
+      "sources": [
+        {
+          "title": "Option B · Connected External Agent",
+          "color": "yellow",
+          "chips": ["Claude", "Antigravity", "Codex", "Cursor"],
+          "body": "An external agent connects to the browser via an MCP extension/bridge instead of scraping the DOM with Playwright."
+        }
+      ],
+      "hub": {
+        "badge": "BROWSER BROKER",
+        "title": "navigator.modelContext",
+        "points": [
+          "Discovers tools from the active tab",
+          "Validates arguments against JSON Schema",
+          "Also serves connected external agents"
+        ]
+      },
+      "target": {
+        "badge": "YOUR WEB APP",
+        "title": "registerTool({ execute })",
+        "body": "Adds the article about \"small models\" to your blog posts reading list in the live DOM."
+      },
+      "builds": [],
+      "notes": [
+        "Second option: an external agent such as Claude, Antigravity, Codex, or Cursor connected to the browser via an extension or MCP bridge. Instead of scraping the DOM with Playwright, it calls the exact same tool registered in navigator.modelContext."
       ]
     },
     {

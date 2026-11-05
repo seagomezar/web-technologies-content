@@ -18,7 +18,7 @@ try{
   for(const lang of ['en','es']){
     await page.goto(`${base}/slides/index.html?lang=${lang}&session=code-${lang}`);await page.evaluate(()=>document.fonts.ready);
     const examples=await page.evaluate(()=>TALK.slides.flatMap((slide,index)=>slide.kind==='code'?[{...slide,index}]:[]));
-    assert.equal(examples.length,6);assert.equal(await page.evaluate(()=>TALK.slides.length),19);assert.equal(await page.evaluate(()=>TALK.slides.reduce((n,s)=>n+s.minutes,0)),30);
+    assert.equal(examples.length,6);assert.equal(await page.evaluate(()=>TALK.slides.length),20);assert.equal(await page.evaluate(()=>TALK.slides.reduce((n,s)=>n+s.minutes,0)),30);
     for(const size of [{width:1600,height:900},{width:1280,height:720},{width:900,height:1100}]){
       await page.setViewportSize(size);
       for(const slide of examples){
@@ -68,7 +68,7 @@ try{
     record(`${lang}: presenter notes, preview highlights, keyboard links and reload-persistent builds work on code slides`);
   }
   const offline=await browser.newContext({offline:true,reducedMotion:'reduce'}),off=await offline.newPage(),network=[];off.on('request',r=>{if(/^https?:/.test(r.url()))network.push(r.url());});
-  for(const lang of ['en','es']){const u=pathToFileURL(resolve(root,'slides/index.html'));u.search='?lang='+lang;u.hash='#9.1';await off.goto(u.href);await off.evaluate(()=>document.fonts.ready);assert.equal(await off.evaluate(()=>TALK.slides[deck.getState().index].kind),'code');assert(await off.evaluate(()=>document.fonts.check('400 32px "Roboto Mono"')));await off.keyboard.press('PageDown');assert.equal(await off.evaluate(()=>deck.getState().step),2);assert(await off.locator('.code-line.is-focused[data-line="10"]').count());}
+  for(const lang of ['en','es']){const u=pathToFileURL(resolve(root,'slides/index.html'));u.search='?lang='+lang;u.hash='#10.1';await off.goto(u.href);await off.evaluate(()=>document.fonts.ready);assert.equal(await off.evaluate(()=>TALK.slides[deck.getState().index].kind),'code');assert(await off.evaluate(()=>document.fonts.check('400 32px "Roboto Mono"')));await off.keyboard.press('PageDown');assert.equal(await off.evaluate(()=>deck.getState().step),2);assert(await off.locator('.code-line.is-focused[data-line="10"]').count());}
   assert.deepEqual(network,[]);record('English and Spanish code slides, regular-weight local fonts and clicker highlights work offline');
 
   try {

@@ -22,14 +22,8 @@
       if(s.flowType==='lanes'){
         flowAnim.lanesStep=(flowAnim.lanesStep+1)%4;
       }else if(s.flowType==='broker'){
-        if(flowAnim.brokerStep<2){
-          flowAnim.brokerStep++;
-          flowAnim.routeAdded=flowAnim.brokerStep===2;
-        }else{
-          flowAnim.brokerStep=0;
-          flowAnim.brokerSource=(flowAnim.brokerSource+1)%2;
-          flowAnim.routeAdded=false;
-        }
+        flowAnim.brokerStep=(flowAnim.brokerStep+1)%3;
+        flowAnim.routeAdded=flowAnim.brokerStep===2;
       }
       const container=viewport.querySelector('.slide-content');
       if(container)container.innerHTML=body(s);
@@ -102,13 +96,13 @@
         return `${heading}<div class="flow-toolbar"><span class="prompt-chip">${geminiSvg}<span>Prompt: <strong>«${escape(promptText)}»</strong></span></span></div><div class="flow-lanes ${slide.flowOnly?'flow-lanes-single':''}">${slide.lanes.map(lane=>{const isWeb=lane.id==='webmcp';const traces=traceById[lane.id]||traceById.legacy;return `<div class="flow-lane ${lane.tone} ${lane.step?'build':''} ${lane.step>state.step?'pending':''}" ${lane.step>state.step?'aria-hidden="true"':''}><div class="flow-lane-head"><strong>${lane.title}</strong><span class="flow-trace-pill ${isWeb&&activeIdx===3?'trace-ok':!isWeb&&activeIdx===3?'trace-warn':''}">${traces[activeIdx]}</span><span class="flow-Verdict ${lane.verdictTone}">${lane.verdict}</span></div><div class="flow-nodes">${lane.nodes.map((n,idx)=>`${idx?`<span class="flow-edge ${idx<=activeIdx?'is-lit':''} ${idx===activeIdx?'is-pulsing':''}"><em>${n.edge||''}</em><span class="edge-track"><span class="edge-dot"></span>→</span></span>`:''}<div class="flow-node ${idx===activeIdx?'is-active-node':idx<activeIdx?'is-visited-node':''}"><span class="flow-node-title">${n.title}</span><span class="flow-node-sub">${n.sub}</span></div>`).join('')}</div></div>`;}).join('')}</div>`;
       }
       if(slide.flowType==='broker'){
-        const srcIdx=flowAnim.brokerSource;
         const bStep=flowAnim.brokerStep;
-        const activeAgentName=srcIdx===0?'Gemini Nano / Chrome':'Claude / Antigravity';
-        return `<h2 class="single-line">${slide.title}</h2><div class="flow-toolbar"><span class="prompt-chip">${geminiSvg}<span>Prompt: <strong>«${escape(promptText)}»</strong></span></span></div><div class="flow-broker"><div class="broker-sources">${slide.sources.map((src,idx)=>`<div class="broker-card ${src.color} ${src.step?'build':''} ${src.step>state.step?'pending':''} ${srcIdx===idx?'is-selected-source':'is-dimmed-source'} ${srcIdx===idx&&bStep===0?'is-active-node':''}" ${src.step>state.step?'aria-hidden="true"':''}><div class="broker-card-head"><strong>${src.title}</strong><span class="source-state-badge">${srcIdx===idx?(es?'ORIGEN ACTIVO':'ACTIVE SOURCE'):(es?'EN ESPERA':'STANDBY')}</span></div><div class="chip-row">${src.chips.map(c=>`<span class="chip">${c}</span>`).join('')}</div><span class="diagram-label">${src.body}</span></div>`).join('')}</div><span class="flow-join build ${state.step<1?'pending':''} ${bStep>=1?'is-lit':''} ${bStep===1?'is-pulsing':''}" aria-hidden="true"><em>prompt</em>⇉</span><div class="broker-hub build ${state.step<1?'pending':''} ${bStep===1?'is-active-node':''}" ${state.step<1?'aria-hidden="true"':''}><span class="hub-badge">${slide.hub.badge}</span><strong>${slide.hub.title}</strong><pre class="hub-code"><code>// ${activeAgentName}
+        const activeAgentName=slide.agentComment||'Gemini Nano / Chrome';
+        const heading=slide.flowOnly?'':`<h2 class="single-line">${slide.title}</h2>`;
+        return `${heading}<div class="flow-toolbar"><span class="prompt-chip">${geminiSvg}<span>Prompt: <strong>«${escape(promptText)}»</strong></span></span></div><div class="flow-broker"><div class="broker-sources">${slide.sources.map(src=>`<div class="broker-card ${src.color} is-selected-source ${bStep===0?'is-active-node':''}"><div class="broker-card-head"><strong>${src.title}</strong></div><div class="chip-row">${src.chips.map(c=>`<span class="chip">${c}</span>`).join('')}</div><span class="diagram-label">${src.body}</span></div>`).join('')}</div><span class="flow-join ${bStep>=1?'is-lit':''} ${bStep===1?'is-pulsing':''}" aria-hidden="true"><em>prompt</em>→</span><div class="broker-hub ${bStep===1?'is-active-node':''}"><span class="hub-badge">${slide.hub.badge}</span><strong>${slide.hub.title}</strong><pre class="hub-code"><code>// ${activeAgentName}
 callTool("add_to_route", {
   articleId: "models"
-}) // ✓ JSON Schema OK</code></pre><ul class="hub-list">${slide.hub.points.map(p=>`<li>${p}</li>`).join('')}</ul></div><span class="flow-join build ${state.step<2?'pending':''} ${bStep>=2?'is-lit':''} ${bStep===2?'is-pulsing':''}" aria-hidden="true"><em>execute</em>→</span><div class="broker-target green build ${state.step<2?'pending':''} ${bStep===2?'is-active-node':''}" ${state.step<2?'aria-hidden="true"':''}><span class="hub-badge">${slide.target.badge}</span><strong>${slide.target.title}</strong><div class="mini-dom-preview"><div class="mini-dom-bar"><span>🌐 reading-route.html</span><strong>${es?'Por leer':'To read'}: ${flowAnim.routeAdded?1:0}</strong></div><div class="mini-dom-body">${flowAnim.routeAdded?`<div class="mini-dom-item"><span>✓ ${es?'Artículo: «Modelos pequeños»':'Article: “Small models”'}</span><span class="mini-dom-btn">${es?'Añadido':'Added'}</span></div>`:`<div class="mini-dom-empty"><span>${es?'Esperando ejecución de tool…':'Waiting for tool execution…'}</span><span class="mini-dom-btn">0</span></div>`}</div></div><span class="diagram-label">${slide.target.body}</span></div></div>`;
+}) // ✓ JSON Schema OK</code></pre><ul class="hub-list">${slide.hub.points.map(p=>`<li>${p}</li>`).join('')}</ul></div><span class="flow-join ${bStep>=2?'is-lit':''} ${bStep===2?'is-pulsing':''}" aria-hidden="true"><em>execute</em>→</span><div class="broker-target green ${bStep===2?'is-active-node':''}"><span class="hub-badge">${slide.target.badge}</span><strong>${slide.target.title}</strong><div class="mini-dom-preview"><div class="mini-dom-bar"><span>🌐 reading-route.html</span><strong>${es?'Por leer':'To read'}: ${flowAnim.routeAdded?1:0}</strong></div><div class="mini-dom-body">${flowAnim.routeAdded?`<div class="mini-dom-item"><span>✓ ${es?'Artículo: «Modelos pequeños»':'Article: “Small models”'}</span><span class="mini-dom-btn">${es?'Añadido':'Added'}</span></div>`:`<div class="mini-dom-empty"><span>${es?'Esperando ejecución de tool…':'Waiting for tool execution…'}</span><span class="mini-dom-btn">0</span></div>`}</div></div><span class="diagram-label">${slide.target.body}</span></div></div>`;
       }
     }
     if(slide.kind==='demo'){

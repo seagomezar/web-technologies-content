@@ -1,17 +1,23 @@
 /* Expanded after the three opening mockups were rendered and shown. */
 TALK.slides.push(
-  {id:'browser-broker',kind:'flow',flowType:'broker',title:'¿Desde qué LLM o agente se envía el prompt?',minutes:1,sources:[
-    {title:'Opción A · LLM integrado en el navegador',color:'blue',chips:['Gemini en Chrome','Gemini Nano','Gemma 4'],body:'El usuario escribe el prompt en el panel del navegador; el modelo corre local o en la nube del browser.'},
-    {title:'Opción B · Agente externo conectado',color:'yellow',step:1,chips:['Claude','Antigravity','Codex','Cursor'],body:'El agente externo se conecta al browser vía extensión o puente MCP en vez de raspar con Playwright.'}
+  {id:'browser-broker',kind:'flow',flowType:'broker',title:'¿Desde qué LLM o agente se envía el prompt?',minutes:0.5,agentComment:'Gemini Nano / Chrome',sources:[
+    {title:'Opción A · LLM integrado en el navegador',color:'blue',chips:['Gemini en Chrome','Gemini Nano','Gemma 4'],body:'El usuario escribe el prompt en el panel lateral del navegador; el modelo corre local en el dispositivo o en la nube del browser.'}
   ],hub:{badge:'BROKER DEL NAVEGADOR',title:'navigator.modelContext',points:[
     'Descubre herramientas de la pestaña activa',
     'Valida argumentos con JSON Schema',
-    'Sirve tanto a LLMs locales como externos'
+    'Ejecuta en el contexto de tu página'
   ]},target:{badge:'TU APLICACIÓN WEB',title:'registerTool({ execute })',body:'Agrega el artículo sobre "modelos pequeños" a tu lista de blog posts por leer en vivo.'},notes:[
-    'Segunda pregunta clave: ¿desde dónde escribe ese prompt el usuario final? ¿Desde Gemini Nano en Chrome o desde Claude, Antigravity o Codex? La respuesta es que WebMCP sirve para ambos porque es agnóstico al modelo.',
-    'En la Opción A, el usuario usa un asistente integrado en el navegador o un modelo local como Gemini Nano o Gemma 4. En la Opción B, usa un agente externo como Claude, Antigravity o Codex conectado al navegador mediante una extensión o puente MCP.',
-    'En ambos casos, el navegador actúa como intermediario a través de navigator.modelContext: valida el contrato JSON y ejecuta tu función directamente en la pestaña abierta.'
-  ],builds:['Dos orígenes de prompt','Ejecución en tu pestaña']},
+    'Primera opción para enviar el prompt: un LLM integrado directamente en el navegador, como Gemini en Chrome, Gemini Nano o Gemma 4. El usuario escribe el prompt en el panel del navegador y navigator.modelContext ejecuta tu herramienta en la pestaña activa.'
+  ],builds:[]},
+  {id:'browser-broker-external',kind:'flow',flowType:'broker',flowOnly:true,title:'Opción B · Agente externo conectado al navegador.',minutes:0.5,agentComment:'Claude / Antigravity',sources:[
+    {title:'Opción B · Agente externo conectado',color:'yellow',chips:['Claude','Antigravity','Codex','Cursor'],body:'El agente externo se conecta al browser vía extensión o puente MCP en vez de raspar el DOM con Playwright.'}
+  ],hub:{badge:'BROKER DEL NAVEGADOR',title:'navigator.modelContext',points:[
+    'Descubre herramientas de la pestaña activa',
+    'Valida argumentos con JSON Schema',
+    'Sirve también a agentes externos conectados'
+  ]},target:{badge:'TU APLICACIÓN WEB',title:'registerTool({ execute })',body:'Agrega el artículo sobre "modelos pequeños" a tu lista de blog posts por leer en vivo.'},notes:[
+    'Segunda opción: un agente externo como Claude, Antigravity, Codex o Cursor conectado al navegador mediante una extensión o puente MCP. En lugar de raspar el DOM con Playwright, invoca la misma herramienta registrada en navigator.modelContext.'
+  ],builds:[]},
   {id:'intent',kind:'diagram',title:'¿Por qué WebMCP en lugar de scrapear el DOM?',subtitle:'<span class="gemini-prompt"><strong>«Quiero que agregues a mi lista de blog posts por leer el artículo sobre "modelos pequeños"»</strong></span>',minutes:1.5,diagram:[
     {title:'1. Hoy: Scraping del DOM',body:'El agente busca «modelos pequeños» en tu HTML, adivina qué botón clicar (.btn-add) y se rompe si cambias la UI.',color:'yellow'},
     {title:'2. Con WebMCP: Tu contrato',body:'Tú (el dev) expones add_to_route({ articleId: "models" }) en modelContext. El agente llama tu función directa.',color:'blue',step:1},
