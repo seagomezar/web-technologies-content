@@ -14,9 +14,9 @@ window.TALK = {
       'La página web ya sabe hacer cosas: buscar, filtrar, preparar una ruta de lectura. La pregunta es cómo ofrecer esas mismas acciones a un agente sin perder la interfaz que una persona entiende. Esta charla empieza con una necesidad concreta: elegir qué leer antes de una charla.',
       'Presenta el alcance: WebMCP sigue siendo una propuesta experimental. Los demos tienen un panel local para explorar las mismas funciones incluso cuando el navegador no ofrece la API. Ese panel no es un agente de IA.'
     ],builds:[]},
-    {id:'intent',kind:'diagram',title:'¿Por qué WebMCP en lugar<br>de scrapear el DOM?',subtitle:'Cuando el usuario final le pide una tarea a su agente de IA dentro de tu web:',minutes:1.5,diagram:[
-      {title:'1. Hoy: Scraping del DOM',body:'El agente lee tu HTML/CSS, adivina qué botón clicar (.btn-add) y se rompe si cambias el diseño o el idioma.',color:'yellow'},
-      {title:'2. Con WebMCP: Tu contrato',body:'Tú (el dev) expones add_to_route({ articleId }) en modelContext. El agente llama tu función con JSON validado.',color:'blue',step:1},
+    {id:'intent',kind:'diagram',title:'¿Por qué WebMCP en lugar<br>de scrapear el DOM?',subtitle:'Prompt del usuario final: <strong>«Agrega a mi ruta el artículo sobre modelos pequeños»</strong>',minutes:1.5,diagram:[
+      {title:'1. Hoy: Scraping del DOM',body:'El agente busca ese texto en tu HTML, adivina qué botón clicar (.btn-add) y se rompe si cambias la UI.',color:'yellow'},
+      {title:'2. Con WebMCP: Tu contrato',body:'Tú (el dev) expones add_to_route({ articleId: "models" }) en modelContext. El agente llama tu función directa.',color:'blue',step:1},
       {title:'3. Valor: UI y control humano',body:'Tu app ejecuta su propia lógica sin duplicar código, actualiza el DOM en vivo y exige confirmación si hay riesgo.',color:'green',step:2}
     ],notes:[
       'Hoy, cuando el usuario final le pide una tarea a un agente en el navegador, el agente suele raspar el DOM o adivinar en qué coordenada hacer clic. Si cambias una clase CSS, el orden de los elementos o el idioma, el flujo se rompe.',

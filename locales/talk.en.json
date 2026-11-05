@@ -21,16 +21,16 @@
     {
       "id": "intent",
       "title": "Why WebMCP instead<br>of scraping the DOM?",
-      "subtitle": "When an end user asks their browser AI agent to do a task inside your web app:",
+      "subtitle": "End-user prompt: <strong>“Add the article about small models to my reading route”</strong>",
       "diagram": [
         {
           "title": "1. Today: DOM Scraping",
-          "body": "The agent reads your HTML/CSS, guesses which button to click (.btn-add), and breaks whenever you change the UI.",
+          "body": "The agent searches your HTML for that text, guesses which button to click (.btn-add), and breaks if your UI changes.",
           "color": "yellow"
         },
         {
           "title": "2. With WebMCP: Your Contract",
-          "body": "You (the dev) expose add_to_route({ articleId }) in modelContext. The agent calls your function with validated JSON.",
+          "body": "You (the dev) expose add_to_route({ articleId: \"models\" }) in modelContext. The agent calls your function directly.",
           "color": "blue",
           "step": 1
         },
