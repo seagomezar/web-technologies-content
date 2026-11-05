@@ -10,7 +10,7 @@ window.TALK = {
     {title:'debugging annotation',url:'https://github.com/webmachinelearning/webmcp/pull/253'}
   ],
   slides:[
-    {id:'opening',kind:'title',title:'Tu web también<br>tiene herramientas.',subtitle:'WebMCP: exponer funciones de tu aplicación<br>a agentes sin duplicar la interfaz.',speaker:'Sebastián Gómez · Google Developer Expert (Web Technologies)',minutes:1.5,notes:[
+    {id:'opening',kind:'title',title:'Expón funciones de tu<br>aplicación web a agentes de IA',subtitle:'Sin duplicar la interfaz.',speaker:'Sebastián Gómez · Google Developer Expert (Web Technologies)',photo:'assets/sebastian-gomez.jpg',badge:'assets/gde-web-badge.svg',minutes:1.5,notes:[
       'La página web ya sabe hacer cosas: buscar, filtrar, preparar una ruta de lectura. La pregunta es cómo ofrecer esas mismas acciones a un agente sin perder la interfaz que una persona entiende. Esta charla empieza con una necesidad concreta: elegir qué leer antes de una charla.',
       'Presenta el alcance: WebMCP sigue siendo una propuesta experimental. Los demos tienen un panel local para explorar las mismas funciones incluso cuando el navegador no ofrece la API. Ese panel no es un agente de IA.'
     ],builds:[]},

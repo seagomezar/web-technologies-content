@@ -8,9 +8,11 @@
   "slides": [
     {
       "id": "opening",
-      "title": "Your website<br>has tools, too.",
-      "subtitle": "WebMCP: exposing application functions<br>to agents without duplicating your UI.",
+      "title": "Expose your web app's<br>functions to AI agents",
+      "subtitle": "Without duplicating your UI.",
       "speaker": "Sebastián Gómez · Google Developer Expert (Web Technologies)",
+      "photo": "assets/sebastian-gomez.jpg",
+      "badge": "assets/gde-web-badge.svg",
       "builds": [],
       "notes": [
         "A web page already knows how to search, filter, and prepare a reading route. How can we offer those same actions to an agent while preserving an interface that a person understands? This talk starts with a concrete need: choosing what to read before a talk.\n\nSet the scope: WebMCP is still experimental. The demos include a local console for exploring the same functions when the browser does not expose the API. That console is not an AI agent."
