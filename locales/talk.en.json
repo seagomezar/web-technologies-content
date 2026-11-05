@@ -21,22 +21,22 @@
     {
       "id": "intent",
       "title": "From DOM scraping<br>to schema contracts.",
-      "subtitle": "The agent invokes a typed function; the user keeps visual control of the page.",
+      "subtitle": "How the end user, the AI agent, and your web app interact.",
       "diagram": [
         {
-          "title": "1. User",
-          "body": "States the goal and inspects changes directly in the page UI.",
+          "title": "1. End User",
+          "body": "Your site's visitor asks for a task (“Add articles about local models”).",
           "color": "blue"
         },
         {
-          "title": "2. WebMCP Tool",
-          "body": "Accepts validated arguments (add_to_route) without brittle DOM selectors.",
+          "title": "2. AI Agent → WebMCP",
+          "body": "The agent calls your typed tool add_to_route({ articleId }) instead of scraping the DOM.",
           "color": "yellow",
           "step": 1
         },
         {
-          "title": "3. Shared Page State",
-          "body": "Updates the on-screen list and allows one-click removal.",
+          "title": "3. Your Web App",
+          "body": "Your code validates the input, updates the live DOM, and lets the user undo in one click.",
           "color": "green",
           "step": 2
         }

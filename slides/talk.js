@@ -14,10 +14,10 @@ window.TALK = {
       'La página web ya sabe hacer cosas: buscar, filtrar, preparar una ruta de lectura. La pregunta es cómo ofrecer esas mismas acciones a un agente sin perder la interfaz que una persona entiende. Esta charla empieza con una necesidad concreta: elegir qué leer antes de una charla.',
       'Presenta el alcance: WebMCP sigue siendo una propuesta experimental. Los demos tienen un panel local para explorar las mismas funciones incluso cuando el navegador no ofrece la API. Ese panel no es un agente de IA.'
     ],builds:[]},
-    {id:'intent',kind:'diagram',title:'Del scraping del DOM<br>a contratos con esquema.',subtitle:'El agente invoca una función tipada; la persona conserva el control en pantalla.',minutes:1.5,diagram:[
-      {title:'1. Usuario',body:'Define el objetivo y supervisa los cambios en la interfaz.',color:'blue'},
-      {title:'2. Herramienta WebMCP',body:'Recibe argumentos validados (add_to_route) sin adivinar selectores.',color:'yellow',step:1},
-      {title:'3. Estado de la página',body:'Actualiza la ruta en pantalla y permite deshacer con un clic.',color:'green',step:2}
+    {id:'intent',kind:'diagram',title:'Del scraping del DOM<br>a contratos con esquema.',subtitle:'Cómo interactúan el usuario final, el agente de IA y tu aplicación.',minutes:1.5,diagram:[
+      {title:'1. Usuario final',body:'El visitante de tu web pide una tarea («Agrega lecturas sobre modelos locales»).',color:'blue'},
+      {title:'2. Agente → WebMCP',body:'El agente invoca tu herramienta tipada add_to_route({ articleId }) sin raspar el DOM.',color:'yellow',step:1},
+      {title:'3. Tu aplicación web',body:'Tu código valida el input, actualiza el DOM en vivo y permite deshacer con un clic.',color:'green',step:2}
     ],notes:[
       'Una persona quiere prepararse para una charla. La intención es sencilla: ayúdame a elegir qué leer. La experiencia debe seguir siendo comprensible en la pantalla.',
       'El agente necesita una acción acotada, como añadir un artículo. Una herramienta con argumentos definidos reduce lo que el agente tiene que inferir sobre la página.',
