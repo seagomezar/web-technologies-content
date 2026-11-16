@@ -75,7 +75,7 @@ The Hot Path and GPS Geofence Feedforward work even without an API key.
 - `[index.html:#root]`, `[index.html:meta]`, & `[index.html:script]`: Browser HTML shell declaring dark `color-scheme`, preconnecting and loading Google Fonts (`Inter` and `JetBrains Mono`), mounting `<div id="root"></div>`, and executing `/src/main.tsx`.
 - Static `public/` runtime fixtures: `/mock-telemetry.txt` (JSON-lines built-in demo stream), `/sample-lap-a.csv`, `/sample-lap-b.csv` (VBOX CSV laps playable in Replay, Analysis, and Live `.csv` replay), `/favicon.svg`, and `/icons.svg`.
 - Child Subpackage Contract:
-  - [Koru Application Source (`src`)](./src/README.md): Application types (`TelemetryFrame`, `GpsSSEPoint`, `Track`, `CoachPersona`, `CoachAction`), router (`App`), stylesheet (`index.css`), and UI/hook/service/utility subpackages.
+  - [Koru Application Source (`src`)](./src/README.md): Application & finite-state-machine types (`TelemetryFrame`, `GpsSSEPoint`, `Track`, `CoachPersona`, `CoachAction`, `TelemetryStreamState`, `ReplayTransportState`, `LapComparisonState`, `TTSPhase`, `GeminiCloudPhase`), router (`App`), stylesheet (`index.css`), `window.__KORU_MACHINES__` AX registry (`src/utils/stateMachine.ts`), and UI/hook/service/utility subpackages.
 
 ## Invariants
 
