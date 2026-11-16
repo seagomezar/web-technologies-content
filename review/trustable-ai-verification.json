@@ -1,0 +1,44 @@
+{
+  "checkedAt": "2026-11-16T01:36:01.796Z",
+  "deck": "slides-trustable-ai",
+  "checks": [
+    {
+      "name": "Root gallery links to Trustable AI Workshop in both EN and ES while preserving all 7 modules and 21 demos",
+      "status": "pass"
+    },
+    {
+      "name": "ES: all 37 slides (including Slide 2 GitHub repo notice) stay inside 1600x900 with zero code clipping and zero broken images",
+      "status": "pass"
+    },
+    {
+      "name": "ES: embedded Split-Brain simulator (Slide 18) responds to persona, rain (0.6g), and physics toggles",
+      "status": "pass"
+    },
+    {
+      "name": "ES: Presenter View syncs builds, previews current/next slide, and controls 90-minute timer",
+      "status": "pass"
+    },
+    {
+      "name": "EN: all 37 slides (including Slide 2 GitHub repo notice) stay inside 1600x900 with zero code clipping and zero broken images",
+      "status": "pass"
+    },
+    {
+      "name": "EN: embedded Split-Brain simulator (Slide 18) responds to persona, rain (0.6g), and physics toggles",
+      "status": "pass"
+    },
+    {
+      "name": "EN: Presenter View syncs builds, previews current/next slide, and controls 90-minute timer",
+      "status": "pass"
+    },
+    {
+      "name": "Offline file:// mode loads local fonts, switches ES/EN preserving #slide.step, makes zero network calls, and renders all 74 PNGs",
+      "status": "pass"
+    },
+    {
+      "name": "Zero console or page errors across all HTTP and offline flows",
+      "status": "pass"
+    }
+  ],
+  "browser": "157.0.8103.51",
+  "status": "passed"
+}

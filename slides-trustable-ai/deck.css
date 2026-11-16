@@ -1,0 +1,223 @@
+/* Workshop presentation layout & controls — engineered for 1600x900 zero-overflow precision */
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden}
+.viewport{position:fixed;inset:0;display:grid;place-items:center;cursor:pointer}
+.slide{position:absolute;width:1600px;height:900px;transform:scale(var(--scale,1));transform-origin:center;overflow:hidden;view-transition-name:slide}
+.slide-content{position:absolute;inset:0;display:block}
+.slide-content h1,.slide-content h2,.slide-content h3,.slide-content h4,.slide-content p{margin:0}
+
+/* Shared Workshop Top-Right Header (sits neatly inside the upper-right notch x:590..1490, y:88..276) */
+.ws-header{position:absolute;left:595px;right:105px;top:86px;height:190px;display:flex;flex-direction:column;justify-content:center;gap:8px}
+.ws-header-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.step-pill{display:inline-flex;align-items:center;gap:8px;align-self:flex-start;font:700 13.5px/1.1 'Roboto Mono',monospace;padding:5px 12px;border:1.8px solid var(--ink);border-radius:999px;background:var(--pastel-yellow);color:var(--ink);letter-spacing:.02em}
+.step-pill.blue{background:var(--pastel-blue)}
+.step-pill.green{background:var(--pastel-green)}
+.step-pill.red{background:var(--pastel-red)}
+.time-pill{font:700 13px/1.1 'Roboto Mono',monospace;padding:5px 11px;border:1.5px solid var(--ink);border-radius:999px;background:#fff;white-space:nowrap}
+.ws-header h2{font-size:38px;line-height:1.08;letter-spacing:-.03em}
+.ws-header .subhead{font-size:18.5px;line-height:1.3;color:#2b2b2b}
+
+/* Main lower full-width canvas (x:110..1490, y:294..740 -> 1380x446 safe zone) */
+.ws-body{position:absolute;left:110px;right:105px;top:294px;height:444px;display:flex;flex-direction:column;justify-content:center;gap:14px}
+
+/* 1. Title & Closing Slides */
+.title-wrap{position:absolute;inset:96px 105px 155px 115px;display:grid;grid-template-columns:1fr 370px;gap:32px;align-items:center}
+.title-copy{display:flex;flex-direction:column;justify-content:flex-end;height:100%;padding-top:190px;padding-bottom:6px;gap:14px}
+.title-kicker{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.title-copy h1{font-size:66px;line-height:1.03;max-width:940px}
+.title-copy .subhead{font-size:21px;line-height:1.32;max-width:910px;color:#262626}
+.coauthors{font:400 14.5px/1.35 'Roboto Mono',monospace;background:var(--paper);border:1.8px solid var(--ink);border-radius:14px;padding:9px 14px;max-width:900px}
+.speaker-col{display:flex;flex-direction:column;align-items:center;gap:10px}
+.speaker-photo-row{display:flex;align-items:center;gap:12px}
+.speaker-photo{width:225px;height:285px;object-fit:cover;object-position:center top;border:3px solid var(--ink);border-radius:24px;box-shadow:7px 7px 0 var(--pastel-blue);background:#fff}
+.codelab-badge-img{width:122px;height:122px;object-fit:contain;background:#fff;border:2px solid var(--ink);border-radius:20px;padding:6px;box-shadow:5px 5px 0 var(--pastel-yellow)}
+.speaker-badge{width:295px;height:auto;display:block}
+.speaker-meta{font:700 18px/1.25 'Google Sans',Arial,sans-serif;text-align:center}
+.speaker-meta span{display:block;font:400 14px/1.3 'Roboto Mono',monospace;color:#444}
+.speaker-meta a.speaker-site{display:inline-block;margin-top:3px;font:700 14px/1.25 'Roboto Mono',monospace;color:#0b57d0;text-decoration:none;border-bottom:1.5px solid #0b57d0}
+.speaker-meta span.speaker-title{margin-top:4px;font:700 14px/1.25 'Roboto Mono',monospace;color:var(--ink)}
+
+/* 2. Section Divider Slides */
+.section-wrap{position:absolute;left:110px;right:105px;top:296px;height:440px;display:grid;grid-template-columns:1.15fr 1fr;gap:24px;align-items:stretch}
+.section-hero{border:2.5px solid var(--ink);border-radius:24px;padding:28px 30px;display:flex;flex-direction:column;justify-content:space-between;background:var(--pastel-blue);box-shadow:7px 7px 0 var(--ink)}
+.section-hero.yellow{background:var(--pastel-yellow)}
+.section-hero.green{background:var(--pastel-green)}
+.section-hero.red{background:var(--pastel-red)}
+.section-hero h1{font-size:50px;line-height:1.05}
+.section-hero p{font-size:21px;line-height:1.32}
+.section-goals{border:2.5px solid var(--ink);border-radius:24px;padding:24px 28px;background:#fff;display:flex;flex-direction:column;justify-content:center;gap:14px}
+.section-goals h3{font-size:23px}
+.goal-item{display:flex;gap:12px;align-items:flex-start;font-size:19px;line-height:1.32}
+.goal-num{font:700 14px/1 'Roboto Mono',monospace;padding:6px 9px;border:1.8px solid var(--ink);border-radius:999px;background:var(--pastel-yellow);flex-shrink:0}
+
+/* 3. Roadmap Grid (4 Phases / 12 Steps) */
+.roadmap-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;height:100%}
+.roadmap-col{border:2.5px solid var(--ink);border-radius:20px;padding:16px 16px;background:#fff;display:flex;flex-direction:column;gap:10px}
+.roadmap-col.blue{background:var(--pastel-blue)}
+.roadmap-col.yellow{background:var(--pastel-yellow)}
+.roadmap-col.green{background:var(--pastel-green)}
+.roadmap-col.red{background:var(--pastel-red)}
+.roadmap-head{display:flex;justify-content:space-between;align-items:center;gap:6px;border-bottom:1.5px solid var(--ink);padding-bottom:8px}
+.roadmap-head strong{font-size:19px;line-height:1.15}
+.roadmap-list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px;flex:1}
+.roadmap-list li{background:#fff;border:1.5px solid var(--ink);border-radius:12px;padding:8px 10px;font-size:14.5px;line-height:1.25}
+.roadmap-list li b{display:block;font:700 12px/1.2 'Roboto Mono',monospace;color:#174ea6;margin-bottom:2px}
+
+/* 4. Horizontal Diagram Cards */
+.diagram-row{display:flex;gap:14px;align-items:stretch;width:100%;flex:1;max-height:360px}
+.diagram-card{flex:1;border:2.5px solid var(--ink);border-radius:20px;background:#fff;padding:18px 18px;display:flex;flex-direction:column;justify-content:space-between;gap:8px}
+.diagram-card-top{display:flex;flex-direction:column;gap:8px}
+.card-tag{align-self:flex-start;font:700 12px/1 'Roboto Mono',monospace;padding:4px 8px;border:1.5px solid var(--ink);border-radius:8px;background:#fff}
+.diagram-card-top > strong{font-size:22px;line-height:1.15}
+.diagram-label{font-size:17.5px;line-height:1.32;color:#222}
+.diagram-foot{font:700 13px/1.2 'Roboto Mono',monospace;padding-top:8px;border-top:1.5px dashed rgba(30,30,30,.35)}
+.arrow{align-self:center;font:700 34px/1 'Roboto Mono',monospace;flex-shrink:0}
+.takeaway-bar{border:2px solid var(--ink);border-radius:14px;padding:10px 16px;background:#fff;font-size:17.5px;line-height:1.3;display:flex;align-items:center;gap:10px}
+.takeaway-bar strong{font-family:'Roboto Mono',monospace;font-size:14px;background:var(--pastel-yellow);padding:3px 9px;border:1.5px solid var(--ink);border-radius:999px;flex-shrink:0}
+
+/* 5. Comparison Layout (Telemetry Context + Bad vs Good) */
+.comp-context{border:2px solid var(--ink);border-radius:14px;padding:10px 16px;background:#0f172a;color:#f8fafc;font:400 15px/1.3 'Roboto Mono',monospace;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.comp-context b{color:#fde047}
+.comp-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;flex:1;min-height:0}
+.comp-card{border:2.5px solid var(--ink);border-radius:20px;padding:18px 22px;display:flex;flex-direction:column;justify-content:space-between;gap:10px}
+.comp-card.bad{background:var(--pastel-red)}
+.comp-card.good{background:var(--pastel-green)}
+.comp-card.neutral{background:var(--pastel-blue)}
+.comp-head{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.comp-head strong{font-size:23px}
+.verdict-pill{font:700 12.5px/1 'Roboto Mono',monospace;padding:5px 10px;border:1.5px solid var(--ink);border-radius:999px;background:#fff;white-space:nowrap;flex-shrink:0}
+.comp-quote{background:#fff;border:2px solid var(--ink);border-radius:14px;padding:12px 15px;font:700 18.5px/1.3 'Google Sans',Arial,sans-serif}
+.comp-quote a,.takeaway-bar a,.spec-row a,.coauthors a{color:#0b57d0;text-decoration:underline;text-underline-offset:3px}
+.comp-points{margin:0;padding-left:20px;font-size:16.5px;line-height:1.32;display:flex;flex-direction:column;gap:4px}
+
+/* 6. Animated 4-Path Split-Brain Architecture */
+.sb-grid{display:grid;grid-template-columns:235px 32px 1fr 32px 255px;gap:8px;align-items:center;height:100%}
+.sb-source,.sb-sink{border:2.5px solid var(--ink);border-radius:20px;padding:18px 16px;height:100%;display:flex;flex-direction:column;justify-content:space-between;background:#fff}
+.sb-source{background:var(--pastel-blue)}
+.sb-sink{background:var(--pastel-green)}
+.sb-source h3,.sb-sink h3{font-size:21px;line-height:1.15}
+.sb-mini-code{background:#0f172a;color:#e2e8f0;border-radius:12px;padding:10px;font:400 12.5px/1.35 'Roboto Mono',monospace}
+.sb-paths{display:grid;grid-template-rows:repeat(4,1fr);gap:9px;height:100%}
+.sb-lane{border:2px solid var(--ink);border-radius:15px;padding:9px 14px;background:#fff;display:grid;grid-template-columns:145px 1fr auto;align-items:center;gap:12px;transition:transform .18s ease,box-shadow .18s ease}
+.sb-lane.active{border-width:2.5px;box-shadow:5px 5px 0 var(--ink);transform:translateX(3px)}
+.sb-lane.hot.active{background:var(--pastel-red)}
+.sb-lane.cold.active{background:var(--pastel-blue)}
+.sb-lane.feed.active{background:var(--pastel-yellow)}
+.sb-lane.pred.active{background:var(--pastel-green)}
+.sb-lane-id{font:700 14px/1.2 'Roboto Mono',monospace}
+.sb-lane-id span{display:block;font-weight:400;font-size:12px;color:#444}
+.sb-lane-desc{font-size:15.5px;line-height:1.25}
+.sb-lat{font:700 12.5px/1 'Roboto Mono',monospace;padding:5px 9px;border:1.5px solid var(--ink);border-radius:999px;background:#fff;white-space:nowrap}
+.sb-arrow{text-align:center;font:700 26px/1 'Roboto Mono',monospace}
+
+/* 7. Code & Terminal Slides (Left explanation y:318..808 inside panel-shape, Tall Right Window y:88..738) */
+.code-copy{position:absolute;left:112px;top:318px;width:455px;height:486px;display:flex;flex-direction:column;justify-content:flex-start;gap:9px}
+.code-copy h2{font-size:31px;line-height:1.08;letter-spacing:-.02em}
+.code-copy .subhead{font-size:16.5px;line-height:1.28;color:#262626}
+.file-badge{display:inline-block;align-self:flex-start;max-width:100%;overflow-wrap:anywhere;font:700 12px/1.2 'Roboto Mono',monospace;padding:4px 9px;background:var(--pastel-blue);border:1.8px solid var(--ink);border-radius:8px}
+.tip-box{border:2px solid var(--ink);border-radius:14px;padding:10px 13px;background:var(--pastel-yellow);font-size:15.5px;line-height:1.3}
+.code-copy .tip-box{padding:8px 11px;font-size:14px;line-height:1.26}
+.tip-box.red{background:var(--pastel-red)}
+.tip-box.green{background:var(--pastel-green)}
+.code-example{position:absolute;left:595px;right:105px;top:86px;height:652px;display:flex;flex-direction:column;justify-content:center;gap:10px}
+.code-label-row{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.code-label{font:700 15px/1.2 'Roboto Mono',monospace;color:#222}
+.code-window{margin:0;padding:13px 0;border:2.5px solid var(--ink);border-radius:18px;background:var(--code-paper);box-shadow:6px 6px 0 var(--pastel-blue);font:400 18.5px/1.34 'Roboto Mono',monospace;overflow:hidden}
+.code-window.compact{font-size:16px;line-height:1.3}
+.code-window.terminal-win{background:#0f172a;color:#f1f5f9;box-shadow:6px 6px 0 var(--pastel-yellow)}
+.code-window code{display:block;white-space:normal;font:inherit}
+.code-line{display:block;padding:0 16px;border-left:4px solid transparent;min-height:1.3em;white-space:pre}
+.code-line.is-focused{background:var(--code-focus);border-left-color:var(--blue)}
+.terminal-win .code-line.is-focused{background:#1e293b;border-left-color:#fbbc04;color:#fef08a}
+.code-keyword{color:var(--code-keyword);font-weight:700}
+.code-string{color:var(--code-string)}
+.code-comment{color:var(--code-comment)}
+.terminal-win .code-keyword{color:#7dd3fc}
+.terminal-win .code-string{color:#86efac}
+.terminal-win .code-comment{color:#94a3b8}
+.code-step-banner{display:flex;align-items:center;gap:12px;padding:9px 14px;border:2px solid var(--ink);border-left-width:5px;background:#fff;border-radius:12px}
+.step-index{font:700 14px/1.1 'Roboto Mono',monospace;padding:3px 8px;background:var(--pastel-yellow);border:1.5px solid var(--ink);border-radius:6px;flex-shrink:0}
+.step-callout{font:400 17px/1.28 'Google Sans',Arial,sans-serif;color:var(--ink)}
+
+.term-steps{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:6px}
+.term-steps li{border:1.8px solid var(--ink);border-radius:11px;padding:6px 10px;background:#fff;font-size:14.2px;line-height:1.24}
+.term-steps li b{font:700 12px/1 'Roboto Mono',monospace;color:#174ea6;margin-right:6px}
+
+/* 8. Physics Visual Diagram (Friction Circle + Weight Transfer) */
+.physics-grid{display:grid;grid-template-columns:1.05fr 1fr;gap:18px;height:100%}
+.physics-card{border:2.5px solid var(--ink);border-radius:20px;padding:16px 20px;background:#fff;display:grid;grid-template-columns:230px 1fr;gap:16px;align-items:center}
+.physics-card.right{grid-template-columns:1fr;display:flex;flex-direction:column;justify-content:space-between;background:var(--pastel-yellow)}
+.wt-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.wt-box{background:#fff;border:2px solid var(--ink);border-radius:14px;padding:12px 14px;font-size:15.5px;line-height:1.3}
+.wt-box > .box-title{display:block;font-size:17px;font-weight:700;margin-bottom:4px}
+
+/* 9. Five Coach Personas Matrix */
+.personas-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;flex:1;min-height:0}
+.persona-card{border:2.5px solid var(--ink);border-radius:18px;padding:14px 14px;background:#fff;display:flex;flex-direction:column;justify-content:space-between;gap:8px}
+.persona-card:nth-child(1){background:var(--pastel-yellow)}
+.persona-card:nth-child(2){background:var(--pastel-blue)}
+.persona-card:nth-child(3){background:var(--pastel-red)}
+.persona-card:nth-child(4){background:#f5f5f5}
+.persona-card:nth-child(5){background:var(--pastel-green)}
+.persona-top{display:flex;align-items:center;gap:10px}
+.persona-avatar{width:38px;height:38px;border-radius:10px;border:2px solid var(--ink);background:#fff;display:grid;place-items:center;font:700 15px/1 'Roboto Mono',monospace;flex-shrink:0}
+.persona-name{font-size:20px;font-weight:700;line-height:1.1}
+.persona-style{font:400 12.5px/1.2 'Roboto Mono',monospace;color:#333}
+.persona-quote{background:#fff;border:1.8px solid var(--ink);border-radius:12px;padding:10px;font:700 15px/1.28 'Google Sans',Arial,sans-serif;flex:1;display:flex;align-items:center}
+.persona-tts{font:400 12px/1.35 'Roboto Mono',monospace;border-top:1.5px dashed rgba(30,30,30,.35);padding-top:6px}
+
+/* 10. Visual Tour / Annotated Screenshot */
+.visual-grid{display:grid;grid-template-columns:1.35fr 1fr;gap:18px;height:100%;align-items:stretch}
+.visual-frame{border:2.5px solid var(--ink);border-radius:18px;overflow:hidden;background:#0c1017;display:flex;align-items:center;justify-content:center;box-shadow:6px 6px 0 var(--pastel-blue)}
+.visual-frame img{width:100%;height:100%;object-fit:contain;display:block}
+.visual-notes{display:flex;flex-direction:column;justify-content:space-between;gap:10px}
+.visual-note{border:2px solid var(--ink);border-radius:14px;padding:11px 14px;background:#fff;font-size:16px;line-height:1.28}
+.visual-note > .note-title{display:block;font-size:17.5px;font-weight:700;margin-bottom:3px}
+
+/* 11. Embedded Live Simulator */
+.sim-frame-wrap{width:100%;height:100%;border:2.5px solid var(--ink);border-radius:20px;overflow:hidden;background:#0c1017;box-shadow:6px 6px 0 var(--pastel-blue)}
+.sim-frame{width:100%;height:100%;border:0;display:block}
+
+/* 12. Cross-Domain Matrix */
+.domain-table{width:100%;border-collapse:separate;border-spacing:0;border:2.5px solid var(--ink);border-radius:18px;overflow:hidden;background:#fff;font-size:15.5px}
+.domain-table th,.domain-table td{padding:10px 13px;border-bottom:1.5px solid #ddd;text-align:left;vertical-align:top;line-height:1.26}
+.domain-table th{background:var(--pastel-blue);font:700 13.5px/1.2 'Roboto Mono',monospace;border-bottom:2px solid var(--ink)}
+.domain-table tr:last-child td{border-bottom:0}
+.domain-table td:first-child{font-weight:700;background:#fafafa;width:195px}
+
+/* 13. Statement / Resources */
+.spec-list{display:flex;flex-direction:column;gap:8px;background:#fff;border:2.5px solid var(--ink);border-radius:18px;padding:14px 20px}
+.spec-row{display:grid;grid-template-columns:280px 1fr;gap:16px;align-items:baseline;padding:5px 0;border-bottom:1px solid #e2e2e2}
+.spec-row:last-child{border-bottom:0}
+.spec-row dt{font:700 16.5px/1.25 'Roboto Mono',monospace;color:#174ea6}
+.spec-row dd{margin:0;font-size:18px;line-height:1.3}
+.resource-links{display:flex;flex-wrap:wrap;gap:10px}
+.resource-pill{display:inline-block;padding:9px 16px;background:var(--pastel-yellow);border:2px solid var(--ink);border-radius:999px;font:700 17px/1.2 'Google Sans',Arial,sans-serif;color:var(--ink);text-decoration:none}
+.resource-pill:hover{background:var(--pastel-blue)}
+
+/* Build transitions */
+.build{transition:opacity .2s ease,transform .2s ease}
+.build.pending{opacity:.22;transform:translateY(6px);pointer-events:none}
+
+/* Navigation control bar */
+.controlbar{position:fixed;bottom:12px;right:16px;display:flex;align-items:center;gap:6px;opacity:.95;transition:opacity .2s;z-index:20;background:#ffffffeb;padding:6px 8px;border:1.5px solid var(--ink);border-radius:12px;box-shadow:0 4px 14px #0002}
+.controlbar:hover,.controlbar:focus-within{opacity:1}
+body.hide-controls .controlbar,body.embedded-preview .controlbar,body.embedded-preview .key-help,body.embedded-preview .language-switch{display:none!important}
+.controlbar button,.controlbar select{font:600 13px/1.2 'Google Sans',Arial,sans-serif;border:1.5px solid var(--ink);border-radius:8px;background:#fff;color:#1e1e1e;padding:7px 11px;cursor:pointer}
+.controlbar button:hover:not(:disabled),.controlbar select:hover{background:var(--pastel-blue)}
+.controlbar button:disabled{opacity:.4;cursor:default}
+.controlbar select{max-width:230px;font-weight:400}
+.step-status{font:400 12px/1 'Roboto Mono',monospace;padding:5px 8px;background:var(--pastel-yellow);border:1px solid var(--ink);border-radius:6px;white-space:nowrap}
+.controlbar button:focus-visible,.controlbar select:focus-visible,.resource-pill:focus-visible{outline:4px solid #4285f4;outline-offset:4px}
+.progress-rail{position:fixed;left:0;bottom:0;width:100%;height:5px;background:#0002;z-index:19}
+.progress-rail span{display:block;height:100%;background:#4285f4;transition:width .2s}
+.key-help{position:fixed;left:16px;bottom:14px;font:12px 'Roboto Mono',monospace;opacity:.78;background:#ffffffd9;padding:4px 10px;border-radius:6px;border:1px solid #ccc;z-index:15;pointer-events:none}
+body.hide-controls .key-help{opacity:0}
+
+::view-transition{pointer-events:none}
+::view-transition-old(slide){animation:fade-out .16s ease both}
+::view-transition-new(slide){animation:fade-in .16s ease both}
+@keyframes fade-out{to{opacity:0}}
+@keyframes fade-in{from{opacity:0}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important}::view-transition-old(slide),::view-transition-new(slide){animation:none!important}}
+@media print{html,body{height:auto;overflow:visible}.viewport{position:static;display:block}.slide{position:relative;transform:none;width:1600px;height:900px;break-after:page}.controlbar,.progress-rail,.key-help{display:none}}

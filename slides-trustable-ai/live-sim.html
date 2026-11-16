@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Koru Interactive Telemetry &amp; Split-Brain Simulator</title>
+  <link rel="stylesheet" href="theme.css">
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{width:100%;height:100%;background:#0c1017;color:#f1f5f9;font-family:'Google Sans',Arial,sans-serif;overflow:hidden}
+    .sim{display:grid;grid-template-rows:48px 1fr;width:100%;height:100%}
+    .topbar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 14px;background:#131a26;border-bottom:1.5px solid #263248}
+    .brand{display:flex;align-items:center;gap:8px;font-weight:700;font-size:15px}
+    .dot-live{width:9px;height:9px;border-radius:50%;background:#4ade80;box-shadow:0 0 8px #4ade80}
+    .controls{display:flex;align-items:center;gap:6px;flex-wrap:nowrap}
+    .pill{font:700 12px/1 'Roboto Mono',monospace;padding:6px 9px;border-radius:999px;border:1.5px solid #334155;background:#1e293b;color:#e2e8f0;cursor:pointer;transition:all .15s}
+    .pill:hover{border-color:#60a5fa}
+    .pill.active{background:#4285f4;border-color:#93c5fd;color:#fff}
+    .pill.rain.on{background:#0284c7;border-color:#7dd3fc;color:#fff}
+    .pill.phys.off{background:#b91c1c;border-color:#fca5a5;color:#fff}
+    .grid{display:grid;grid-template-columns:250px 1fr 370px;gap:12px;padding:12px;height:100%;min-height:0}
+    .card{background:#131a26;border:1.5px solid #263248;border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:10px;min-height:0}
+    .card-title{font:700 11px/1 'Roboto Mono',monospace;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em;display:flex;justify-content:space-between}
+    .gauges{display:grid;grid-template-columns:1fr 90px;gap:10px;align-items:center}
+    .speed-box{text-align:center;background:#0c1017;border:1px solid #263248;border-radius:12px;padding:10px 6px}
+    .speed-val{font:700 44px/1 'Roboto Mono',monospace;color:#f8fafc}
+    .speed-unit{font:400 12px/1.2 'Roboto Mono',monospace;color:#94a3b8;margin-top:4px}
+    .pedals{display:flex;gap:10px;justify-content:center}
+    .pedal{display:flex;flex-direction:column;align-items:center;gap:4px;font:700 10px/1 'Roboto Mono',monospace;color:#94a3b8}
+    .bar-wrap{width:20px;height:78px;background:#0c1017;border:1px solid #334155;border-radius:6px;display:flex;align-items:flex-end;overflow:hidden}
+    .bar{width:100%;transition:height .12s linear}
+    .bar.thr{background:#34a853}
+    .bar.brk{background:#ea4335}
+    .fcircle{display:flex;align-items:center;gap:12px;background:#0c1017;border:1px solid #263248;border-radius:12px;padding:8px 10px;margin-top:auto}
+    .fc-svg{width:84px;height:84px;flex-shrink:0}
+    .fc-stats{font:400 11.5px/1.45 'Roboto Mono',monospace;color:#cbd5e1}
+    .track-wrap{position:relative;flex:1;min-height:0;display:flex;align-items:center;justify-content:center;background:#0c1017;border:1px solid #263248;border-radius:12px;overflow:hidden}
+    .track-svg{width:100%;height:100%;max-height:310px}
+    .corner-banner{font:700 12px/1.2 'Roboto Mono',monospace;padding:6px 10px;border-radius:8px;background:#1e293b;color:#fde68a;border:1px solid #475569;display:flex;justify-content:space-between}
+    .feed{display:flex;flex-direction:column;gap:8px;overflow:hidden;flex:1}
+    .msg{padding:9px 11px;border-radius:10px;border-left:4px solid #64748b;background:#0c1017;font-size:13px;line-height:1.32}
+    .msg.hot{border-left-color:#ea4335;background:#1f1318}
+    .msg.feedforward{border-left-color:#fbbc04;background:#1f1b11}
+    .msg.cold{border-left-color:#4285f4;background:#111a2e}
+    .msg-head{display:flex;justify-content:space-between;font:700 10.5px/1 'Roboto Mono',monospace;margin-bottom:4px;letter-spacing:.04em}
+    .msg.hot .msg-head{color:#fca5a5}
+    .msg.feedforward .msg-head{color:#fde047}
+    .msg.cold .msg-head{color:#93c5fd}
+  </style>
+</head>
+<body>
+  <div class="sim">
+    <header class="topbar">
+      <div class="brand"><span class="dot-live"></span><span id="sim-title">koru · Simulador Split-Brain (10Hz)</span></div>
+      <div class="controls">
+        <button class="pill active" data-coach="superaj">SA Super AJ</button>
+        <button class="pill" data-coach="aj">AJ</button>
+        <button class="pill" data-coach="rachel">RC Rachel</button>
+        <button class="pill" data-coach="tony">TY Tony</button>
+        <button class="pill" data-coach="garmin">GM Garmin</button>
+        <button class="pill rain" id="btn-rain">☀️ Seco (1.0g)</button>
+        <button class="pill phys" id="btn-phys">🧠 Física: ON</button>
+        <button class="pill" id="btn-pause">⏸</button>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <div class="card-title"><span id="lbl-gauges">Telemetría Derivada</span><span id="grip-tag">GRIP 100%</span></div>
+        <div class="gauges">
+          <div class="speed-box">
+            <div class="speed-val" id="val-speed">118</div>
+            <div class="speed-unit" id="unit-speed">MPH · 190 km/h</div>
+          </div>
+          <div class="pedals">
+            <div class="pedal"><span>THR</span><div class="bar-wrap"><div class="bar thr" id="bar-thr" style="height:75%"></div></div><span id="val-thr">75%</span></div>
+            <div class="pedal"><span>BRK</span><div class="bar-wrap"><div class="bar brk" id="bar-brk" style="height:0%"></div></div><span id="val-brk">0%</span></div>
+          </div>
+        </div>
+        <div class="fcircle">
+          <svg class="fc-svg" viewBox="-55 -55 110 110" aria-label="Friction circle">
+            <circle cx="0" cy="0" r="46" fill="none" stroke="#334155" stroke-width="2" id="fc-outer"/>
+            <circle cx="0" cy="0" r="28" fill="none" stroke="#1e293b" stroke-dasharray="3 3"/>
+            <line x1="-48" y1="0" x2="48" y2="0" stroke="#334155"/>
+            <line x1="0" y1="-48" x2="0" y2="48" stroke="#334155"/>
+            <circle cx="0" cy="0" r="6" fill="#4ade80" id="fc-dot"/>
+          </svg>
+          <div class="fc-stats">
+            <div>G-Lat: <strong id="val-glat">0.12g</strong></div>
+            <div>G-Long: <strong id="val-glong">+0.38g</strong></div>
+            <div>Uso Grip: <strong id="val-usage">40%</strong></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card-title"><span id="lbl-track">Circuito &amp; Geocercas (150m)</span><span>SSE /events · 10Hz</span></div>
+        <div class="track-wrap">
+          <svg class="track-svg" viewBox="0 0 460 280">
+            <path id="track-path" d="M 75 215 L 75 80 Q 75 36 125 36 L 290 36 Q 355 36 375 88 L 395 150 Q 406 205 352 222 L 250 236 Q 205 242 190 190 L 178 145 Q 165 112 135 142 L 112 212 Q 95 245 75 215 Z" fill="none" stroke="#334155" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M 75 215 L 75 80 Q 75 36 125 36 L 290 36 Q 355 36 375 88 L 395 150 Q 406 205 352 222 L 250 236 Q 205 242 190 190 L 178 145 Q 165 112 135 142 L 112 212 Q 95 245 75 215 Z" fill="none" stroke="#60a5fa" stroke-width="2.5" stroke-dasharray="6 5" opacity="0.75"/>
+            <g fill="#fbbc04" font-family="Roboto Mono, monospace" font-size="11" font-weight="700">
+              <circle cx="84" cy="56" r="5"/><text x="95" y="60">T1 Entry</text>
+              <circle cx="348" cy="56" r="5"/><text x="278" y="54">T2 Carousel</text>
+              <circle cx="384" cy="196" r="5"/><text x="302" y="198">T5 Bypass</text>
+              <circle cx="170" cy="130" r="5"/><text x="182" y="128">T9 Crest</text>
+            </g>
+            <circle id="car-ring" cx="75" cy="200" r="15" fill="rgba(74,222,128,0.22)" stroke="#4ade80" stroke-width="1.5"/>
+            <circle id="car-dot" cx="75" cy="200" r="6.5" fill="#4ade80"/>
+          </svg>
+        </div>
+        <div class="corner-banner"><span id="sector-name">📍 Recta Principal</span><span id="path-status">HOT &lt;50ms · COLD Gemini 3.8</span></div>
+      </section>
+
+      <section class="card">
+        <div class="card-title"><span id="lbl-feed">Radio del Coach en Vivo</span><span id="active-persona">SUPER AJ</span></div>
+        <div class="feed" id="feed"></div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    (() => {
+      const es = new URLSearchParams(location.search).get('lang') !== 'en';
+      if (!es) {
+        document.documentElement.lang = 'en';
+        document.getElementById('sim-title').textContent = 'koru · Split-Brain Simulator (10Hz)';
+        document.getElementById('lbl-gauges').textContent = 'Derived Telemetry';
+        document.getElementById('lbl-track').textContent = 'Track & Geofences (150m)';
+        document.getElementById('lbl-feed').textContent = 'Live Coach Radio';
+        document.getElementById('btn-rain').textContent = '☀️ Dry (1.0g)';
+        document.getElementById('btn-phys').textContent = '🧠 Physics: ON';
+      }
+
+      const pathEl = document.getElementById('track-path');
+      const totalLen = pathEl.getTotalLength();
+      let coach = 'superaj', rain = false, physics = true, paused = false, t = 0, lastPhase = -1;
+
+      const phases = [
+        { range: [0.00, 0.16], nameEs: 'Recta Principal', nameEn: 'Main Straight', spd: 126, thr: 94, brk: 0, glat: 0.08, glong: 0.45, type: 'straight' },
+        { range: [0.16, 0.30], nameEs: 'T1 Entry · Frenada Fuerte', nameEn: 'T1 Entry · Heavy Braking', spd: 78, thr: 0, brk: 84, glat: 0.65, glong: -1.05, type: 't1' },
+        { range: [0.30, 0.52], nameEs: 'T2 Carousel · Apoyo Largo', nameEn: 'T2 Carousel · Long Load', spd: 68, thr: 28, brk: 18, glat: 1.28, glong: -0.18, type: 't2' },
+        { range: [0.52, 0.74], nameEs: 'T5 Bypass · Subida Ciega', nameEn: 'T5 Bypass · Blind Uphill', spd: 92, thr: 66, brk: 0, glat: 0.94, glong: 0.25, type: 't5' },
+        { range: [0.74, 1.00], nameEs: 'T9 Crest · Rasante', nameEn: 'T9 Crest · Drop-off', spd: 74, thr: 12, brk: 56, glat: -1.12, glong: -0.62, type: 't9' },
+      ];
+
+      const callouts = {
+        t1: {
+          feedEs: '📍 T1 Entry (150m): Frena en línea recta antes de girar; prepara trail-braking.',
+          feedEn: '📍 T1 Entry (150m): Brake straight before turn-in; set up trail-braking.',
+          hot: {
+            superaj: es ? '¡Suelta el freno progresivamente al girar — no lo sueltes de golpe!' : 'Release the brake slowly as you turn — do not let go all at once!',
+            aj: 'Trail off. Release.',
+            rachel: 'Trail off the brake — front is loaded, ease the G-vector.',
+            tony: 'Breathe off the brake — feel the car rotate!',
+            garmin: '84% brake — Trail braking. G-Long: -1.05g. Release linearly.'
+          }
+        },
+        t2: {
+          coldPhysEs: 'Gemini 3.8 Flash: En T2 Carousel mantén 20% de acelerador de mantenimiento. Física: soltar de golpe transfiere peso adelante y provoca sobreviraje (Regla #2).',
+          coldPhysEn: 'Gemini 3.8 Flash: Hold 20% maintenance throttle in T2 Carousel. Physics: lifting abruptly shifts weight forward -> Lift-Off Oversteer (Rule #2).',
+          coldGenericEs: 'Gemini (sin física): Vas rápido en la curva 2, intenta manejar con más cuidado.',
+          coldGenericEn: 'Gemini (no physics): You are going fast in Turn 2, try driving more carefully.'
+        },
+        t5: {
+          hot: {
+            superaj: es ? '¡Confía en la compresión de la subida — comprométete con el acelerador!' : 'Trust the uphill compression — commit to throttle!',
+            aj: 'Commit. Go.',
+            rachel: 'Compression increases vertical tire load — build progressive throttle.',
+            tony: 'Commit! Trust the grip — send it up the hill!',
+            garmin: 'G-Lat 0.94g — 34% traction headroom available. Commit.'
+          }
+        },
+        t9: {
+          feedEs: '📍 T9 Crest (Lookahead 8s): Perdiste 16 mph aquí la vuelta pasada — frena ANTES de la cresta.',
+          feedEn: '📍 T9 Crest (8s Lookahead): Lost 16 mph here last lap — brake BEFORE the crest.',
+          rainAlertEs: '⚠️ LLUVIA (0.6g): Límite del círculo de fricción superado en T9 — ¡Reduce freno 25% ya!',
+          rainAlertEn: '⚠️ RAIN (0.6g): Friction circle exceeded at T9 — Ease brake 25% now!'
+        }
+      };
+
+      const feedEl = document.getElementById('feed');
+      function pushMsg(kind, badge, text) {
+        const div = document.createElement('div');
+        div.className = 'msg ' + kind;
+        const now = new Date().toLocaleTimeString([], { hour12: false, minute: '2-digit', second: '2-digit' });
+        div.innerHTML = `<div class="msg-head"><span>${badge}</span><span>${now}</span></div><div>${text}</div>`;
+        feedEl.prepend(div);
+        while (feedEl.children.length > 4) feedEl.lastElementChild.remove();
+      }
+
+      function emitForPhase(idx) {
+        const p = phases[idx];
+        if (p.type === 't1') {
+          pushMsg('feedforward', 'FEEDFORWARD · <150m', es ? callouts.t1.feedEs : callouts.t1.feedEn);
+          pushMsg('hot', 'HOT PATH · <50ms', callouts.t1.hot[coach]);
+        } else if (p.type === 't2') {
+          const txt = physics
+            ? (es ? callouts.t2.coldPhysEs : callouts.t2.coldPhysEn)
+            : (es ? callouts.t2.coldGenericEs : callouts.t2.coldGenericEn);
+          pushMsg('cold', 'COLD PATH · GEMINI 3.8 FLASH', txt);
+        } else if (p.type === 't5') {
+          pushMsg('hot', 'HOT PATH · <50ms', callouts.t5.hot[coach]);
+        } else if (p.type === 't9') {
+          pushMsg('feedforward', 'PREDICTIVE · 8s', es ? callouts.t9.feedEs : callouts.t9.feedEn);
+          if (rain) pushMsg('hot', 'HOT SAFETY · <50ms', es ? callouts.t9.rainAlertEs : callouts.t9.rainAlertEn);
+        }
+      }
+
+      document.querySelectorAll('[data-coach]').forEach(btn => {
+        btn.onclick = () => {
+          document.querySelectorAll('[data-coach]').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          coach = btn.dataset.coach;
+          document.getElementById('active-persona').textContent = btn.textContent.trim().toUpperCase();
+          pushMsg('hot', 'HOT PATH · <50ms', callouts.t1.hot[coach]);
+        };
+      });
+
+      const rainBtn = document.getElementById('btn-rain');
+      rainBtn.onclick = () => {
+        rain = !rain;
+        rainBtn.classList.toggle('on', rain);
+        rainBtn.textContent = rain ? (es ? '🌧️ Lluvia (0.6g)' : '🌧️ Rain (0.6g)') : (es ? '☀️ Seco (1.0g)' : '☀️ Dry (1.0g)');
+        document.getElementById('grip-tag').textContent = rain ? 'GRIP 60%' : 'GRIP 100%';
+        document.getElementById('fc-outer').setAttribute('r', rain ? '30' : '46');
+      };
+
+      const physBtn = document.getElementById('btn-phys');
+      physBtn.onclick = () => {
+        physics = !physics;
+        physBtn.classList.toggle('off', !physics);
+        physBtn.textContent = physics ? (es ? '🧠 Física: ON' : '🧠 Physics: ON') : (es ? '⚠️ Física: OFF' : '⚠️ Physics: OFF');
+        emitForPhase(2);
+      };
+
+      const pauseBtn = document.getElementById('btn-pause');
+      pauseBtn.onclick = () => {
+        paused = !paused;
+        pauseBtn.textContent = paused ? '▶' : '⏸';
+      };
+
+      emitForPhase(1);
+      emitForPhase(2);
+
+      setInterval(() => {
+        if (paused) return;
+        t = (t + 0.008) % 1;
+        const pt = pathEl.getPointAtLength(t * totalLen);
+        document.getElementById('car-dot').setAttribute('cx', pt.x.toFixed(1));
+        document.getElementById('car-dot').setAttribute('cy', pt.y.toFixed(1));
+        document.getElementById('car-ring').setAttribute('cx', pt.x.toFixed(1));
+        document.getElementById('car-ring').setAttribute('cy', pt.y.toFixed(1));
+
+        const pIdx = phases.findIndex(p => t >= p.range[0] && t < p.range[1]);
+        const idx = pIdx >= 0 ? pIdx : 0;
+        const p = phases[idx];
+        if (idx !== lastPhase) {
+          lastPhase = idx;
+          emitForPhase(idx);
+        }
+
+        const gripScale = rain ? 0.62 : 1.0;
+        const spd = Math.round(p.spd * (rain ? 0.84 : 1) + Math.sin(t * 40) * 2);
+        const thr = Math.max(0, Math.min(100, Math.round(p.thr * (rain ? 0.85 : 1))));
+        const brk = Math.max(0, Math.min(100, Math.round(p.brk)));
+        const glat = p.glat * (rain ? 0.78 : 1);
+        const glong = p.glong * (rain ? 0.82 : 1);
+        const totalG = Math.hypot(glat, glong);
+        const usage = Math.min(135, Math.round((totalG / (1.45 * gripScale)) * 100));
+
+        document.getElementById('val-speed').textContent = String(spd);
+        document.getElementById('unit-speed').textContent = `${spd} MPH · ${Math.round(spd * 1.609)} km/h`;
+        document.getElementById('bar-thr').style.height = thr + '%';
+        document.getElementById('val-thr').textContent = thr + '%';
+        document.getElementById('bar-brk').style.height = brk + '%';
+        document.getElementById('val-brk').textContent = brk + '%';
+        document.getElementById('val-glat').textContent = (glat >= 0 ? '+' : '') + glat.toFixed(2) + 'g';
+        document.getElementById('val-glong').textContent = (glong >= 0 ? '+' : '') + glong.toFixed(2) + 'g';
+        document.getElementById('val-usage').textContent = usage + '%';
+        document.getElementById('sector-name').textContent = '📍 ' + (es ? p.nameEs : p.nameEn);
+
+        const dot = document.getElementById('fc-dot');
+        dot.setAttribute('cx', (glat * 28).toFixed(1));
+        dot.setAttribute('cy', (-glong * 28).toFixed(1));
+        dot.setAttribute('fill', usage > 98 ? '#ea4335' : usage > 75 ? '#fbbc04' : '#4ade80');
+      }, 100);
+    })();
+  </script>
+</body>
+</html>
