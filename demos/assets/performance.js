@@ -1,22 +1,355 @@
 (() => {
-  const {$,$$,esc,id,app,status,panel,output,result,run,available,withSession,download}=Lab;
-  const source='The team tested a local reading assistant with twelve volunteers. Eight wanted a shorter route through the material. Three asked to keep the original source passages visible. One wanted a way to stop the answer. The next prototype will show source cards, a reading-time estimate, and a cancel button. The team has not measured retention or compared model quality yet.';
-  if(id==='latency-lens') {
-    const trials=[];
-    app.innerHTML=panel('Streaming Latency Profiler','<label for="config">Configuration label</label><input id="config" value="Baseline: Chrome version, hardware, and flags"><label for="input">Benchmark prompt</label><textarea id="input">Write ten concise suggestions for designing an on-device reading assistant. Include a short explanation for each.</textarea><label><input id="greedy" type="checkbox">Use most-predictable sampling (samplingMode: "most-predictable")</label><p class="small">Required when benchmarking Prompt API Multi-Token Prediction (MTP) flags in Chrome Canary.</p><div class="actions"><button type="button" id="live">Run streaming trial</button><button type="button" id="export" class="secondary">Export trials JSON</button></div><div id="summary"></div>')+output('Latency Metrics');
-    run('#live',async()=>{const options=$('#greedy').checked?{samplingMode:'most-predictable'}:{};const started=performance.now();let prepared=0,first=null,answer='',chunks=0;const metrics=await withSession('LanguageModel',options,async session=>{prepared=performance.now();for await(const chunk of session.promptStreaming($('#input').value)){if(first===null)first=performance.now();answer+=chunk;chunks++;}const ended=performance.now();return {setupMs:prepared-started,firstChunkMs:first===null?null:first-prepared,generationMs:ended-prepared,characters:answer.length,chunks,charactersPerSecond:answer.length/Math.max(.001,(ended-prepared)/1000),reportedSamplingMode:session.samplingMode??'not exposed'};});const trial={recordedAt:new Date().toISOString(),configuration:$('#config').value,userAgent:navigator.userAgent,prompt:$('#input').value,options,metrics,answer};trials.push(trial);result(trial,'LanguageModel.promptStreaming() · performance.now()');const median=values=>{const a=[...values].sort((a,b)=>a-b);return a.length%2?a[(a.length-1)/2]:(a[a.length/2-1]+a[a.length/2])/2;};$('#summary').innerHTML=`<div class="tile"><strong>${trials.length} recorded trial(s)</strong><p>Median generation: ${Math.round(median(trials.map(t=>t.metrics.generationMs)))} ms</p><p class="small">Session 1 includes model warm-up overhead; compare subsequent runs with matching configuration labels.</p></div>`;status('Streaming trial recorded.');});run('#export',()=>{if(!trials.length)throw new Error('Run at least one streaming trial before exporting.');download('native-latency-trials.json',trials);status('Exported native-latency-trials.json.');});
+  const { $, $$, id, app, status, panel, output, result, run, createMachine, withSession, download } = Lab;
+  const source = 'The team tested a local reading assistant with twelve volunteers. Eight wanted a shorter route through the material. Three asked to keep the original source passages visible. One wanted a way to stop the answer. The next prototype will show source cards, a reading-time estimate, and a cancel button. The team has not measured retention or compared model quality yet.';
+
+  if (id === 'latency-lens') {
+    const trials = [];
+    app.innerHTML = panel('Streaming Latency Profiler', '<label for="config">Configuration label</label><input id="config" value="Baseline: Chrome version, hardware, and flags"><label for="input">Benchmark prompt</label><textarea id="input">Write ten concise suggestions for designing an on-device reading assistant. Include a short explanation for each.</textarea><label><input id="greedy" type="checkbox">Use most-predictable sampling (samplingMode: "most-predictable")</label><p class="small">Required when benchmarking Prompt API Multi-Token Prediction (MTP) flags in Chrome Canary.</p><div class="actions"><button type="button" id="live">Run streaming trial</button><button type="button" id="export" class="secondary">Export trials JSON</button></div><div id="summary"></div>') + output('Latency Metrics');
+
+    const median = values => {
+      const a = [...values].sort((x, y) => x - y);
+      return a.length % 2 ? a[(a.length - 1) / 2] : (a[a.length / 2 - 1] + a[a.length / 2]) / 2;
+    };
+
+    const latencyMachine = createMachine({
+      id: 'latency-lens',
+      initial: 'empty',
+      host: app,
+      context: {
+        trialCount: 0,
+        medianGenerationMs: null,
+        lastSetupMs: null,
+        lastFirstChunkMs: null,
+        samplingMode: 'default',
+        exportedCount: 0,
+        lastError: null
+      },
+      states: {
+        empty: {
+          on: {
+            TOGGLE_SAMPLING: { target: 'empty', assign: (_, samplingMode) => ({ samplingMode }) },
+            START_TRIAL: { target: 'running', assign: (_, samplingMode) => ({ samplingMode, lastError: null }) }
+          }
+        },
+        running: {
+          busy: true,
+          on: {
+            RECORD_TRIAL: {
+              target: 'recorded',
+              assign: (_, p) => ({
+                trialCount: p.trialCount,
+                medianGenerationMs: p.medianGenerationMs,
+                lastSetupMs: p.setupMs,
+                lastFirstChunkMs: p.firstChunkMs,
+                lastError: null
+              })
+            },
+            FAIL_TRIAL: [
+              {
+                target: 'recorded',
+                guard: ctx => ctx.trialCount > 0,
+                assign: (_, lastError) => ({ lastError })
+              },
+              {
+                target: 'empty',
+                assign: (_, lastError) => ({ lastError })
+              }
+            ]
+          }
+        },
+        recorded: {
+          on: {
+            TOGGLE_SAMPLING: { target: 'recorded', assign: (_, samplingMode) => ({ samplingMode }) },
+            START_TRIAL: { target: 'running', assign: (_, samplingMode) => ({ samplingMode, lastError: null }) },
+            EXPORT: { target: 'exported', assign: ctx => ({ exportedCount: ctx.exportedCount + 1 }) }
+          }
+        },
+        exported: {
+          on: {
+            TOGGLE_SAMPLING: { target: 'exported', assign: (_, samplingMode) => ({ samplingMode }) },
+            START_TRIAL: { target: 'running', assign: (_, samplingMode) => ({ samplingMode, lastError: null }) },
+            EXPORT: { target: 'exported', assign: ctx => ({ exportedCount: ctx.exportedCount + 1 }) }
+          }
+        }
+      }
+    });
+
+    $('#greedy').addEventListener('change', () => {
+      latencyMachine.send('TOGGLE_SAMPLING', $('#greedy').checked ? 'most-predictable' : 'default');
+    });
+
+    run('#live', async () => {
+      const greedy = $('#greedy').checked;
+      const options = greedy ? { samplingMode: 'most-predictable' } : {};
+      latencyMachine.send('START_TRIAL', greedy ? 'most-predictable' : 'default');
+      try {
+        const started = performance.now();
+        let prepared = 0, first = null, answer = '', chunks = 0;
+        const metrics = await withSession('LanguageModel', options, async session => {
+          prepared = performance.now();
+          for await (const chunk of session.promptStreaming($('#input').value)) {
+            if (first === null) first = performance.now();
+            answer += chunk;
+            chunks++;
+          }
+          const ended = performance.now();
+          return {
+            setupMs: prepared - started,
+            firstChunkMs: first === null ? null : first - prepared,
+            generationMs: ended - prepared,
+            characters: answer.length,
+            chunks,
+            charactersPerSecond: answer.length / Math.max(0.001, (ended - prepared) / 1000),
+            reportedSamplingMode: session.samplingMode ?? 'not exposed'
+          };
+        });
+        const trial = {
+          recordedAt: new Date().toISOString(),
+          configuration: $('#config').value,
+          userAgent: navigator.userAgent,
+          prompt: $('#input').value,
+          options,
+          metrics,
+          answer
+        };
+        trials.push(trial);
+        const medianMs = Math.round(median(trials.map(t => t.metrics.generationMs)));
+        latencyMachine.send('RECORD_TRIAL', {
+          trialCount: trials.length,
+          medianGenerationMs: medianMs,
+          setupMs: Math.round(metrics.setupMs * 100) / 100,
+          firstChunkMs: metrics.firstChunkMs === null ? null : Math.round(metrics.firstChunkMs * 100) / 100
+        });
+        result(trial, 'LanguageModel.promptStreaming() · performance.now()');
+        $('#summary').innerHTML = `<div class="tile"><strong>${trials.length} recorded trial(s)</strong><p>Median generation: ${medianMs} ms</p><p class="small">Session 1 includes model warm-up overhead; compare subsequent runs with matching configuration labels.</p></div>`;
+        status('Streaming trial recorded.');
+      } catch (e) {
+        latencyMachine.send('FAIL_TRIAL', e.message);
+        throw e;
+      }
+    });
+
+    run('#export', () => {
+      if (!latencyMachine.can('EXPORT')) throw new Error('Run at least one streaming trial before exporting.');
+      latencyMachine.send('EXPORT');
+      download('native-latency-trials.json', trials);
+      status('Exported native-latency-trials.json.');
+    });
   }
-  if(id==='preference-kitchen') {
-    app.innerHTML=panel('Summarizer Options','<label for="preference">Preference (experimental)</label><select id="preference"><option>speed</option><option>auto</option><option>capability</option></select><label for="type">Summary type</label><select id="type"><option>headline</option><option>key-points</option><option>tldr</option><option>teaser</option></select><label for="language">Output language</label><select id="language"><option value="es">Spanish</option><option value="en">English</option></select><label for="length">Length</label><select id="length"><option>long</option><option>short</option><option>medium</option></select><label for="input">English source text</label><textarea id="input"></textarea><div class="actions"><button type="button" id="validate" class="secondary">Validate options</button><button type="button" id="fix" class="secondary">Apply speed-compatible preset</button><button type="button" id="live">Run Summarizer.summarize()</button></div>')+output('Validation & Summary Output');$('#input').value=source;
-    const opts=()=>({preference:$('#preference').value,type:$('#type').value,format:'plain-text',length:$('#length').value,outputLanguage:$('#language').value,expectedInputLanguages:['en']});
-    function errors(o){return o.preference==='speed'?[...(o.outputLanguage!=='en'?['preference: "speed" supports English output (outputLanguage: "en") only.']:[]),...(!['key-points','tldr'].includes(o.type)?['preference: "speed" supports type "key-points" or "tldr" only.']:[]),...(!['short','medium'].includes(o.length)?['preference: "speed" supports length "short" or "medium" only.']:[])]:[];}
-    function inspect(){const o=opts(),problems=errors(o);result({options:o,compatibility:problems.length?'incompatible':'compatible',problems},'Option constraint check');status(problems.length?'Selected options conflict with preference: "speed" constraints.':'Options are valid for Summarizer.create().',Boolean(problems.length));return problems;}
-    run('#validate',inspect);run('#fix',()=>{$('#type').value='key-points';$('#language').value='en';$('#length').value='short';$('#preference').value='speed';inspect();});run('#live',async()=>{if(inspect().length)throw new Error('Resolve incompatible Summarizer options before calling Summarizer.create().');const o=opts();await withSession('Summarizer',o,async s=>{result(await s.summarize($('#input').value),`Summarizer.summarize() · preference: "${o.preference}"`);});status('Summarizer.summarize() completed.');});inspect();
+
+  if (id === 'preference-kitchen') {
+    app.innerHTML = panel('Summarizer Options', '<label for="preference">Preference (experimental)</label><select id="preference"><option>speed</option><option>auto</option><option>capability</option></select><label for="type">Summary type</label><select id="type"><option>headline</option><option>key-points</option><option>tldr</option><option>teaser</option></select><label for="language">Output language</label><select id="language"><option value="es">Spanish</option><option value="en">English</option></select><label for="length">Length</label><select id="length"><option>long</option><option>short</option><option>medium</option></select><label for="input">English source text</label><textarea id="input"></textarea><div class="actions"><button type="button" id="validate" class="secondary">Validate options</button><button type="button" id="fix" class="secondary">Apply speed-compatible preset</button><button type="button" id="live">Run Summarizer.summarize()</button></div>') + output('Validation & Summary Output');
+    $('#input').value = source;
+
+    const opts = () => ({
+      preference: $('#preference').value,
+      type: $('#type').value,
+      format: 'plain-text',
+      length: $('#length').value,
+      outputLanguage: $('#language').value,
+      expectedInputLanguages: ['en']
+    });
+
+    function errors(o) {
+      return o.preference === 'speed' ? [
+        ...(o.outputLanguage !== 'en' ? ['preference: "speed" supports English output (outputLanguage: "en") only.'] : []),
+        ...(!['key-points', 'tldr'].includes(o.type) ? ['preference: "speed" supports type "key-points" or "tldr" only.'] : []),
+        ...(!['short', 'medium'].includes(o.length) ? ['preference: "speed" supports length "short" or "medium" only.'] : [])
+      ] : [];
+    }
+
+    const validateBranches = [
+      {
+        target: 'invalid_config',
+        guard: (_, p) => (p?.problems?.length ?? 0) > 0,
+        assign: (_, p) => ({ preference: p.options.preference, problemCount: p.problems.length, problems: p.problems })
+      },
+      {
+        target: 'valid',
+        assign: (_, p) => ({ preference: p.options.preference, problemCount: 0, problems: [] })
+      }
+    ];
+
+    const preferenceMachine = createMachine({
+      id: 'preference-kitchen',
+      initial: 'invalid_config',
+      host: app,
+      context: { preference: 'speed', problemCount: 0, problems: [], lastSummaryLength: 0, lastError: null },
+      states: {
+        invalid_config: {
+          on: {
+            VALIDATE: validateBranches
+          }
+        },
+        valid: {
+          on: {
+            VALIDATE: validateBranches,
+            SUMMARIZE: { target: 'summarizing', assign: () => ({ lastError: null }) }
+          }
+        },
+        summarizing: {
+          busy: true,
+          on: {
+            SUMMARIZE_DONE: {
+              target: 'summarized',
+              assign: (_, lastSummaryLength) => ({ lastSummaryLength, lastError: null })
+            },
+            SUMMARIZE_FAIL: {
+              target: 'valid',
+              assign: (_, lastError) => ({ lastError })
+            }
+          }
+        },
+        summarized: {
+          on: {
+            VALIDATE: validateBranches,
+            SUMMARIZE: { target: 'summarizing', assign: () => ({ lastError: null }) }
+          }
+        }
+      }
+    });
+
+    function inspect() {
+      const o = opts(), problems = errors(o);
+      preferenceMachine.send('VALIDATE', { options: o, problems });
+      result({ options: o, compatibility: problems.length ? 'incompatible' : 'compatible', problems }, 'Option constraint check');
+      status(problems.length ? 'Selected options conflict with preference: "speed" constraints.' : 'Options are valid for Summarizer.create().', Boolean(problems.length));
+      return problems;
+    }
+
+    ['#preference', '#type', '#language', '#length'].forEach(sel => {
+      $(sel).addEventListener('change', inspect);
+    });
+
+    run('#validate', inspect);
+    run('#fix', () => {
+      $('#type').value = 'key-points';
+      $('#language').value = 'en';
+      $('#length').value = 'short';
+      $('#preference').value = 'speed';
+      inspect();
+    });
+    run('#live', async () => {
+      inspect();
+      if (!preferenceMachine.can('SUMMARIZE')) {
+        throw new Error('Resolve incompatible Summarizer options before calling Summarizer.create().');
+      }
+      const o = opts();
+      preferenceMachine.send('SUMMARIZE');
+      try {
+        await withSession('Summarizer', o, async s => {
+          const summary = await s.summarize($('#input').value);
+          preferenceMachine.send('SUMMARIZE_DONE', summary.length);
+          result(summary, `Summarizer.summarize() · preference: "${o.preference}"`);
+        });
+        status('Summarizer.summarize() completed.');
+      } catch (e) {
+        preferenceMachine.send('SUMMARIZE_FAIL', e.message);
+        throw e;
+      }
+    });
+
+    inspect();
   }
-  if(id==='context-backpack') {
-    const notes=[{name:'System goal',text:'Help a visitor choose three useful articles for a web AI talk.'},{name:'Source A',text:source},{name:'Source B',text:'The visitor has twenty minutes to read. Show why each source was selected and preserve the visible route.'},{name:'Unrelated chat history',text:('This old discussion is unrelated to the current task. ').repeat(100)}];let selected=[true,true,true,false];
-    app.innerHTML=panel('Context Segments & Prompt','<div id="notes"></div><label for="question">User question</label><textarea id="question">Which product changes should the next prototype prioritize?</textarea><button type="button" id="measure">Run session.measureContextUsage()</button><p class="small">Toggle context segments to compare string length vs. tokenized context window usage.</p>')+output('Token Usage (measureContextUsage)');
-    function render(){$('#notes').innerHTML=notes.map((n,i)=>`<label class="item"><input type="checkbox" data-note="${i}" ${selected[i]?'checked':''}>${n.name}<span class="small"> · ${n.text.length} chars</span></label>`).join('');$$('[data-note]').forEach(el=>el.onchange=()=>{selected[Number(el.dataset.note)]=el.checked;});}render();
-    run('#measure',()=>withSession('LanguageModel',{},async s=>{if(typeof s.measureContextUsage!=='function')throw new Error('This session does not expose measureContextUsage(). Check your Chrome version.');const text=notes.filter((_,i)=>selected[i]).map(n=>n.text).join('\n\n')+'\nQUESTION: '+$('#question').value;const measured=await s.measureContextUsage(text);result({selectedSegments:notes.filter((_,i)=>selected[i]).map(n=>n.name),characters:text.length,measuredInputTokens:measured,currentContextUsage:s.contextUsage,sessionContextWindow:s.contextWindow},'LanguageModel.measureContextUsage()');status('Token count measured in LanguageModel session.');}));
+
+  if (id === 'context-backpack') {
+    const notes = [
+      { name: 'System goal', text: 'Help a visitor choose three useful articles for a web AI talk.' },
+      { name: 'Source A', text: source },
+      { name: 'Source B', text: 'The visitor has twenty minutes to read. Show why each source was selected and preserve the visible route.' },
+      { name: 'Unrelated chat history', text: ('This old discussion is unrelated to the current task. ').repeat(100) }
+    ];
+    const selected = [true, true, true, false];
+
+    app.innerHTML = panel('Context Segments & Prompt', '<div id="notes"></div><label for="question">User question</label><textarea id="question">Which product changes should the next prototype prioritize?</textarea><button type="button" id="measure">Run session.measureContextUsage()</button><p class="small">Toggle context segments to compare string length vs. tokenized context window usage.</p>') + output('Token Usage (measureContextUsage)');
+
+    const backpackMachine = createMachine({
+      id: 'context-backpack',
+      initial: 'ready',
+      host: app,
+      context: { selectedCount: 3, characterCount: 0, measuredInputTokens: null, contextWindow: null, lastError: null },
+      states: {
+        ready: {
+          on: {
+            UPDATE_INPUT: { target: 'ready', assign: (_, selectedCount) => ({ selectedCount }) },
+            MEASURE: { target: 'measuring', assign: () => ({ lastError: null }) }
+          }
+        },
+        measuring: {
+          busy: true,
+          on: {
+            MEASURE_DONE: {
+              target: 'measured',
+              assign: (_, p) => ({
+                characterCount: p.characters,
+                measuredInputTokens: p.measuredInputTokens,
+                contextWindow: p.sessionContextWindow,
+                lastError: null
+              })
+            },
+            MEASURE_FAIL: { target: 'error', assign: (_, lastError) => ({ lastError }) }
+          }
+        },
+        measured: {
+          on: {
+            UPDATE_INPUT: { target: 'stale', assign: (_, selectedCount) => ({ selectedCount }) },
+            MEASURE: { target: 'measuring', assign: () => ({ lastError: null }) }
+          }
+        },
+        stale: {
+          on: {
+            UPDATE_INPUT: { target: 'stale', assign: (_, selectedCount) => ({ selectedCount }) },
+            MEASURE: { target: 'measuring', assign: () => ({ lastError: null }) }
+          }
+        },
+        error: {
+          on: {
+            UPDATE_INPUT: { target: 'ready', assign: (_, selectedCount) => ({ selectedCount }) },
+            MEASURE: { target: 'measuring', assign: () => ({ lastError: null }) }
+          }
+        }
+      }
+    });
+
+    function render() {
+      $('#notes').innerHTML = notes.map((n, i) => `<label class="item"><input type="checkbox" data-note="${i}" ${selected[i] ? 'checked' : ''}>${n.name}<span class="small"> · ${n.text.length} chars</span></label>`).join('');
+      $$('[data-note]').forEach(el => {
+        el.addEventListener('change', () => {
+          selected[Number(el.dataset.note)] = el.checked;
+          backpackMachine.send('UPDATE_INPUT', selected.filter(Boolean).length);
+        });
+      });
+    }
+    render();
+
+    $('#question').addEventListener('input', () => {
+      backpackMachine.send('UPDATE_INPUT', selected.filter(Boolean).length);
+    });
+
+    run('#measure', async () => {
+      backpackMachine.send('MEASURE');
+      try {
+        await withSession('LanguageModel', {}, async s => {
+          if (typeof s.measureContextUsage !== 'function') {
+            throw new Error('This session does not expose measureContextUsage(). Check your Chrome version.');
+          }
+          const text = notes.filter((_, i) => selected[i]).map(n => n.text).join('\n\n') + '\nQUESTION: ' + $('#question').value;
+          const measured = await s.measureContextUsage(text);
+          const payload = {
+            selectedSegments: notes.filter((_, i) => selected[i]).map(n => n.name),
+            characters: text.length,
+            measuredInputTokens: measured,
+            currentContextUsage: s.contextUsage,
+            sessionContextWindow: s.contextWindow
+          };
+          backpackMachine.send('MEASURE_DONE', payload);
+          result(payload, 'LanguageModel.measureContextUsage()');
+          status('Token count measured in LanguageModel session.');
+        });
+      } catch (e) {
+        backpackMachine.send('MEASURE_FAIL', e.message);
+        throw e;
+      }
+    });
   }
 })();

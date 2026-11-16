@@ -1,20 +1,124 @@
 (() => {
-  const { $, $$, esc, id, app, status, panel, output, result, run } = Lab;
+  const { $, $$, esc, id, app, status, panel, output, result, run, createMachine, bindMachine, inspectMachines } = Lab;
   const definitions = [];
+  const searchParams = () => new URLSearchParams(location.search);
   const getModelContext = () => {
-    const params = new URLSearchParams(location.search);
+    const params = searchParams();
     if (params.get('webmcp') === '0' || params.get('forceModal') === '1') return null;
     if ('modelContext' in document && document.modelContext) return document.modelContext;
     if ('modelContext' in navigator && navigator.modelContext) return navigator.modelContext;
     return null;
   };
   const hasWebMCP = () => {
-    const params = new URLSearchParams(location.search);
+    const params = searchParams();
     if (params.get('webmcp') === '0' || params.get('forceModal') === '1') return false;
     if (params.get('webmcp') === '1') return true;
     const mc = getModelContext();
     return Boolean(mc && typeof mc.registerTool === 'function');
   };
+
+  const initialParams = searchParams();
+  const webmcpEnv = createMachine({
+    id: 'webmcp-env',
+    initial: 'detecting',
+    context: {
+      registeredTools: [],
+      forcedSimulation: initialParams.get('webmcp') === '0' || initialParams.get('forceModal') === '1',
+      simulatedActiveFlag: initialParams.get('webmcp') === '1',
+      lastError: null
+    },
+    states: {
+      detecting: {
+        busy: true,
+        on: {
+          REGISTER_OK: {
+            target: 'native_active',
+            assign: (ctx, toolName) => ({
+              registeredTools: [...ctx.registeredTools, toolName],
+              lastError: null
+            })
+          },
+          FALLBACK: [
+            {
+              target: 'native_active',
+              guard: () => hasWebMCP(),
+              assign: (ctx, toolName) => ({
+                registeredTools: [...ctx.registeredTools, toolName]
+              })
+            },
+            {
+              target: 'simulation_only',
+              assign: (ctx, toolName) => ({
+                registeredTools: [...ctx.registeredTools, toolName]
+              })
+            }
+          ],
+          REGISTER_FAIL: {
+            target: 'registration_error',
+            assign: (_, err) => ({ lastError: err })
+          }
+        }
+      },
+      native_active: {
+        on: {
+          REGISTER_OK: {
+            target: 'native_active',
+            assign: (ctx, toolName) => ({
+              registeredTools: [...ctx.registeredTools, toolName],
+              lastError: null
+            })
+          },
+          FALLBACK: {
+            target: 'native_active',
+            assign: (ctx, toolName) => ({
+              registeredTools: [...ctx.registeredTools, toolName]
+            })
+          },
+          REGISTER_FAIL: {
+            target: 'registration_error',
+            assign: (_, err) => ({ lastError: err })
+          }
+        }
+      },
+      simulation_only: {
+        on: {
+          FALLBACK: {
+            target: 'simulation_only',
+            assign: (ctx, toolName) => ({
+              registeredTools: [...ctx.registeredTools, toolName]
+            })
+          },
+          REGISTER_OK: {
+            target: 'native_active',
+            assign: (ctx, toolName) => ({
+              registeredTools: [...ctx.registeredTools, toolName],
+              lastError: null
+            })
+          },
+          REGISTER_FAIL: {
+            target: 'registration_error',
+            assign: (_, err) => ({ lastError: err })
+          }
+        }
+      },
+      registration_error: {
+        on: {
+          REGISTER_OK: {
+            target: 'native_active',
+            assign: (ctx, toolName) => ({
+              registeredTools: [...ctx.registeredTools, toolName],
+              lastError: null
+            })
+          },
+          REGISTER_FAIL: {
+            target: 'registration_error',
+            assign: (_, err) => ({ lastError: err })
+          }
+        }
+      }
+    }
+  });
+
   const card = (name, description, inputSchema, execute, annotations = {}) => ({
     name,
     description: I18N.text(description),
@@ -27,20 +131,25 @@
     },
     execute
   });
+
   async function register(tool) {
     definitions.push(tool);
     const mc = getModelContext();
     if (mc?.registerTool) {
       try {
         await mc.registerTool(tool);
+        webmcpEnv.send('REGISTER_OK', tool.name);
         status('Native WebMCP tool registered on document.modelContext.');
       } catch (e) {
+        webmcpEnv.send('REGISTER_FAIL', e.message);
         status(`WebMCP registration error: ${e.message}`, true);
       }
     } else {
+      webmcpEnv.send('FALLBACK', tool.name);
       status('document.modelContext not detected.');
     }
   }
+
   const schema = properties => ({
     type: 'object',
     properties,
@@ -179,8 +288,6 @@
     ];
 
     const trail = [];
-    let lastAddedId = null;
-    let lastAddedSource = null;
     let toastTimer = null;
     const webmcpActive = hasWebMCP();
 
@@ -220,7 +327,79 @@
       </section>
     `;
 
-    // Build Onboarding Modal for when WebMCP API/Flag is not active
+    bindMachine($('#webmcp-env-pill'), webmcpEnv);
+
+    const routeMachine = createMachine({
+      id: 'reading-route',
+      initial: 'empty',
+      host: app,
+      context: {
+        route: [],
+        totalMinutes: 0,
+        filterQuery: '',
+        lastAddedId: null,
+        lastAddedSource: null,
+        lastErrorCode: null
+      },
+      states: {
+        empty: {
+          on: {
+            ADD_ITEM: {
+              target: 'populated',
+              assign: (_, p) => ({
+                route: [...p.route],
+                totalMinutes: p.totalMinutes,
+                lastAddedId: p.articleId,
+                lastAddedSource: p.source,
+                lastErrorCode: null
+              })
+            },
+            FILTER: { target: 'empty', assign: (_, filterQuery) => ({ filterQuery }) },
+            INVALID_INPUT: { target: 'empty', assign: (_, code) => ({ lastErrorCode: code }) }
+          }
+        },
+        populated: {
+          on: {
+            ADD_ITEM: {
+              target: 'populated',
+              assign: (_, p) => ({
+                route: [...p.route],
+                totalMinutes: p.totalMinutes,
+                lastAddedId: p.articleId,
+                lastAddedSource: p.source,
+                lastErrorCode: null
+              })
+            },
+            DUPLICATE_ITEM: {
+              target: 'populated',
+              assign: () => ({ lastErrorCode: null })
+            },
+            REMOVE_ITEM: [
+              {
+                target: 'empty',
+                guard: (_, p) => p?.route?.length === 0,
+                assign: (ctx, p) => ({
+                  route: [],
+                  totalMinutes: 0,
+                  lastAddedId: ctx.lastAddedId === p.removedId ? null : ctx.lastAddedId
+                })
+              },
+              {
+                target: 'populated',
+                assign: (ctx, p) => ({
+                  route: [...p.route],
+                  totalMinutes: p.totalMinutes,
+                  lastAddedId: ctx.lastAddedId === p.removedId ? null : ctx.lastAddedId
+                })
+              }
+            ],
+            FILTER: { target: 'populated', assign: (_, filterQuery) => ({ filterQuery }) },
+            INVALID_INPUT: { target: 'populated', assign: (_, code) => ({ lastErrorCode: code }) }
+          }
+        }
+      }
+    });
+
     let modal = $('#webmcp-modal');
     if (!modal) {
       modal = document.createElement('dialog');
@@ -267,11 +446,30 @@
       document.body.append(modal);
     }
 
-    let pendingToast = null;
+    const modalMachine = createMachine({
+      id: 'onboarding-modal',
+      initial: 'closed',
+      host: modal,
+      context: { queuedToast: null },
+      states: {
+        closed: {
+          on: {
+            OPEN: 'open'
+          }
+        },
+        open: {
+          on: {
+            QUEUE_TOAST: { target: 'open', assign: (_, queuedToast) => ({ queuedToast }) },
+            CLOSE: { target: 'closed', assign: () => ({ queuedToast: null }) }
+          }
+        }
+      }
+    });
 
     const openModal = () => {
       if (!modal.open && typeof modal.showModal === 'function') {
         modal.showModal();
+        modalMachine.send('OPEN');
       }
     };
     const closeModal = () => {
@@ -297,20 +495,59 @@
       }
     };
 
+    const copyBtn = $('#copy-flag-btn');
+    const copyMachine = createMachine({
+      id: 'clipboard-copy',
+      initial: 'idle',
+      host: copyBtn,
+      context: { attempts: 0, lastUrl: null },
+      states: {
+        idle: {
+          on: {
+            COPY_START: { target: 'copying', assign: (ctx, lastUrl) => ({ attempts: ctx.attempts + 1, lastUrl }) }
+          }
+        },
+        copying: {
+          busy: true,
+          on: {
+            COPY_START: { target: 'copying', assign: (ctx, lastUrl) => ({ attempts: ctx.attempts + 1, lastUrl }) },
+            COPY_OK: 'copied',
+            COPY_FAIL: 'failed'
+          }
+        },
+        copied: {
+          on: {
+            COPY_START: { target: 'copying', assign: (ctx, lastUrl) => ({ attempts: ctx.attempts + 1, lastUrl }) },
+            RESET: 'idle'
+          }
+        },
+        failed: {
+          on: {
+            COPY_START: { target: 'copying', assign: (ctx, lastUrl) => ({ attempts: ctx.attempts + 1, lastUrl }) },
+            RESET: 'idle'
+          }
+        }
+      }
+    });
+
     let copyTimer = null;
     let lastCopyAnnouncement = '';
 
-    $('#copy-flag-btn').addEventListener('click', async e => {
+    copyBtn.addEventListener('click', async e => {
       const btn = e.currentTarget;
       const live = $('#copy-flag-live', modal);
       const urlToCopy = btn.dataset.flagUrl || 'chrome://flags';
       clearTimeout(copyTimer);
+      copyMachine.send('COPY_START', urlToCopy);
       btn.removeAttribute('data-failed');
       btn.textContent = copy.copiedFlagBtn;
       btn.classList.add('is-copied');
       btn.dataset.copied = 'true';
       const ok = await copyTextToClipboard(urlToCopy);
-      if (!ok) {
+      if (ok) {
+        copyMachine.send('COPY_OK');
+      } else {
+        copyMachine.send('COPY_FAIL');
         delete btn.dataset.copied;
         btn.setAttribute('data-failed', '');
         btn.classList.remove('is-copied');
@@ -323,6 +560,7 @@
         live.textContent = msg;
       }
       copyTimer = setTimeout(() => {
+        copyMachine.send('RESET');
         btn.textContent = copy.copyFlagBtn;
         btn.classList.remove('is-copied');
         btn.removeAttribute('data-failed');
@@ -347,14 +585,12 @@
     }
     modal.addEventListener('close', () => {
       modal.returnValue = '';
-      if (pendingToast) {
-        const queued = pendingToast;
-        pendingToast = null;
-        showToast(queued.message, queued.tone);
-      }
+      const queued = modalMachine.getContext().queuedToast;
+      modalMachine.send('CLOSE');
+      if (queued) showToast(queued.message, queued.tone);
     });
     $('#webmcp-env-pill').addEventListener('click', () => {
-      if (!webmcpActive) openModal();
+      if (webmcpEnv.getState() !== 'native_active') openModal();
     });
 
     if (!webmcpActive) {
@@ -362,8 +598,8 @@
     }
 
     function showToast(message, tone = 'ok') {
-      if (modal.open) {
-        pendingToast = { message, tone };
+      if (modal.open || modalMachine.getState() === 'open') {
+        modalMachine.send('QUEUE_TOAST', { message, tone });
         return;
       }
       const toast = $('#route-toast');
@@ -378,6 +614,11 @@
       }, 3200);
     }
 
+    addEventListener('pagehide', () => {
+      clearTimeout(copyTimer);
+      clearTimeout(toastTimer);
+    });
+
     function updateBadge(textLabel, highlight = false) {
       const badge = $('#route-status-badge');
       if (!badge) return;
@@ -385,8 +626,11 @@
       badge.classList.toggle('is-highlighted', highlight);
     }
 
+    const computeMinutes = list => list.reduce((n, key) => n + articles.find(a => a.id === key).minutes, 0);
+
     function render() {
       const q = ($('#filter')?.value || '').toLowerCase().trim();
+      const { lastAddedId, lastAddedSource } = routeMachine.getContext();
       const filtered = articles.filter(a =>
         `${a.title} ${a.displayTitle} ${a.tags} ${a.displayTags}`.toLowerCase().includes(q)
       );
@@ -435,27 +679,32 @@
       }
 
       $('#count').textContent = String(trail.length);
-      $('#minutes').textContent = String(trail.reduce((n, key) => n + articles.find(a => a.id === key).minutes, 0));
+      $('#minutes').textContent = String(computeMinutes(trail));
 
       $$('[data-add]').forEach(b => {
-        b.onclick = () => add({ articleId: b.dataset.add }, 'ui');
+        b.addEventListener('click', () => add({ articleId: b.dataset.add }, 'ui'));
       });
       $$('[data-remove]').forEach(b => {
-        b.onclick = () => {
+        b.addEventListener('click', () => {
           const removedId = b.dataset.remove;
           const removedArticle = articles.find(a => a.id === removedId);
           const idx = trail.indexOf(removedId);
           if (idx !== -1) trail.splice(idx, 1);
-          if (lastAddedId === removedId) lastAddedId = null;
+          routeMachine.send('REMOVE_ITEM', {
+            removedId,
+            route: [...trail],
+            totalMinutes: computeMinutes(trail)
+          });
           render();
           updateBadge(copy.badgeReady, false);
           if (removedArticle) showToast(copy.toastRemoved(removedArticle.displayTitle), 'info');
-        };
+        });
       });
     }
 
     function add(args, source = 'tool') {
       if (!args || typeof args.articleId !== 'string') {
+        routeMachine.send('INVALID_INPUT', 'INVALID_ARGUMENT');
         const err = { error: 'articleId must be a string.', code: 'INVALID_ARGUMENT', retryable: true };
         showToast(copy.toastError(err.error), 'warn');
         return err;
@@ -474,24 +723,33 @@
         (rawId.includes('responsabilidad') && item.id === 'ownership')
       );
       if (!a) {
+        routeMachine.send('INVALID_INPUT', 'UNKNOWN_ARTICLE');
         const err = { error: 'Unknown articleId. Valid values: models, browserdj, patterns, ownership.', code: 'UNKNOWN_ARTICLE', retryable: true };
         showToast(copy.toastError(err.error), 'warn');
         return err;
       }
       if (trail.includes(a.id)) {
+        routeMachine.send('DUPLICATE_ITEM', a.id);
         showToast(copy.toastDuplicate(a.displayTitle), 'info');
         return { status: 'already-added', article: a.title };
       }
       trail.push(a.id);
-      lastAddedId = a.id;
-      lastAddedSource = source;
+      routeMachine.send('ADD_ITEM', {
+        articleId: a.id,
+        source,
+        route: [...trail],
+        totalMinutes: computeMinutes(trail)
+      });
       render();
       updateBadge(source === 'ui' ? copy.badgeUpdatedUi : copy.badgeUpdatedTool, true);
       showToast(copy.toastAdded(a.displayTitle), 'ok');
       return { status: 'added', article: a.title, route: [...trail] };
     }
 
-    $('#filter').oninput = render;
+    $('#filter').addEventListener('input', () => {
+      routeMachine.send('FILTER', ($('#filter')?.value || '').trim());
+      render();
+    });
     window.addToRoute = (args, source = 'tool') => add(args, source);
     render();
     register(
@@ -513,22 +771,311 @@
   }
 
   if (id === 'consent-cart') {
-    let pending = null, order = 0, finishReview = null;
+    let reviewSeq = 0;
+    let activeReview = null;
+
     app.innerHTML = panel('1. Stage Tool Request', '<p class="small">Tool: <code>request_demo_ticket_confirmation</code> (<code>consequentialHint: true</code>)</p><label for="qty">Quantity (1–4)</label><input id="qty" type="number" min="1" max="4" value="2"><button type="button" id="stage">Stage request</button>') + panel('2. User Confirmation Gate', '<div id="pending" class="output">No pending request.</div><div class="actions"><button type="button" id="confirm" disabled>Confirm</button><button type="button" id="reject" class="secondary" disabled>Reject</button></div><pre id="ledger" aria-live="polite" tabindex="0">No confirmed requests.</pre>');
-    function prepare({ quantity }) { if (!Number.isInteger(quantity) || quantity < 1 || quantity > 4) return { error: 'quantity must be an integer between 1 and 4.', code: 'INVALID_QUANTITY', retryable: true }; if (pending) return { error: 'Resolve the pending request first.', code: 'REVIEW_PENDING', retryable: true }; pending = { quantity }; $('#pending').textContent = `Pending confirmation: ${quantity} ticket(s).`; $('#confirm').disabled = false; $('#reject').disabled = false; status('Request staged; Promise is waiting for user confirmation.'); return { status: 'awaiting-user-review', quantity }; }
-    run('#stage', () => prepare({ quantity: Number($('#qty').value) }));
-    $('#confirm').onclick = () => { if (!pending) return; order++; const quantity = pending.quantity; $('#ledger').textContent = `Confirmed #${order}: ${quantity} ticket(s).`; pending = null; $('#pending').textContent = 'No pending request.'; $('#confirm').disabled = true; $('#reject').disabled = true; finishReview?.({ status: 'confirmed', quantity }); finishReview = null; status('Request confirmed; Promise resolved.'); };
-    $('#reject').onclick = () => { pending = null; $('#pending').textContent = 'Request rejected.'; $('#confirm').disabled = true; $('#reject').disabled = true; finishReview?.({ status: 'rejected' }); finishReview = null; status('Request rejected.'); };
-    async function requestReview(args, { signal } = {}) { if (signal?.aborted) return { status: 'cancelled' }; const prepared = prepare(args); if (prepared.error) return prepared; return new Promise(resolve => { const cancel = () => { pending = null; $('#pending').textContent = 'Request cancelled.'; $('#confirm').disabled = true; $('#reject').disabled = true; finishReview?.({ status: 'cancelled' }); finishReview = null; }; finishReview = value => { signal?.removeEventListener('abort', cancel); resolve(value); }; signal?.addEventListener('abort', cancel, { once: true }); }); }
-    register(card('request_demo_ticket_confirmation', 'Stage a ticket request and wait for explicit user confirmation.', schema({ quantity: { type: 'integer', minimum: 1, maximum: 4 } }), requestReview, { consequentialHint: true }));
+
+    const stageTransition = {
+      target: 'awaiting_review',
+      assign: (_, p) => ({
+        pendingQuantity: p.quantity,
+        source: p.source
+      })
+    };
+
+    const consentMachine = createMachine({
+      id: 'consent-cart',
+      initial: 'idle',
+      host: app,
+      context: { pendingQuantity: null, confirmedOrders: 0, lastQuantity: null, source: null },
+      states: {
+        idle: {
+          on: {
+            STAGE: stageTransition,
+            CANCEL_ABORTED: 'cancelled'
+          }
+        },
+        awaiting_review: {
+          busy: true,
+          on: {
+            CONFIRM: {
+              target: 'confirmed',
+              assign: ctx => ({
+                confirmedOrders: ctx.confirmedOrders + 1,
+                lastQuantity: ctx.pendingQuantity,
+                pendingQuantity: null
+              })
+            },
+            REJECT: {
+              target: 'rejected',
+              assign: () => ({ pendingQuantity: null })
+            },
+            CANCEL: {
+              target: 'cancelled',
+              assign: () => ({ pendingQuantity: null })
+            }
+          }
+        },
+        confirmed: {
+          on: {
+            STAGE: stageTransition,
+            CANCEL_ABORTED: 'cancelled',
+            RESET: 'idle'
+          }
+        },
+        rejected: {
+          on: {
+            STAGE: stageTransition,
+            CANCEL_ABORTED: 'cancelled',
+            RESET: 'idle'
+          }
+        },
+        cancelled: {
+          on: {
+            STAGE: stageTransition,
+            CANCEL_ABORTED: 'cancelled',
+            RESET: 'idle'
+          }
+        }
+      },
+      onTransition(snap, meta) {
+        const awaiting = snap.state === 'awaiting_review';
+        $('#confirm').disabled = !awaiting;
+        $('#reject').disabled = !awaiting;
+        if (meta.event === 'STAGE') {
+          $('#pending').textContent = `Pending confirmation: ${snap.context.pendingQuantity} ticket(s).`;
+          status('Request staged; Promise is waiting for user confirmation.');
+        } else if (meta.event === 'CONFIRM') {
+          $('#ledger').textContent = `Confirmed #${snap.context.confirmedOrders}: ${snap.context.lastQuantity} ticket(s).`;
+          $('#pending').textContent = 'No pending request.';
+          status('Request confirmed; Promise resolved.');
+        } else if (meta.event === 'REJECT') {
+          $('#pending').textContent = 'Request rejected.';
+          status('Request rejected.');
+        } else if (meta.event === 'CANCEL' || meta.event === 'CANCEL_ABORTED') {
+          $('#pending').textContent = 'Request cancelled.';
+          status('Request cancelled.');
+        }
+      }
+    });
+
+    function settleReview(outcome) {
+      if (!activeReview) return;
+      const current = activeReview;
+      activeReview = null;
+      current.cleanup();
+      current.resolve(outcome);
+    }
+
+    function prepare({ quantity } = {}, source = 'ui') {
+      if (!Number.isInteger(quantity) || quantity < 1 || quantity > 4) {
+        return { error: 'quantity must be an integer between 1 and 4.', code: 'INVALID_QUANTITY', retryable: true };
+      }
+      if (!consentMachine.can('STAGE')) {
+        return { error: 'Resolve the pending request first.', code: 'REVIEW_PENDING', retryable: true };
+      }
+      consentMachine.send('STAGE', { quantity, source });
+      return { status: 'awaiting-user-review', quantity };
+    }
+
+    run('#stage', () => {
+      const outcome = prepare({ quantity: Number($('#qty').value) }, 'ui');
+      if (outcome.error) status(outcome.error, true);
+    });
+
+    $('#confirm').addEventListener('click', () => {
+      if (!consentMachine.can('CONFIRM')) return;
+      const snap = consentMachine.send('CONFIRM');
+      settleReview({ status: 'confirmed', quantity: snap.context.lastQuantity });
+    });
+
+    $('#reject').addEventListener('click', () => {
+      if (!consentMachine.can('REJECT')) return;
+      consentMachine.send('REJECT');
+      settleReview({ status: 'rejected' });
+    });
+
+    async function requestReview(args, { signal } = {}) {
+      if (signal?.aborted) {
+        if (consentMachine.can('CANCEL_ABORTED')) consentMachine.send('CANCEL_ABORTED');
+        return { status: 'cancelled' };
+      }
+      const prepared = prepare(args, 'tool');
+      if (prepared.error) return prepared;
+      const token = ++reviewSeq;
+      return new Promise(resolve => {
+        const onAbort = () => {
+          if (activeReview?.token !== token) return;
+          if (consentMachine.can('CANCEL')) consentMachine.send('CANCEL');
+          settleReview({ status: 'cancelled' });
+        };
+        activeReview = {
+          token,
+          resolve,
+          cleanup: () => signal?.removeEventListener('abort', onAbort)
+        };
+        signal?.addEventListener('abort', onAbort, { once: true });
+      });
+    }
+
+    addEventListener('pagehide', () => {
+      if (consentMachine.can('CANCEL')) {
+        consentMachine.send('CANCEL');
+        settleReview({ status: 'cancelled' });
+      }
+    });
+
+    register(card(
+      'request_demo_ticket_confirmation',
+      'Stage a ticket request and wait for explicit user confirmation.',
+      schema({ quantity: { type: 'integer', minimum: 1, maximum: 4 } }),
+      requestReview,
+      { consequentialHint: true }
+    ));
   }
 
   if (id === 'tool-observatory') {
     app.innerHTML = panel('Registered Tools & Arguments', '<label><input type="checkbox" id="show-debug">Show debugging tools (<code>debugging: true</code>)</label><div id="tools"></div><label for="tool">Select tool</label><select id="tool"></select><div class="presets"><span>Presets:</span><button type="button" class="secondary" data-preset=\'{"query":"browser"}\'>Valid query</button><button type="button" class="secondary" data-preset=\'{"query":""}\'>Empty query</button><button type="button" class="secondary" data-preset="broken JSON">Malformed JSON</button></div><label for="args">JSON arguments</label><textarea id="args" autocorrect="off" autocapitalize="none" spellcheck="false">{"query":"browser"}</textarea><button type="button" id="invoke">Execute tool</button>') + output('Execution Trace');
-    const tools = [card('find_demo', 'Search modules in the catalog.', schema({ query: { type: 'string' } }), ({ query }) => { if (typeof query !== 'string' || !query.trim()) return { error: 'Provide a non-empty query string.', code: 'INVALID_QUERY', retryable: true }; return { matches: CONTENT_TOPICS.filter(t => (t.title + ' ' + t.subtitle).toLowerCase().includes(query.toLowerCase())).map(t => ({ id: t.id, title: t.title })) }; }, { readOnlyHint: true }), card('inspect_state', 'Return internal application state for debugging.', { type: 'object', properties: {} }, () => ({ time: new Date().toISOString(), topicCount: CONTENT_TOPICS.length, source: 'local-debug-state' }), { readOnlyHint: true, debugging: true })];
-    function render() { const list = tools.filter(t => $('#show-debug').checked || !t.annotations.debugging); $('#tools').innerHTML = list.map(t => `<div class="item"><h3>${t.name}</h3><p>${t.description}</p><pre tabindex="0"><code>${esc(JSON.stringify({ annotations: t.annotations, inputSchema: t.inputSchema }, null, 2))}</code></pre></div>`).join(''); $('#tool').innerHTML = list.map(t => `<option>${t.name}</option>`).join(''); }
-    $('#show-debug').onchange = render; $('#tool').onchange = () => $('#args').value = $('#tool').value === 'find_demo' ? '{"query":"browser"}' : '{}';
-    $$('[data-preset]').forEach(b => b.onclick = () => { $('#args').value = b.dataset.preset; $('#invoke').click(); });
-    run('#invoke', async () => { const t = tools.find(t => t.name === $('#tool').value); const args = JSON.parse($('#args').value); if (!args || typeof args !== 'object' || Array.isArray(args)) throw new Error('Arguments must be a JSON object.'); const begin = performance.now(); const response = await t.execute(args); result({ tool: t.name, annotations: t.annotations, arguments: args, response, durationMs: Math.round((performance.now() - begin) * 100) / 100 }, 'Direct callback execution'); status(response.error ? 'Tool returned a structured error.' : 'Tool executed.', Boolean(response.error)); }); render(); tools.forEach(register);
+
+    const tools = [
+      card(
+        'find_demo',
+        'Search modules in the catalog.',
+        schema({ query: { type: 'string' } }),
+        ({ query }) => {
+          if (typeof query !== 'string' || !query.trim()) {
+            return { error: 'Provide a non-empty query string.', code: 'INVALID_QUERY', retryable: true };
+          }
+          return {
+            matches: CONTENT_TOPICS
+              .filter(t => (t.title + ' ' + t.subtitle).toLowerCase().includes(query.toLowerCase()))
+              .map(t => ({ id: t.id, title: t.title }))
+          };
+        },
+        { readOnlyHint: true }
+      ),
+      card(
+        'inspect_state',
+        'Return internal application state for debugging.',
+        { type: 'object', properties: {} },
+        () => ({
+          time: new Date().toISOString(),
+          topicCount: CONTENT_TOPICS.length,
+          source: 'local-debug-state',
+          machines: inspectMachines()
+        }),
+        { readOnlyHint: true, debugging: true }
+      )
+    ];
+
+    const controlTransitions = {
+      TOGGLE_DEBUG: {
+        assign: (_, p) => ({
+          showDebug: p.showDebug,
+          visibleToolCount: p.visibleToolCount,
+          selectedTool: p.selectedTool
+        })
+      },
+      SELECT_TOOL: { assign: (_, selectedTool) => ({ selectedTool }) },
+      APPLY_PRESET: { assign: (_, preset) => ({ lastPreset: preset }) },
+      INVOKE: { target: 'executing', assign: (_, lastTool) => ({ lastTool, lastErrorCode: null }) },
+      REJECT_ARGS: { target: 'invalid_json', assign: (_, lastErrorCode) => ({ lastErrorCode }) }
+    };
+
+    const observatoryMachine = createMachine({
+      id: 'tool-observatory',
+      initial: 'idle',
+      host: app,
+      context: {
+        showDebug: false,
+        selectedTool: 'find_demo',
+        visibleToolCount: 1,
+        registeredToolCount: tools.length,
+        lastTool: null,
+        lastDurationMs: null,
+        lastErrorCode: null,
+        lastPreset: null
+      },
+      states: {
+        idle: { on: controlTransitions },
+        executing: {
+          busy: true,
+          on: {
+            RESOLVE_OK: {
+              target: 'succeeded',
+              assign: (_, durationMs) => ({ lastDurationMs: durationMs, lastErrorCode: null })
+            },
+            RESOLVE_TOOL_ERROR: {
+              target: 'structured_error',
+              assign: (_, p) => ({ lastDurationMs: p.durationMs, lastErrorCode: p.code })
+            },
+            REJECT_ARGS: {
+              target: 'invalid_json',
+              assign: (_, lastErrorCode) => ({ lastErrorCode })
+            }
+          }
+        },
+        succeeded: { on: controlTransitions },
+        structured_error: { on: controlTransitions },
+        invalid_json: { on: controlTransitions }
+      }
+    });
+
+    function render() {
+      const showDebug = $('#show-debug').checked;
+      const list = tools.filter(t => showDebug || !t.annotations.debugging);
+      $('#tools').innerHTML = list.map(t => `<div class="item"><h3>${t.name}</h3><p>${t.description}</p><pre tabindex="0"><code>${esc(JSON.stringify({ annotations: t.annotations, inputSchema: t.inputSchema }, null, 2))}</code></pre></div>`).join('');
+      const prev = $('#tool').value;
+      $('#tool').innerHTML = list.map(t => `<option>${t.name}</option>`).join('');
+      if (list.some(t => t.name === prev)) $('#tool').value = prev;
+      observatoryMachine.send('TOGGLE_DEBUG', {
+        showDebug,
+        visibleToolCount: list.length,
+        selectedTool: $('#tool').value
+      });
+    }
+
+    $('#show-debug').addEventListener('change', render);
+    $('#tool').addEventListener('change', () => {
+      const selected = $('#tool').value;
+      $('#args').value = selected === 'find_demo' ? '{"query":"browser"}' : '{}';
+      observatoryMachine.send('SELECT_TOOL', selected);
+    });
+    $$('[data-preset]').forEach(b => {
+      b.addEventListener('click', () => {
+        $('#args').value = b.dataset.preset;
+        observatoryMachine.send('APPLY_PRESET', b.dataset.preset);
+        $('#invoke').click();
+      });
+    });
+
+    run('#invoke', async () => {
+      const t = tools.find(item => item.name === $('#tool').value);
+      let args;
+      try {
+        args = JSON.parse($('#args').value);
+        if (!args || typeof args !== 'object' || Array.isArray(args)) {
+          throw new Error('Arguments must be a JSON object.');
+        }
+      } catch (err) {
+        observatoryMachine.send('REJECT_ARGS', err.name || 'Error');
+        throw err;
+      }
+      observatoryMachine.send('INVOKE', t.name);
+      const begin = performance.now();
+      const response = await t.execute(args);
+      const durationMs = Math.round((performance.now() - begin) * 100) / 100;
+      if (response?.error) {
+        observatoryMachine.send('RESOLVE_TOOL_ERROR', { durationMs, code: response.code || 'TOOL_ERROR' });
+      } else {
+        observatoryMachine.send('RESOLVE_OK', durationMs);
+      }
+      result({ tool: t.name, annotations: t.annotations, arguments: args, response, durationMs }, 'Direct callback execution');
+      status(response.error ? 'Tool returned a structured error.' : 'Tool executed.', Boolean(response.error));
+    });
+
+    render();
+    tools.forEach(register);
   }
 })();
