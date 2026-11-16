@@ -1,0 +1,28 @@
+# Python virtual environments & caches
+.venv/
+**/.venv/
+venv/
+**/venv/
+__pycache__/
+**/__pycache__/
+*.py[cod]
+
+# Node dependencies & Vite build outputs
+node_modules/
+**/node_modules/
+dist/
+**/dist/
+dist-ssr/
+
+# Environment variables & secrets (keep .env.example)
+.env
+**/.env
+.env.*
+**/.env.*
+!.env.example
+!**/.env.example
+
+# OS & editor files
+.DS_Store
+Thumbs.db
+*.log
