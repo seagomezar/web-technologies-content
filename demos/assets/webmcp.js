@@ -86,6 +86,7 @@
       step1Sub: 'Copia la dirección y ábrela en una pestaña nueva de Chrome:',
       copyFlagBtn: 'Copiar URL de la flag',
       copiedFlagBtn: '✓ ¡Copiado! (chrome://flags)',
+      copyFailedBtn: '⚠️ Error al copiar',
       step2Title: '2. Buscar y habilitar la flag requerida por el demo',
       step2Sub: 'Busca y activa la flag:',
       step3Title: '3. Reiniciar el navegador y recargar el demo',
@@ -128,6 +129,7 @@
       step1Sub: 'Copy the URL and open it in a new Chrome tab:',
       copyFlagBtn: 'Copy flag URL',
       copiedFlagBtn: '✓ Copied! (chrome://flags)',
+      copyFailedBtn: '⚠️ Copy failed',
       step2Title: '2. Search for and enable the flag required by the demo',
       step2Sub: 'Search for and enable:',
       step3Title: '3. Relaunch the browser and reload the demo',
@@ -198,7 +200,9 @@
       <section class="panel reading-panel catalog-panel">
         <div class="panel-head-row">
           <h2>${esc(copy.catalogTitle)}</h2>
-          <input id="filter" class="compact-filter" type="search" placeholder="${esc(copy.filterPlaceholder)}" aria-label="${esc(copy.filterAria)}">
+          <search class="catalog-search">
+            <input id="filter" class="compact-filter" type="search" name="filter" placeholder="${esc(copy.filterPlaceholder)}" aria-label="${esc(copy.filterAria)}" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false">
+          </search>
         </div>
         <div id="catalog" class="catalog-grid"></div>
       </section>
@@ -222,6 +226,7 @@
       modal = document.createElement('dialog');
       modal.id = 'webmcp-modal';
       modal.className = 'onboarding-modal';
+      modal.setAttribute('closedby', 'any');
       modal.setAttribute('aria-labelledby', 'onboarding-modal-title');
       modal.innerHTML = `
         <div class="onboarding-modal-card">
@@ -237,6 +242,7 @@
               <button type="button" id="copy-flag-btn" class="copy-flag-btn" data-flag-url="chrome://flags">
                 ${esc(copy.copyFlagBtn)}
               </button>
+              <span id="copy-flag-live" class="sr-only" role="status" data-original></span>
             </li>
             <li>
               <div class="step-body">
@@ -252,7 +258,7 @@
             </li>
           </ol>
           <div class="onboarding-actions">
-            <button type="button" id="close-onboarding-btn" class="secondary onboarding-close-btn">
+            <button type="button" id="close-onboarding-btn" class="secondary onboarding-close-btn" autofocus>
               ${esc(copy.closeModalBtn)}
             </button>
           </div>
@@ -261,54 +267,91 @@
       document.body.append(modal);
     }
 
+    let pendingToast = null;
+
     const openModal = () => {
-      if (!modal.open) {
-        if (typeof modal.showModal === 'function') {
-          try { modal.showModal(); } catch { modal.setAttribute('open', ''); }
-        } else {
-          modal.setAttribute('open', '');
-        }
+      if (!modal.open && typeof modal.showModal === 'function') {
+        modal.showModal();
       }
     };
     const closeModal = () => {
       if (typeof modal.close === 'function' && modal.open) modal.close();
-      else modal.removeAttribute('open');
+    };
+
+    const legacyCopy = textToCopy => {
+      const ta = Object.assign(document.createElement('textarea'), { value: textToCopy });
+      ta.setAttribute('readonly', '');
+      ta.style.cssText = 'position:fixed;inset-block-start:0;opacity:0';
+      (modal.open ? modal : document.body).append(ta);
+      ta.select();
+      try { return document.execCommand('copy'); } catch { return false; } finally { ta.remove(); }
     };
 
     const copyTextToClipboard = async textToCopy => {
       try {
-        if (navigator.clipboard?.writeText) {
-          await navigator.clipboard.writeText(textToCopy);
-          return true;
-        }
-      } catch {}
-      const ta = document.createElement('textarea');
-      ta.value = textToCopy;
-      ta.style.position = 'fixed';
-      ta.style.opacity = '0';
-      document.body.append(ta);
-      ta.select();
-      try { document.execCommand('copy'); } catch {}
-      ta.remove();
-      return true;
+        if (!navigator.clipboard?.writeText) throw new Error('Clipboard unavailable');
+        await navigator.clipboard.writeText(textToCopy);
+        return true;
+      } catch {
+        return legacyCopy(textToCopy);
+      }
     };
+
+    let copyTimer = null;
+    let lastCopyAnnouncement = '';
 
     $('#copy-flag-btn').addEventListener('click', async e => {
       const btn = e.currentTarget;
+      const live = $('#copy-flag-live', modal);
       const urlToCopy = btn.dataset.flagUrl || 'chrome://flags';
+      clearTimeout(copyTimer);
+      btn.removeAttribute('data-failed');
       btn.textContent = copy.copiedFlagBtn;
       btn.classList.add('is-copied');
       btn.dataset.copied = 'true';
-      await copyTextToClipboard(urlToCopy);
-      setTimeout(() => {
+      const ok = await copyTextToClipboard(urlToCopy);
+      if (!ok) {
+        delete btn.dataset.copied;
+        btn.setAttribute('data-failed', '');
+        btn.classList.remove('is-copied');
+        btn.textContent = copy.copyFailedBtn;
+      }
+      if (live) {
+        let msg = ok ? copy.copiedFlagBtn : copy.copyFailedBtn;
+        if (msg === lastCopyAnnouncement) msg += '\u00A0';
+        lastCopyAnnouncement = msg;
+        live.textContent = msg;
+      }
+      copyTimer = setTimeout(() => {
         btn.textContent = copy.copyFlagBtn;
         btn.classList.remove('is-copied');
+        btn.removeAttribute('data-failed');
+        if (live) live.textContent = '';
       }, 2400);
     });
 
     $('#close-onboarding-btn').addEventListener('click', closeModal);
-    modal.addEventListener('click', e => {
-      if (e.target === modal) closeModal();
+    if (!('closedBy' in HTMLDialogElement.prototype)) {
+      const outside = e => {
+        const r = modal.getBoundingClientRect();
+        return e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom;
+      };
+      let pressedOutside = false;
+      modal.addEventListener('pointerdown', e => {
+        pressedOutside = e.target === modal && outside(e);
+      });
+      modal.addEventListener('pointerup', e => {
+        if (pressedOutside && e.target === modal && outside(e)) closeModal();
+        pressedOutside = false;
+      });
+    }
+    modal.addEventListener('close', () => {
+      modal.returnValue = '';
+      if (pendingToast) {
+        const queued = pendingToast;
+        pendingToast = null;
+        showToast(queued.message, queued.tone);
+      }
     });
     $('#webmcp-env-pill').addEventListener('click', () => {
       if (!webmcpActive) openModal();
@@ -319,6 +362,10 @@
     }
 
     function showToast(message, tone = 'ok') {
+      if (modal.open) {
+        pendingToast = { message, tone };
+        return;
+      }
       const toast = $('#route-toast');
       if (!toast) return;
       toast.textContent = message;
@@ -467,7 +514,7 @@
 
   if (id === 'consent-cart') {
     let pending = null, order = 0, finishReview = null;
-    app.innerHTML = panel('1. Stage Tool Request', '<p class="small">Tool: <code>request_demo_ticket_confirmation</code> (<code>consequentialHint: true</code>)</p><label for="qty">Quantity (1–4)</label><input id="qty" type="number" min="1" max="4" value="2"><button id="stage">Stage request</button>') + panel('2. User Confirmation Gate', '<div id="pending" class="output">No pending request.</div><div class="actions"><button id="confirm" disabled>Confirm</button><button id="reject" class="secondary" disabled>Reject</button></div><pre id="ledger" aria-live="polite">No confirmed requests.</pre>');
+    app.innerHTML = panel('1. Stage Tool Request', '<p class="small">Tool: <code>request_demo_ticket_confirmation</code> (<code>consequentialHint: true</code>)</p><label for="qty">Quantity (1–4)</label><input id="qty" type="number" min="1" max="4" value="2"><button type="button" id="stage">Stage request</button>') + panel('2. User Confirmation Gate', '<div id="pending" class="output">No pending request.</div><div class="actions"><button type="button" id="confirm" disabled>Confirm</button><button type="button" id="reject" class="secondary" disabled>Reject</button></div><pre id="ledger" aria-live="polite" tabindex="0">No confirmed requests.</pre>');
     function prepare({ quantity }) { if (!Number.isInteger(quantity) || quantity < 1 || quantity > 4) return { error: 'quantity must be an integer between 1 and 4.', code: 'INVALID_QUANTITY', retryable: true }; if (pending) return { error: 'Resolve the pending request first.', code: 'REVIEW_PENDING', retryable: true }; pending = { quantity }; $('#pending').textContent = `Pending confirmation: ${quantity} ticket(s).`; $('#confirm').disabled = false; $('#reject').disabled = false; status('Request staged; Promise is waiting for user confirmation.'); return { status: 'awaiting-user-review', quantity }; }
     run('#stage', () => prepare({ quantity: Number($('#qty').value) }));
     $('#confirm').onclick = () => { if (!pending) return; order++; const quantity = pending.quantity; $('#ledger').textContent = `Confirmed #${order}: ${quantity} ticket(s).`; pending = null; $('#pending').textContent = 'No pending request.'; $('#confirm').disabled = true; $('#reject').disabled = true; finishReview?.({ status: 'confirmed', quantity }); finishReview = null; status('Request confirmed; Promise resolved.'); };
@@ -477,9 +524,9 @@
   }
 
   if (id === 'tool-observatory') {
-    app.innerHTML = panel('Registered Tools & Arguments', '<label><input type="checkbox" id="show-debug">Show debugging tools (<code>debugging: true</code>)</label><div id="tools"></div><label for="tool">Select tool</label><select id="tool"></select><div class="presets"><span>Presets:</span><button type="button" class="secondary" data-preset=\'{"query":"browser"}\'>Valid query</button><button type="button" class="secondary" data-preset=\'{"query":""}\'>Empty query</button><button type="button" class="secondary" data-preset="broken JSON">Malformed JSON</button></div><label for="args">JSON arguments</label><textarea id="args">{"query":"browser"}</textarea><button id="invoke">Execute tool</button>') + output('Execution Trace');
+    app.innerHTML = panel('Registered Tools & Arguments', '<label><input type="checkbox" id="show-debug">Show debugging tools (<code>debugging: true</code>)</label><div id="tools"></div><label for="tool">Select tool</label><select id="tool"></select><div class="presets"><span>Presets:</span><button type="button" class="secondary" data-preset=\'{"query":"browser"}\'>Valid query</button><button type="button" class="secondary" data-preset=\'{"query":""}\'>Empty query</button><button type="button" class="secondary" data-preset="broken JSON">Malformed JSON</button></div><label for="args">JSON arguments</label><textarea id="args" autocorrect="off" autocapitalize="none" spellcheck="false">{"query":"browser"}</textarea><button type="button" id="invoke">Execute tool</button>') + output('Execution Trace');
     const tools = [card('find_demo', 'Search modules in the catalog.', schema({ query: { type: 'string' } }), ({ query }) => { if (typeof query !== 'string' || !query.trim()) return { error: 'Provide a non-empty query string.', code: 'INVALID_QUERY', retryable: true }; return { matches: CONTENT_TOPICS.filter(t => (t.title + ' ' + t.subtitle).toLowerCase().includes(query.toLowerCase())).map(t => ({ id: t.id, title: t.title })) }; }, { readOnlyHint: true }), card('inspect_state', 'Return internal application state for debugging.', { type: 'object', properties: {} }, () => ({ time: new Date().toISOString(), topicCount: CONTENT_TOPICS.length, source: 'local-debug-state' }), { readOnlyHint: true, debugging: true })];
-    function render() { const list = tools.filter(t => $('#show-debug').checked || !t.annotations.debugging); $('#tools').innerHTML = list.map(t => `<div class="item"><h3>${t.name}</h3><p>${t.description}</p><pre>${esc(JSON.stringify({ annotations: t.annotations, inputSchema: t.inputSchema }, null, 2))}</pre></div>`).join(''); $('#tool').innerHTML = list.map(t => `<option>${t.name}</option>`).join(''); }
+    function render() { const list = tools.filter(t => $('#show-debug').checked || !t.annotations.debugging); $('#tools').innerHTML = list.map(t => `<div class="item"><h3>${t.name}</h3><p>${t.description}</p><pre tabindex="0"><code>${esc(JSON.stringify({ annotations: t.annotations, inputSchema: t.inputSchema }, null, 2))}</code></pre></div>`).join(''); $('#tool').innerHTML = list.map(t => `<option>${t.name}</option>`).join(''); }
     $('#show-debug').onchange = render; $('#tool').onchange = () => $('#args').value = $('#tool').value === 'find_demo' ? '{"query":"browser"}' : '{}';
     $$('[data-preset]').forEach(b => b.onclick = () => { $('#args').value = b.dataset.preset; $('#invoke').click(); });
     run('#invoke', async () => { const t = tools.find(t => t.name === $('#tool').value); const args = JSON.parse($('#args').value); if (!args || typeof args !== 'object' || Array.isArray(args)) throw new Error('Arguments must be a JSON object.'); const begin = performance.now(); const response = await t.execute(args); result({ tool: t.name, annotations: t.annotations, arguments: args, response, durationMs: Math.round((performance.now() - begin) * 100) / 100 }, 'Direct callback execution'); status(response.error ? 'Tool returned a structured error.' : 'Tool executed.', Boolean(response.error)); }); render(); tools.forEach(register);

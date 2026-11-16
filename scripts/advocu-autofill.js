@@ -279,60 +279,162 @@ Te llevarás patrones de ingeniería listos para construir clasificadores locale
       if (editor.tagName === 'TEXTAREA') {
         setNativeValue(editor, abstractText);
       } else {
-        editor.innerHTML = abstractText
-          .split('\n\n')
-          .map(p => `<p>${p.replace(/\n/g, '<br>')}</p>`)
-          .join('');
+        const paragraphs = abstractText.split('\n\n').map(block => {
+          const p = document.createElement('p');
+          const lines = block.split('\n');
+          lines.forEach((line, idx) => {
+            if (idx > 0) p.appendChild(document.createElement('br'));
+            p.appendChild(document.createTextNode(line));
+          });
+          return p;
+        });
+        editor.replaceChildren(...paragraphs);
         editor.dispatchEvent(new InputEvent('input', { bubbles: true, data: abstractText }));
         editor.dispatchEvent(new Event('change', { bubbles: true }));
         editor.dispatchEvent(new Event('blur', { bubbles: true }));
       }
     }
 
-    statusEl.textContent = `✅ Filled ${session.id} (${useShort ? '<500 chars' : '<1200 chars'}) — Title: ${session.title.slice(0, 32)}...`;
+    announceStatus(`✅ Filled ${session.id} (${useShort ? '<500 chars' : '<1200 chars'}) — Title: ${session.title.slice(0, 32)}...`);
   }
 
-  const panel = document.createElement('div');
-  panel.id = 'advocu-autofill-panel';
-  panel.style.cssText = 'position:fixed;top:12px;right:12px;z-index:999999;background:#0f172a;color:#f8fafc;padding:14px;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,0.45);font-family:system-ui,sans-serif;width:360px;border:1px solid #334155;font-size:13px;';
+  function el(tag, attrs = {}, ...children) {
+    const node = document.createElement(tag);
+    for (const [k, v] of Object.entries(attrs)) {
+      if (k === 'style') node.style.cssText = v;
+      else if (k === 'text') node.textContent = v;
+      else node.setAttribute(k, v);
+    }
+    for (const child of children) {
+      if (typeof child === 'string') node.appendChild(document.createTextNode(child));
+      else if (child) node.appendChild(child);
+    }
+    return node;
+  }
 
-  panel.innerHTML = `
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-      <strong style="font-size:14px;color:#38bdf8;">⚡ Advocu 14-Session Auto-Filler</strong>
-      <button id="adv-close" style="background:none;border:none;color:#94a3b8;cursor:pointer;font-size:16px;">✕</button>
-    </div>
-    <select id="adv-select" style="width:100%;padding:7px;border-radius:6px;background:#1e293b;color:#fff;border:1px solid #475569;margin-bottom:8px;">
-      ${SESSIONS.map((s, idx) => `<option value="${idx}">[${s.id}] ${s.title}</option>`).join('')}
-    </select>
-    <div style="display:flex;gap:6px;margin-bottom:8px;">
-      <button id="adv-fill-short" style="flex:1;padding:8px;background:#2563eb;color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:600;">Fill (&lt;500 chars)</button>
-      <button id="adv-fill-full" style="flex:1;padding:8px;background:#059669;color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:600;">Fill (&lt;1200 chars)</button>
-    </div>
-    <div style="display:flex;gap:6px;margin-bottom:8px;">
-      <button id="adv-copy-title" style="flex:1;padding:6px;background:#334155;color:#e2e8f0;border:none;border-radius:6px;cursor:pointer;">Copy Title</button>
-      <button id="adv-copy-short" style="flex:1;padding:6px;background:#334155;color:#e2e8f0;border:none;border-radius:6px;cursor:pointer;">Copy &lt;500</button>
-      <button id="adv-copy-full" style="flex:1;padding:6px;background:#334155;color:#e2e8f0;border:none;border-radius:6px;cursor:pointer;">Copy &lt;1200</button>
-    </div>
-    <div id="adv-status" style="font-size:12px;color:#93c5fd;min-height:18px;">Select a talk and click Fill on any step!</div>
-  `;
+  const panel = el('div', {
+    id: 'advocu-autofill-panel',
+    role: 'region',
+    'aria-labelledby': 'adv-panel-heading',
+    style: 'position:fixed;top:12px;right:12px;z-index:999999;background:#0f172a;color:#f8fafc;accent-color:#38bdf8;padding:14px;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,0.45);font-family:system-ui,sans-serif;width:min(360px,calc(100vw - 24px));border:1px solid #334155;font-size:13px;color-scheme:only dark;'
+  });
+
+  const closeBtn = el('button', {
+    type: 'button',
+    id: 'adv-close',
+    'aria-label': 'Close Advocu autofill panel',
+    style: 'background:none;border:1px solid transparent;border-radius:6px;color:#cbd5e1;cursor:pointer;font-size:16px;min-inline-size:28px;min-block-size:28px;display:inline-grid;place-items:center;padding:2px;'
+  }, el('span', { 'aria-hidden': 'true', text: '✕' }));
+
+  const selectEl = el('select', {
+    id: 'adv-select',
+    name: 'adv-session',
+    style: 'width:100%;padding:7px;border-radius:6px;background:#1e293b;color:#fff;border:1px solid #64748b;margin-bottom:8px;font:inherit;'
+  }, ...SESSIONS.map((s, idx) => el('option', { value: String(idx), text: `[${s.id}] ${s.title}` })));
+
+  const fillShortBtn = el('button', {
+    type: 'button',
+    id: 'adv-fill-short',
+    style: 'flex:1;padding:8px;min-block-size:32px;background:#2563eb;color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:600;font:inherit;'
+  }, 'Fill (<500 chars)');
+
+  const fillFullBtn = el('button', {
+    type: 'button',
+    id: 'adv-fill-full',
+    style: 'flex:1;padding:8px;min-block-size:32px;background:#059669;color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:600;font:inherit;'
+  }, 'Fill (<1200 chars)');
+
+  const copyTitleBtn = el('button', {
+    type: 'button',
+    id: 'adv-copy-title',
+    style: 'flex:1;padding:6px;min-block-size:30px;background:#334155;color:#e2e8f0;border:1px solid #475569;border-radius:6px;cursor:pointer;font:inherit;'
+  }, 'Copy Title');
+
+  const copyShortBtn = el('button', {
+    type: 'button',
+    id: 'adv-copy-short',
+    style: 'flex:1;padding:6px;min-block-size:30px;background:#334155;color:#e2e8f0;border:1px solid #475569;border-radius:6px;cursor:pointer;font:inherit;'
+  }, 'Copy <500');
+
+  const copyFullBtn = el('button', {
+    type: 'button',
+    id: 'adv-copy-full',
+    style: 'flex:1;padding:6px;min-block-size:30px;background:#334155;color:#e2e8f0;border:1px solid #475569;border-radius:6px;cursor:pointer;font:inherit;'
+  }, 'Copy <1200');
+
+  const statusEl = el('div', {
+    id: 'adv-status',
+    role: 'status',
+    'aria-live': 'polite',
+    style: 'font-size:12px;color:#93c5fd;min-block-size:18px;'
+  }, 'Select a talk and click Fill on any step!');
+
+  panel.append(
+    el('div', { style: 'display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;gap:8px;' },
+      el('strong', { id: 'adv-panel-heading', style: 'font-size:14px;color:#38bdf8;', text: '⚡ Advocu 14-Session Auto-Filler' }),
+      closeBtn
+    ),
+    el('label', { for: 'adv-select', style: 'display:block;font-size:12px;font-weight:600;color:#cbd5e1;margin-bottom:4px;', text: 'Session proposal' }),
+    selectEl,
+    el('div', { style: 'display:flex;gap:6px;margin-bottom:8px;' }, fillShortBtn, fillFullBtn),
+    el('div', { style: 'display:flex;gap:6px;margin-bottom:8px;' }, copyTitleBtn, copyShortBtn, copyFullBtn),
+    statusEl
+  );
 
   document.body.appendChild(panel);
-  const selectEl = panel.querySelector('#adv-select');
-  const statusEl = panel.querySelector('#adv-status');
 
-  panel.querySelector('#adv-close').onclick = () => panel.remove();
-  panel.querySelector('#adv-fill-short').onclick = () => fillPage(SESSIONS[selectEl.value], true);
-  panel.querySelector('#adv-fill-full').onclick = () => fillPage(SESSIONS[selectEl.value], false);
-  panel.querySelector('#adv-copy-title').onclick = () => {
-    navigator.clipboard.writeText(SESSIONS[selectEl.value].title);
-    statusEl.textContent = '📋 Copied Title!';
-  };
-  panel.querySelector('#adv-copy-short').onclick = () => {
-    navigator.clipboard.writeText(SESSIONS[selectEl.value].shortAbstract);
-    statusEl.textContent = `📋 Copied Short Abstract (${SESSIONS[selectEl.value].shortAbstract.length} chars)!`;
-  };
-  panel.querySelector('#adv-copy-full').onclick = () => {
-    navigator.clipboard.writeText(SESSIONS[selectEl.value].fullAbstract);
-    statusEl.textContent = `📋 Copied Full Abstract (${SESSIONS[selectEl.value].fullAbstract.length} chars)!`;
-  };
+  let lastStatusMessage = '';
+  const copyTimers = new WeakMap();
+
+  function announceStatus(message) {
+    let next = message;
+    if (next === lastStatusMessage) next += '\u00A0';
+    lastStatusMessage = next;
+    statusEl.textContent = next;
+  }
+
+  function legacyCopy(text) {
+    const field = Object.assign(document.createElement('textarea'), { value: text });
+    field.setAttribute('readonly', '');
+    field.style.cssText = 'position:fixed;inset-block-start:0;opacity:0';
+    document.body.append(field);
+    field.select();
+    try { return document.execCommand('copy'); } catch { return false; } finally { field.remove(); }
+  }
+
+  async function copyField(button, text, successMessage) {
+    if (!text) return;
+    clearTimeout(copyTimers.get(button));
+    button.removeAttribute('data-copied');
+    button.removeAttribute('data-failed');
+    let ok = false;
+    try {
+      if (!navigator.clipboard?.writeText) throw new Error('Clipboard unavailable');
+      await navigator.clipboard.writeText(text);
+      ok = true;
+    } catch {
+      ok = legacyCopy(text);
+    }
+    button.setAttribute(ok ? 'data-copied' : 'data-failed', '');
+    announceStatus(ok ? successMessage : '⚠️ Copy failed — clipboard access was denied.');
+    copyTimers.set(button, setTimeout(() => {
+      button.removeAttribute('data-copied');
+      button.removeAttribute('data-failed');
+    }, 2000));
+  }
+
+  closeBtn.addEventListener('click', () => panel.remove());
+  fillShortBtn.addEventListener('click', () => fillPage(SESSIONS[selectEl.value], true));
+  fillFullBtn.addEventListener('click', () => fillPage(SESSIONS[selectEl.value], false));
+  copyTitleBtn.addEventListener('click', () => {
+    copyField(copyTitleBtn, SESSIONS[selectEl.value].title, '📋 Copied Title!');
+  });
+  copyShortBtn.addEventListener('click', () => {
+    const s = SESSIONS[selectEl.value];
+    copyField(copyShortBtn, s.shortAbstract, `📋 Copied Short Abstract (${s.shortAbstract.length} chars)!`);
+  });
+  copyFullBtn.addEventListener('click', () => {
+    const s = SESSIONS[selectEl.value];
+    copyField(copyFullBtn, s.fullAbstract, `📋 Copied Full Abstract (${s.fullAbstract.length} chars)!`);
+  });
 })();
