@@ -16,20 +16,20 @@ export default function Dashboard() {
       <div className="dashboard-grid">
         {/* Quick Actions */}
         <div className="card card-wide">
-          <h2 className="card-title"><Zap size={14} /> Quick Start</h2>
+          <h2 className="card-title"><Zap size={14} aria-hidden="true" /> Quick Start</h2>
           <div className="quick-actions">
             <Link to="/live" className="action-card action-live">
-              <Radio size={24} />
+              <Radio size={24} aria-hidden="true" />
               <h3>Live Session</h3>
               <p>Connect GPS and get real-time coaching</p>
             </Link>
             <Link to="/replay" className="action-card action-replay">
-              <PlayCircle size={24} />
+              <PlayCircle size={24} aria-hidden="true" />
               <h3>Replay</h3>
               <p>Upload CSV telemetry for post-session analysis</p>
             </Link>
             <Link to="/analysis" className="action-card action-analysis">
-              <BarChart3 size={24} />
+              <BarChart3 size={24} aria-hidden="true" />
               <h3>Analysis</h3>
               <p>Compare laps and find time with AI insights</p>
             </Link>
@@ -38,7 +38,7 @@ export default function Dashboard() {
 
         {/* Track Info */}
         <div className="card">
-          <h2 className="card-title"><Activity size={14} /> Current Track</h2>
+          <h2 className="card-title"><Activity size={14} aria-hidden="true" /> Current Track</h2>
           <div className="track-info">
             <div className="track-stat">
               <span className="stat-label">Track</span>
@@ -57,7 +57,7 @@ export default function Dashboard() {
               <span className="stat-value">{track.sectors.length}</span>
             </div>
             <div className="track-stat">
-              <span className="stat-label"><Trophy size={12} /> Record</span>
+              <span className="stat-label"><Trophy size={12} aria-hidden="true" /> Record</span>
               <span className="stat-value">{formatLapTime(track.recordLap)}</span>
             </div>
           </div>
@@ -65,6 +65,7 @@ export default function Dashboard() {
 
         {/* Track Map */}
         <div className="card">
+          <h2 className="visually-hidden">Circuit Map</h2>
           <TrackMap track={track} />
         </div>
 
@@ -74,22 +75,22 @@ export default function Dashboard() {
           <div className="features-grid">
             <div className="feature">
               <span className="feature-icon">01</span>
-              <h4>Hot Path</h4>
+              <h3>Hot Path</h3>
               <p>Heuristic rules for instant coaching commands under 50ms latency</p>
             </div>
             <div className="feature">
               <span className="feature-icon">02</span>
-              <h4>Cold Path</h4>
+              <h3>Cold Path</h3>
               <p>Gemini Cloud analysis with physics-based explanations and detailed feedback</p>
             </div>
             <div className="feature">
               <span className="feature-icon">03</span>
-              <h4>Feedforward</h4>
+              <h3>Feedforward</h3>
               <p>Geofence-triggered corner advice delivered as you approach each turn</p>
             </div>
             <div className="feature">
               <span className="feature-icon">04</span>
-              <h4>Predictive</h4>
+              <h3>Predictive</h3>
               <p>Mistake zone detection with 8-second lookahead alerts before problem areas</p>
             </div>
           </div>

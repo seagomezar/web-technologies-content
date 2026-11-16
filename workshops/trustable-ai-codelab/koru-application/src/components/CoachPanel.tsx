@@ -31,16 +31,22 @@ export default function CoachPanel({
       {/* Coach selector */}
       <div className="coach-header">
         <div className="coach-info">
-          <span className="coach-icon">{coach.icon}</span>
+          <span className="coach-icon" aria-hidden="true">{coach.icon}</span>
           <div>
-            <h3 className="coach-name">{coach.name}</h3>
+            <h2 className="coach-name">{coach.name}</h2>
             <span className="coach-style">{coach.style}</span>
           </div>
         </div>
 
         <div className="coach-actions">
-          <button className="icon-btn" onClick={onAudioToggle} title="Toggle audio">
-            {audioEnabled ? <Volume2 size={16} /> : <VolumeX size={16} />}
+          <button
+            type="button"
+            className="icon-btn"
+            onClick={onAudioToggle}
+            aria-label="Voice coaching audio"
+            aria-pressed={audioEnabled}
+          >
+            {audioEnabled ? <Volume2 size={16} aria-hidden="true" /> : <VolumeX size={16} aria-hidden="true" />}
           </button>
         </div>
       </div>
@@ -50,10 +56,12 @@ export default function CoachPanel({
         {Object.values(COACHES).map(c => (
           <button
             key={c.id}
+            type="button"
             className={`coach-pill ${c.id === activeCoach ? 'active' : ''}`}
+            aria-pressed={c.id === activeCoach}
             onClick={() => onCoachChange(c.id)}
           >
-            {c.icon} {c.name}
+            <span aria-hidden="true">{c.icon}</span> {c.name}
           </button>
         ))}
       </div>
@@ -62,7 +70,7 @@ export default function CoachPanel({
       <div className="coach-messages">
         {messages.length === 0 ? (
           <div className="coach-empty">
-            <MessageCircle size={24} />
+            <MessageCircle size={24} aria-hidden="true" />
             <p>Waiting for telemetry data...</p>
           </div>
         ) : (

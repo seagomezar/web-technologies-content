@@ -25,7 +25,7 @@ export default function TelemetryCharts({ frames, maxPoints = 200 }: TelemetryCh
     <div className="telemetry-charts">
       {/* Speed */}
       <div className="chart-card">
-        <h4 className="chart-title">Speed (km/h)</h4>
+        <h3 className="chart-title">Speed (km/h)</h3>
         <ResponsiveContainer width="100%" height={120}>
           <AreaChart data={data}>
             <defs>
@@ -44,7 +44,7 @@ export default function TelemetryCharts({ frames, maxPoints = 200 }: TelemetryCh
 
       {/* Throttle / Brake */}
       <div className="chart-card">
-        <h4 className="chart-title">Throttle / Brake (%)</h4>
+        <h3 className="chart-title">Throttle / Brake (%)</h3>
         <ResponsiveContainer width="100%" height={120}>
           <AreaChart data={data}>
             <defs>
@@ -68,7 +68,7 @@ export default function TelemetryCharts({ frames, maxPoints = 200 }: TelemetryCh
 
       {/* G-Forces */}
       <div className="chart-card">
-        <h4 className="chart-title">G-Forces</h4>
+        <h3 className="chart-title">G-Forces</h3>
         <ResponsiveContainer width="100%" height={120}>
           <LineChart data={data}>
             <XAxis dataKey="i" hide />

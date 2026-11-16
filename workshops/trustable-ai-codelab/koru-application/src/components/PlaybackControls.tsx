@@ -1,3 +1,4 @@
+import { useId, type CSSProperties } from 'react';
 import { Play, Pause, SkipBack, SkipForward, Gauge } from 'lucide-react';
 
 interface PlaybackControlsProps {
@@ -23,38 +24,74 @@ export default function PlaybackControls({
   onSpeedChange,
   currentTime,
 }: PlaybackControlsProps) {
+  const sliderId = useId();
+  const speedSelectId = useId();
+  const maxFrame = Math.max(0, totalFrames - 1);
+  const progressText = currentTime || formatFrame(currentFrame, totalFrames);
+
   return (
     <div className="playback-controls">
       <div className="playback-buttons">
-        <button className="icon-btn" onClick={() => onSeek(Math.max(0, currentFrame - 100))}>
-          <SkipBack size={16} />
+        <button
+          type="button"
+          className="icon-btn"
+          aria-label="Rewind 100 frames"
+          onClick={() => onSeek(Math.max(0, currentFrame - 100))}
+        >
+          <SkipBack size={16} aria-hidden="true" />
         </button>
-        <button className="play-btn" onClick={onPlayPause}>
-          {isPlaying ? <Pause size={20} /> : <Play size={20} />}
+        <button
+          type="button"
+          className="play-btn"
+          aria-label={isPlaying ? 'Pause replay' : 'Play replay'}
+          onClick={onPlayPause}
+        >
+          {isPlaying ? <Pause size={20} aria-hidden="true" /> : <Play size={20} aria-hidden="true" />}
         </button>
-        <button className="icon-btn" onClick={() => onSeek(Math.min(totalFrames - 1, currentFrame + 100))}>
-          <SkipForward size={16} />
+        <button
+          type="button"
+          className="icon-btn"
+          aria-label="Advance 100 frames"
+          onClick={() => onSeek(Math.min(totalFrames - 1, currentFrame + 100))}
+        >
+          <SkipForward size={16} aria-hidden="true" />
         </button>
       </div>
 
       <div className="playback-slider">
+        <label htmlFor={sliderId} className="visually-hidden">
+          Replay timeline
+        </label>
         <input
+          id={sliderId}
           type="range"
           min={0}
           max={totalFrames - 1}
           value={currentFrame}
+          aria-valuetext={`Frame ${currentFrame + 1} of ${totalFrames} (${progressText})`}
           onChange={e => onSeek(parseInt(e.target.value, 10))}
           className="slider"
+          style={
+            {
+              '--attr-min': 0,
+              '--attr-max': Math.max(1, maxFrame),
+              '--control-value': currentFrame,
+            } as CSSProperties
+          }
         />
         <div className="playback-info">
-          <span>{currentTime || formatFrame(currentFrame, totalFrames)}</span>
+          <span>{progressText}</span>
           <span>{currentFrame + 1} / {totalFrames}</span>
         </div>
       </div>
 
       <div className="speed-selector">
-        <Gauge size={14} />
+        <Gauge size={14} aria-hidden="true" />
+        <label htmlFor={speedSelectId} className="visually-hidden">
+          Playback speed
+        </label>
         <select
+          id={speedSelectId}
           value={speed}
           onChange={e => onSpeedChange(parseFloat(e.target.value))}
           className="speed-select"

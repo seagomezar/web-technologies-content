@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback, useEffect } from 'react';
+import { useState, useRef, useCallback, useEffect, useId } from 'react';
 import { parseTelemetryCSV } from '../utils/telemetryParser';
 import { CoachingService } from '../services/coachingService';
 import { useGeminiCloud } from '../hooks/useGeminiCloud';
@@ -27,6 +27,9 @@ export default function Replay({ apiKey }: ReplayProps) {
   const [activeCoach, setActiveCoach] = useState('superaj');
   const [audioEnabled, setAudioEnabled] = useState(true);
   const [analysisResult, setAnalysisResult] = useState('');
+
+  const csvUploadId = useId();
+  const ttsSelectId = useId();
 
   const { generateFeedback, status: cloudStatus } = useGeminiCloud(apiKey);
   const { speak, setProvider, provider } = useTTS(apiKey, activeCoach);
@@ -176,22 +179,33 @@ export default function Replay({ apiKey }: ReplayProps) {
         <h1>Replay</h1>
         <div className="replay-controls">
           <button type="button" className="upload-btn" onClick={handleLoadSample}>
-            <Sparkles size={14} />
+            <Sparkles size={14} aria-hidden="true" />
             <span>Load Sample Lap</span>
           </button>
-          <label className="upload-btn">
-            <Upload size={14} />
+          <label htmlFor={csvUploadId} className="upload-btn">
+            <Upload size={14} aria-hidden="true" />
             <span>Upload CSV</span>
-            <input type="file" accept=".csv,.txt" onChange={handleFileUpload} hidden />
+            <input
+              id={csvUploadId}
+              type="file"
+              accept=".csv,.txt"
+              onChange={handleFileUpload}
+              className="visually-hidden"
+            />
           </label>
           <button
+            type="button"
             className="analyze-btn"
             onClick={handleAnalyze}
             disabled={frames.length === 0 || cloudStatus.state === 'loading'}
           >
             {cloudStatus.state === 'loading' ? 'Analyzing...' : 'AI Analyze'}
           </button>
+          <label htmlFor={ttsSelectId} className="visually-hidden">
+            Voice synthesis provider
+          </label>
           <select
+            id={ttsSelectId}
             className="tts-select"
             value={provider}
             onChange={e => setProvider(e.target.value as TTSProvider)}
@@ -203,14 +217,14 @@ export default function Replay({ apiKey }: ReplayProps) {
       </header>
 
       {cloudStatus.error && (
-        <div className="analysis-card" style={{ marginBottom: 12, borderColor: 'rgba(248, 113, 113, 0.4)' }}>
-          <p style={{ color: '#f87171', fontSize: 13 }}>{cloudStatus.error}</p>
+        <div role="alert" className="analysis-card error-banner">
+          <p>{cloudStatus.error}</p>
         </div>
       )}
 
       {frames.length === 0 ? (
         <div className="empty-state">
-          <Upload size={40} />
+          <Upload size={40} aria-hidden="true" />
           <h2>Upload Telemetry Data</h2>
           <p>Drop a CSV file from your OBD/VBOX datalogger or click &ldquo;Load Sample Lap&rdquo; above</p>
         </div>
@@ -228,14 +242,16 @@ export default function Replay({ apiKey }: ReplayProps) {
 
           <div className="replay-grid">
             <div className="replay-left">
+              <h2 className="visually-hidden">Vehicle gauges and track map</h2>
               <GaugeCluster frame={currentFrame} />
               <TrackMap track={THUNDERHILL_EAST} currentFrame={currentFrame ?? undefined} />
             </div>
             <div className="replay-center">
+              <h2 className="visually-hidden">Telemetry traces</h2>
               <TelemetryCharts frames={frames.slice(Math.max(0, currentIdx - 100), currentIdx + 1)} />
               {analysisResult && (
                 <div className="analysis-card">
-                  <h3>AI Analysis</h3>
+                  <h2>AI Analysis</h2>
                   <ReactMarkdown>{analysisResult}</ReactMarkdown>
                 </div>
               )}

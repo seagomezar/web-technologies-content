@@ -39,8 +39,8 @@ export default function TrackMap({ track, currentFrame }: TrackMapProps) {
 
   return (
     <div className="track-map">
-      <h4 className="chart-title">{track.name}</h4>
-      <svg viewBox={`0 0 ${width} ${height}`} className="track-svg">
+      <h3 className="chart-title">{track.name}</h3>
+      <svg viewBox={`0 0 ${width} ${height}`} className="track-svg" role="img" aria-label={`${track.name} circuit map`}>
         {/* Track outline */}
         <polyline
           points={polyline}

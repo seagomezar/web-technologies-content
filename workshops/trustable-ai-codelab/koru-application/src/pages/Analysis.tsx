@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useId } from 'react';
 import { useGeminiCloud } from '../hooks/useGeminiCloud';
 import { parseTelemetryCSV } from '../utils/telemetryParser';
 import TelemetryCharts from '../components/TelemetryCharts';
@@ -16,6 +16,8 @@ export default function Analysis({ apiKey }: AnalysisProps) {
   const [lap2Frames, setLap2Frames] = useState<TelemetryFrame[]>([]);
   const [comparisonResult, setComparisonResult] = useState('');
   const { generateFeedback, status } = useGeminiCloud(apiKey);
+  const lapAInputId = useId();
+  const lapBInputId = useId();
 
   const handleFile = useCallback((setter: (f: TelemetryFrame[]) => void) =>
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -81,53 +83,66 @@ Compare sector by sector. Identify where the biggest time differences come from.
   return (
     <div className="page analysis">
       <header className="page-header">
-        <h1><BarChart3 size={18} /> Lap Analysis</h1>
+        <h1><BarChart3 size={18} aria-hidden="true" /> Lap Analysis</h1>
         <button type="button" className="upload-btn" onClick={handleLoadSamples}>
-          <Sparkles size={14} />
+          <Sparkles size={14} aria-hidden="true" />
           <span>Load Sample Laps A &amp; B</span>
         </button>
       </header>
 
       {status.error && (
-        <div className="analysis-result" style={{ marginBottom: 12, borderColor: 'rgba(248, 113, 113, 0.4)' }}>
-          <p style={{ color: '#f87171', fontSize: 13 }}>{status.error}</p>
+        <div role="alert" className="analysis-result error-banner">
+          <p>{status.error}</p>
         </div>
       )}
 
       <div className="analysis-upload-grid">
         <div className="analysis-upload">
-          <label className="upload-btn upload-lap">
-            <Upload size={14} />
+          <label htmlFor={lapAInputId} className="upload-btn upload-lap">
+            <Upload size={14} aria-hidden="true" />
             <span>Lap A {lap1Frames.length > 0 ? `(${lap1Frames.length} frames)` : ''}</span>
-            <input type="file" accept=".csv,.txt" onChange={handleFile(setLap1Frames)} hidden />
+            <input
+              id={lapAInputId}
+              type="file"
+              accept=".csv,.txt"
+              onChange={handleFile(setLap1Frames)}
+              className="visually-hidden"
+            />
           </label>
         </div>
         <div className="analysis-upload">
-          <label className="upload-btn upload-lap">
-            <Upload size={14} />
+          <label htmlFor={lapBInputId} className="upload-btn upload-lap">
+            <Upload size={14} aria-hidden="true" />
             <span>Lap B {lap2Frames.length > 0 ? `(${lap2Frames.length} frames)` : ''}</span>
-            <input type="file" accept=".csv,.txt" onChange={handleFile(setLap2Frames)} hidden />
+            <input
+              id={lapBInputId}
+              type="file"
+              accept=".csv,.txt"
+              onChange={handleFile(setLap2Frames)}
+              className="visually-hidden"
+            />
           </label>
         </div>
         <button
+          type="button"
           className="analyze-btn"
           onClick={handleCompare}
           disabled={lap1Frames.length === 0 || lap2Frames.length === 0 || status.state === 'loading'}
         >
-          {status.state === 'loading' ? <><Loader size={14} className="spin" /> Comparing...</> : 'Compare Laps'}
+          {status.state === 'loading' ? <><Loader size={14} className="spin" aria-hidden="true" /> Comparing...</> : 'Compare Laps'}
         </button>
       </div>
 
       <div className="analysis-charts">
         {lap1Frames.length > 0 && (
           <div className="analysis-lap">
-            <h3>Lap A</h3>
+            <h2>Lap A</h2>
             <TelemetryCharts frames={lap1Frames} maxPoints={500} />
           </div>
         )}
         {lap2Frames.length > 0 && (
           <div className="analysis-lap">
-            <h3>Lap B</h3>
+            <h2>Lap B</h2>
             <TelemetryCharts frames={lap2Frames} maxPoints={500} />
           </div>
         )}
@@ -135,14 +150,14 @@ Compare sector by sector. Identify where the biggest time differences come from.
 
       {comparisonResult && (
         <div className="analysis-result">
-          <h3>AI Lap Comparison</h3>
+          <h2>AI Lap Comparison</h2>
           <ReactMarkdown>{comparisonResult}</ReactMarkdown>
         </div>
       )}
 
       {lap1Frames.length === 0 && lap2Frames.length === 0 && (
         <div className="empty-state">
-          <BarChart3 size={40} />
+          <BarChart3 size={40} aria-hidden="true" />
           <h2>Compare Two Laps</h2>
           <p>Upload two CSV files or click &ldquo;Load Sample Laps A &amp; B&rdquo; above to compare telemetry side-by-side</p>
         </div>

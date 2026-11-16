@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, useId } from 'react';
 import { TelemetryStreamService } from '../services/telemetryStreamService';
 import { CoachingService } from '../services/coachingService';
 import { AudioService } from '../services/audioService';
@@ -22,6 +22,9 @@ export default function LiveSession({ apiKey }: LiveSessionProps) {
   const [activeCoach, setActiveCoach] = useState('superaj');
   const [audioEnabled, setAudioEnabled] = useState(true);
   const [sseUrl, setSseUrl] = useState('');
+
+  const sseInputId = useId();
+  const ttsSelectId = useId();
 
   const streamRef = useRef(TelemetryStreamService.getInstance());
   const coachRef = useRef(new CoachingService());
@@ -98,13 +101,12 @@ export default function LiveSession({ apiKey }: LiveSessionProps) {
   return (
     <div className="page live-session">
       <header className="page-header">
-        <h1><Radio size={20} /> Live Session</h1>
+        <h1><Radio size={20} aria-hidden="true" /> Live Session</h1>
         <div className="live-controls">
           <button
             type="button"
             className="coach-pill"
             onClick={() => handleQuickPreset('http://localhost:8000/events')}
-            title="Connect to local FastAPI telemetry server"
           >
             Local :8000/events
           </button>
@@ -112,25 +114,38 @@ export default function LiveSession({ apiKey }: LiveSessionProps) {
             type="button"
             className="coach-pill"
             onClick={() => handleQuickPreset('/mock-telemetry.txt')}
-            title="Replay built-in VBOX telemetry without a backend"
           >
             Built-in Demo
           </button>
+          <label htmlFor={sseInputId} className="visually-hidden">
+            Telemetry stream URL or file path
+          </label>
           <input
+            id={sseInputId}
             type="text"
             placeholder="SSE URL or .txt / .csv file path"
             value={sseUrl}
             onChange={e => setSseUrl(e.target.value)}
+            autoCorrect="off"
+            autoCapitalize="none"
+            spellCheck={false}
             className="sse-input"
           />
           <button
+            type="button"
             className={`connect-btn ${status === 'connected' ? 'connected' : ''}`}
             onClick={handleConnect}
           >
-            {status === 'connected' ? <><Unplug size={14} /> Disconnect</> : <><Radio size={14} /> Connect</>}
+            {status === 'connected'
+              ? <><Unplug size={14} aria-hidden="true" /> Disconnect</>
+              : <><Radio size={14} aria-hidden="true" /> Connect</>}
           </button>
-          <span className={`status-badge status-${status}`}>{status}</span>
+          <span className={`status-badge status-${status}`} role="status">{status}</span>
+          <label htmlFor={ttsSelectId} className="visually-hidden">
+            Voice synthesis provider
+          </label>
           <select
+            id={ttsSelectId}
             className="tts-select"
             value={provider}
             onChange={e => setProvider(e.target.value as TTSProvider)}
@@ -144,12 +159,14 @@ export default function LiveSession({ apiKey }: LiveSessionProps) {
       <div className="live-grid">
         {/* Left: Gauges + Track */}
         <div className="live-left">
+          <h2 className="visually-hidden">Vehicle gauges and track map</h2>
           <GaugeCluster frame={currentFrame} />
           <TrackMap track={THUNDERHILL_EAST} currentFrame={currentFrame ?? undefined} />
         </div>
 
         {/* Center: Charts */}
         <div className="live-center">
+          <h2 className="visually-hidden">Telemetry traces</h2>
           <TelemetryCharts frames={frames} />
         </div>
 
