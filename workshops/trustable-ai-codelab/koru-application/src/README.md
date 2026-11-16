@@ -14,8 +14,8 @@ Application root package for the Koru React 19 + TypeScript racing coach simulat
 - `[types.ts:CoachPersona]`: Exported interface `{ id: string; name: string; style: string; systemPrompt: string; icon: string }`.
 - `[types.ts:CoachAction]`: Exported 15-member coaching directive string literal union (`'THRESHOLD' | 'TRAIL_BRAKE' | 'BRAKE' | 'WAIT' | 'TURN_IN' | 'COMMIT' | 'ROTATE' | 'APEX' | 'THROTTLE' | 'PUSH' | 'FULL_THROTTLE' | 'STABILIZE' | 'MAINTAIN' | 'COAST' | 'DONT_BE_A_WUSS'`).
 - `[types.ts:SSEConnectionStatus]`, `[types.ts:TTSProvider]`, `[types.ts:CloudModel]`: Exported string literal unions constraining SSE connection states (`'disconnected' | 'connecting' | 'connected' | 'error'`), TTS backends (`'browser' | 'gemini'`), and Gemini cloud model tiers (`'flash' | 'pro'`).
-- `[App.tsx:App]`: Default-exported root React router component rendering `Landing` at `'/'` and wrapping `'/dashboard'`, `'/live'`, `'/replay'`, and `'/analysis'` with `Navbar` and shared `apiKey` state.
-- `[main.tsx:root]` & `[index.css::root]`: Side-effect browser module entrypoint (zero exports) importing `./index.css` (`:root` design tokens and global layout classes) and mounting `<StrictMode><App /></StrictMode>` onto `#root`.
+- `[App.tsx:App]`: Default-exported root React router component rendering `Landing` eagerly at `'/'` and wrapping lazy-loaded `'/dashboard'`, `'/live'`, `'/replay'`, and `'/analysis'` routes (`React.lazy` + `Suspense`) with a skip link, `Navbar`, `[App.tsx:RouteTitleSync]`, and shared `apiKey` state.
+- `[main.tsx:root]` & `[index.css::root]`: Side-effect browser module entrypoint (zero exports) importing `./index.css` (`:root` dark `color-scheme` design tokens, scrollbar/slider properties, and global layout classes) and mounting `<StrictMode><App /></StrictMode>` onto `#root`.
 - Child Subpackage Contracts:
   - [Components](./components/README.md): Presentational React UI gauges, charts, track map, navbar, playback controls, and coach feed.
   - [Track Data](./data/README.md): Thunderhill Raceway (East) circuit model and Sonoma Raceway GPS geofence corners.
@@ -28,13 +28,13 @@ Application root package for the Koru React 19 + TypeScript racing coach simulat
 
 - `[main.tsx:root]`: Requires DOM element `#root` (`document.getElementById('root')!`) to exist in `index.html` at module evaluation time.
 - `[App.tsx:handleApiKeyChange]`: Coerces empty API key strings to `null` in React state (`setApiKey(key || null)`) and removes `'gemini_api_key'` from `localStorage` instead of storing `""`.
-- `[App.tsx:App]`: Renders `'/'` (`Landing`) standalone without `Navbar`, while `'/*'` wraps `'/dashboard'`, `'/live'`, `'/replay'`, and `'/analysis'` inside `Navbar` + `<main className="main-content">` (rendering an empty `<main>` under `Navbar` for any other unmatched URL path).
+- `[App.tsx:App]` & `[App.tsx:RouteTitleSync]`: Renders `'/'` (`Landing`) standalone without `Navbar`, updates `document.title` per route (`[App.tsx:ROUTE_TITLES]`), and under `'/*'` wraps lazy-loaded `'/dashboard'`, `'/live'`, `'/replay'`, and `'/analysis'` inside a skip link + `Navbar` + `<main id="main-content" className="main-content">` (`<Suspense>` boundary, rendering an empty `<main>` under `Navbar` for any other unmatched URL path).
 - `[types.ts:Session]`, `[types.ts:CoachAction]`, `[types.ts:SSEConnectionStatus]`, `[types.ts:TTSProvider]`, `[types.ts:CloudModel]`: Constrain weather conditions, coaching actions, stream connection states, TTS providers, and LLM tiers to closed TypeScript string literal unions.
 
 ## Side Effects
 
-- `[main.tsx:root]` & `[index.css:@import]`: Imports `./index.css` (requesting `Inter` and `JetBrains Mono` from `https://fonts.googleapis.com`), queries `document.getElementById('root')!`, creates a React DOM root, and mounts `<StrictMode><App /></StrictMode>` on module load.
-- `[App.tsx:App]` & `[App.tsx:handleApiKeyChange]`: Reads, writes, and deletes `window.localStorage` key `'gemini_api_key'` and binds `BrowserRouter` to `window.location` / browser history.
+- `[main.tsx:root]` & `[index.css::root]`: Imports `./index.css`, queries `document.getElementById('root')!`, creates a React DOM root, and mounts `<StrictMode><App /></StrictMode>` on module load.
+- `[App.tsx:App]`, `[App.tsx:RouteTitleSync]`, & `[App.tsx:handleApiKeyChange]`: Reads, writes, and deletes `window.localStorage` key `'gemini_api_key'`, binds `BrowserRouter` to `window.location` / browser history, updates `document.title` on route transitions, and dynamically imports route chunks via `React.lazy`.
 
 ## Verification
 

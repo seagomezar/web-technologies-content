@@ -14,7 +14,7 @@ Top-level route view components for the Koru racing coach web application, cover
 
 ## Invariants
 
-- `[Analysis.tsx:handleFile]` / `[Replay.tsx:handleFileUpload]`: Ignore change events lacking `e.target.files?.[0]`; file inputs constrain extensions via `accept=".csv,.txt"`; `Analysis.tsx:handleLoadSamples` clears `comparisonResult` to `''` whereas `Analysis.tsx:handleFile` retains prior `comparisonResult`.
+- `[Analysis.tsx:handleFile]` / `[Replay.tsx:handleFileUpload]`: Ignore change events lacking `e.target.files?.[0]`; keyboard-focusable `.visually-hidden` file inputs (`<label htmlFor>`) constrain extensions via `accept=".csv,.txt"`; `Analysis.tsx:handleLoadSamples` clears `comparisonResult` to `''` whereas `Analysis.tsx:handleFile` retains prior `comparisonResult`.
 - `[Analysis.tsx:handleCompare]`: Executes only when both `lap1Frames.length > 0` and `lap2Frames.length > 0`; formats `MaxSpeed`/`AvgSpeed` and 20th-frame samples in `km/h` (`filter((_, i) => i % 20 === 0).slice(0, 30)`) before invoking `generateFeedback('pro', context)` and caps rendered chart history at `maxPoints={500}`.
 - `[Dashboard.tsx:Dashboard]`: Binds statically to `THUNDERHILL_EAST`, converts `track.length` from meters to miles via `track.length / 1609.34`, and formats lap times as `M:SS.d` in `[Dashboard.tsx:formatLapTime]`.
 - `[LiveSession.tsx:LiveSession]`: Initializes `status` to `'disconnected'`, `activeCoach` to `'superaj'`, `audioEnabled` to `true`, and `sseUrl` to `''`; bounds rolling telemetry state to at most 501 frames (`[...prev.slice(-500), frame]`) and speaks coaching events only when both `audioEnabledRef.current` and `msg.text` are truthy.

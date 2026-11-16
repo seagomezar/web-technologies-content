@@ -52,7 +52,7 @@ Build, localization, source-audit, deliverable-packaging, local multi-origin ser
 - `[build-slide-contact-sheets.py:canvas]` / `[build-trustable-ai-contact-sheets.py:canvas]` — Read slide/code PNGs and `slides/assets/roboto-mono-400.ttf` and write JPEG contact sheets under `review/`.
 - `[research.py:fetch]`, `[export-guides.py:export]`, & `[repair-evidence.py:retry]` — Perform outbound HTTP(S) requests (`requests` / `/usr/bin/curl`), write snapshots under `research/snapshots/`, update `research/source-audit.json`, and print guide text to stdout (`export-guides.py`).
 - `[export-review-csv.py:merged]` & `[package-deliverables.py:z]` — Create `output/spreadsheet/` and `deliverables/`, writing `reviewed-topics{.csv,.es.csv}`, `review/csv-validation.json`, and `deliverables/web-ai-content-studio.zip`.
-- `[advocu-autofill.js:panel]` / `[advocu-autofill.js:fillPage]` — Mounts/removes `#advocu-autofill-panel`, mutates host form inputs/checkboxes/contenteditable `innerHTML` with synthetic `input`/`change`/`blur` events, and writes strings to `navigator.clipboard.writeText`.
+- `[advocu-autofill.js:panel]` / `[advocu-autofill.js:fillPage]` — Mounts/removes `#advocu-autofill-panel` via DOM APIs (`color-scheme: only dark`), mutates host form inputs/checkboxes/contenteditable `replaceChildren` paragraphs with synthetic `input`/`change`/`blur` events, and copies strings via `navigator.clipboard.writeText` with `document.execCommand('copy')` fallback and `#adv-status` live-region feedback.
 
 ## Verification
 

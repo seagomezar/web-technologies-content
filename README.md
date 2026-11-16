@@ -168,7 +168,7 @@ Nothing has been deployed to the personal website, and no email, feedback form, 
 - `[package.json:name]` — Private package `"sebastian-gomez-web-ai-content-lab"` (`v1.0.0`) with devDependency `@playwright/test@1.58.2` (`[package.json:devDependencies.@playwright/test]`).
 - `[package.json:scripts.serve]` — CLI script running `"python3 scripts/serve.py"`.
 - `[package.json:scripts.test]` — CLI script running `"node scripts/verify.mjs"`.
-- `[index.html:#filter]` & `[index.html:#topics]` — Gallery search `<input id="filter">` and `<div id="topics" class="cards">` mount target hydrated by `[gallery.js:render]`.
+- `[index.html:#filter]` & `[index.html:#topics]` — Gallery search `<input id="filter">` (wrapped in `<search class="filter-search">` with polite `#filter-status` live region) and `<div id="topics" class="cards">` mount target hydrated by `[gallery.js:render]`.
 - `[locale-data.js:window.LOCALES]`, `[locale-data.js:window.LOCALE_PATTERNS]`, & `[locale-data.js:window.TALK_EN]` — Compiled browser globals holding exact EN/ES string maps, regex translation pairs, and the English WebMCP talk dataset.
 - `[i18n.js:window.I18N]` — Global localization API `{ lang, text, translateData, url }` resolving `lang` (`'en' | 'es'`), translating strings/objects, and localizing same-origin URLs.
 - `[content-data.js:window.CONTENT_TOPICS]` — Global array of 7 topic descriptors (`'webmcp'`, `'lifecycle'`, `'retrieval'`, `'performance'`, `'recipes'`, `'languages'`, `'decisions'`; ranks `1`–`7`) defining 3 demos each (21 total), outlines, CSV row numbers, and source URLs.
@@ -189,7 +189,7 @@ Nothing has been deployed to the personal website, and no email, feedback form, 
 - `[locale-data.js:window.LOCALES]` — Assigns `window.LOCALES`, `window.LOCALE_PATTERNS`, and `window.TALK_EN` on load.
 - `[i18n.js:window.I18N]` & `[i18n.js:DOMContentLoaded]` — Assigns `window.I18N`, sets `document.documentElement.lang`, appends `<nav class="language-switch">`, binds `hashchange`/`popstate` listeners (`[i18n.js:sync]`), wraps `history.pushState` and `history.replaceState`, localizes DOM text/attributes/links, and attaches a subtree `MutationObserver` on `document.body` watching `attributeFilter: ['placeholder', 'title', 'aria-label', 'href']`.
 - `[content-data.js:window.CONTENT_TOPICS]` — Defines `window.CONTENT_TOPICS` and overwrites it in place via `I18N.translateData(CONTENT_TOPICS)` when `window.I18N?.lang === 'es'`.
-- `[gallery.js:render]` — Binds an `input` listener on `#filter` and renders module cards into `#topics.innerHTML`.
+- `[gallery.js:render]` — Binds an `input` listener on `#filter`, renders module cards into `#topics.innerHTML`, and writes debounced result counts into `#filter-status`.
 
 ## Subdirectories & System Boundaries
 

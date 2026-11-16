@@ -72,7 +72,7 @@ The Hot Path and GPS Geofence Feedforward work even without an API key.
 - `[vite.config.ts:default]`: Default-exported Vite configuration registering `@vitejs/plugin-react`.
 - `[eslint.config.js:default]`: Default-exported flat ESLint configuration combining `@eslint/js`, `typescript-eslint`, `eslint-plugin-react-hooks`, and `eslint-plugin-react-refresh` with browser globals.
 - `[tsconfig.json:references]`: Solution TypeScript configuration referencing `./tsconfig.app.json` and `./tsconfig.node.json`.
-- `[index.html:#root]` & `[index.html:script]`: Browser HTML shell mounting `<div id="root"></div>` and loading `/src/main.tsx`.
+- `[index.html:#root]`, `[index.html:meta]`, & `[index.html:script]`: Browser HTML shell declaring dark `color-scheme`, preconnecting and loading Google Fonts (`Inter` and `JetBrains Mono`), mounting `<div id="root"></div>`, and executing `/src/main.tsx`.
 - Static `public/` runtime fixtures: `/mock-telemetry.txt` (JSON-lines built-in demo stream), `/sample-lap-a.csv`, `/sample-lap-b.csv` (VBOX CSV laps playable in Replay, Analysis, and Live `.csv` replay), `/favicon.svg`, and `/icons.svg`.
 - Child Subpackage Contract:
   - [Koru Application Source (`src`)](./src/README.md): Application types (`TelemetryFrame`, `GpsSSEPoint`, `Track`, `CoachPersona`, `CoachAction`), router (`App`), stylesheet (`index.css`), and UI/hook/service/utility subpackages.
@@ -87,7 +87,7 @@ The Hot Path and GPS Geofence Feedforward work even without an API key.
 
 ## Side Effects
 
-- `[index.html:script]`, `[index.html:link]`, & `[src/index.css:@import]`: Browser load requests `/favicon.svg`, imports `Inter` and `JetBrains Mono` from `https://fonts.googleapis.com`, and executes `/src/main.tsx` to mount the React application onto `#root`.
+- `[index.html:script]` & `[index.html:link]`: Browser load requests `/favicon.svg`, preconnects to `https://fonts.googleapis.com` and `https://fonts.gstatic.com` to load `Inter` and `JetBrains Mono` stylesheets without render-blocking CSS `@import` chains, and executes `/src/main.tsx` to mount the React application onto `#root`.
 - `[package.json:scripts.build]`: Writes incremental TypeScript build info caches under `./node_modules/.tmp/tsconfig.*.tsbuildinfo` (`[tsconfig.app.json:compilerOptions.tsBuildInfoFile]`, `[tsconfig.node.json:compilerOptions.tsBuildInfoFile]`) and outputs bundled static assets to `dist/`.
 - `[package.json:scripts.dev]` & `[package.json:scripts.preview]`: Bind local HTTP server sockets via `vite` and `vite preview`.
 
