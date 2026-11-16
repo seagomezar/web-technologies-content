@@ -10,19 +10,69 @@
   const clean=s=>String(s||'').replace(/<br\s*\/?>/gi,' ');
   const channelName=params.get('session')||'sg-webmcp-talk';
   let state={index:0,step:0,startedAt:null,pausedAt:null,pausedMs:0};
-  let flowAnim={lanesStep:3,brokerSource:0,brokerStep:2,routeAdded:true,override:null,timer:null};
+
+  const CLOCK_TRANSITIONS=Object.freeze({
+    idle:Object.freeze({TOGGLE:'running',START:'running',PAUSE:'idle',RESET:'idle'}),
+    running:Object.freeze({TOGGLE:'paused',START:'running',PAUSE:'paused',RESET:'idle'}),
+    paused:Object.freeze({TOGGLE:'running',START:'running',PAUSE:'paused',RESET:'idle'})
+  });
+  function normalizeClockEvent(action){
+    if(!action||action==='toggle'||action==='clock'||action==='TOGGLE')return 'TOGGLE';
+    if(action==='start'||action==='start-clock'||action==='START')return 'START';
+    if(action==='pause'||action==='pause-clock'||action==='PAUSE')return 'PAUSE';
+    if(action==='reset'||action==='reset-clock'||action==='RESET')return 'RESET';
+    return null;
+  }
+  function deriveClock(s,plannedMinutes,now=Date.now()){
+    const clockState=!s.startedAt?'idle':s.pausedAt?'paused':'running';
+    const elapsed=s.startedAt?Math.max(0,((s.pausedAt||now)-s.startedAt-(s.pausedMs||0))/1000):0;
+    return {clockState,elapsed,overrun:plannedMinutes>0&&elapsed>=plannedMinutes*60};
+  }
+  function transitionClock(s,action,now=Date.now()){
+    const event=normalizeClockEvent(action);
+    const current=!s.startedAt?'idle':s.pausedAt?'paused':'running';
+    const next=event?CLOCK_TRANSITIONS[current][event]:current;
+    if(next===current)return s;
+    if(next==='idle')return {...s,startedAt:null,pausedAt:null,pausedMs:0};
+    if(current==='idle'&&next==='running')return {...s,startedAt:now,pausedAt:null,pausedMs:0};
+    if(current==='running'&&next==='paused')return {...s,pausedAt:now};
+    if(current==='paused'&&next==='running')return {...s,pausedMs:(s.pausedMs||0)+Math.max(0,now-s.pausedAt),pausedAt:null};
+    return s;
+  }
+  function syncClockBodyState(){
+    const snap=deriveClock(state,planned);
+    document.body.dataset.clockState=snap.clockState;
+    document.body.dataset.clockOverrun=String(snap.overrun);
+    return snap;
+  }
+
+  const ANIMATION_TRANSITIONS=Object.freeze({
+    inactive:Object.freeze({SYNC_SLIDE:['inactive','playing','paused_user','paused_hidden','reduced_motion'],TAB_HIDDEN:'inactive',TAB_VISIBLE:'inactive',MOTION_CHANGE:'inactive'}),
+    playing:Object.freeze({SYNC_SLIDE:['inactive','playing'],USER_TOGGLE:'paused_user',USER_PAUSE:'paused_user',USER_PLAY:'playing',TAB_HIDDEN:'paused_hidden',TAB_VISIBLE:'playing',MOTION_CHANGE:['playing','reduced_motion']}),
+    paused_user:Object.freeze({SYNC_SLIDE:['inactive','paused_user'],USER_TOGGLE:['playing','paused_hidden'],USER_PAUSE:'paused_user',USER_PLAY:['playing','paused_hidden'],TAB_HIDDEN:'paused_user',TAB_VISIBLE:'paused_user',MOTION_CHANGE:'paused_user'}),
+    paused_hidden:Object.freeze({SYNC_SLIDE:['inactive','paused_hidden'],USER_TOGGLE:'paused_user',USER_PAUSE:'paused_user',USER_PLAY:'paused_hidden',TAB_HIDDEN:'paused_hidden',TAB_VISIBLE:['playing','reduced_motion'],MOTION_CHANGE:['paused_hidden','reduced_motion']}),
+    reduced_motion:Object.freeze({SYNC_SLIDE:['inactive','reduced_motion'],USER_TOGGLE:['playing','paused_hidden'],USER_PAUSE:'paused_user',USER_PLAY:['playing','paused_hidden'],TAB_HIDDEN:'reduced_motion',TAB_VISIBLE:'reduced_motion',MOTION_CHANGE:['playing','paused_hidden','reduced_motion']})
+  });
+  const TRANSITION_TRANSITIONS=Object.freeze({
+    idle:Object.freeze({START:'transitioning',SKIP:'idle',FINISH:'idle',FAIL:'idle'}),
+    transitioning:Object.freeze({START:'transitioning',SKIP:'idle',FINISH:'idle',FAIL:'idle'})
+  });
+  let flowAnim={lanesStep:3,brokerSource:0,brokerStep:2,routeAdded:true,userIntent:'auto',state:'inactive',timer:null};
+  let transitionMachine={state:'idle',direction:'none',handle:null};
   const reducedMotionMedia=matchMedia('(prefers-reduced-motion: reduce)');
   const reduced=()=>reducedMotionMedia.matches;
-  const isFlowRunning=()=>flowAnim.override?flowAnim.override==='play':!reduced();
-  function syncFlowBodyState(){document.body.classList.toggle('flow-paused',!isFlowRunning());}
+  const isAmbientSlide=slide=>Boolean(slide&&slide.kind==='flow');
+  const isFlowRunning=()=>flowAnim.state==='playing';
   function stopFlowTimer(){if(flowAnim.timer){clearInterval(flowAnim.timer);flowAnim.timer=null;}}
-  function syncFlowLoop(){
-    const slide=slides[state.index];
-    if(!slide||slide.kind!=='flow'||document.hidden||!isFlowRunning()){stopFlowTimer();return;}
+  function syncFlowBodyState(){
+    document.body.dataset.animationState=flowAnim.state;
+    document.body.classList.toggle('flow-paused',flowAnim.state!=='playing');
+  }
+  function startFlowTimer(){
     if(flowAnim.timer)return;
     flowAnim.timer=setInterval(()=>{
       const s=slides[state.index];
-      if(!s||s.kind!=='flow'||document.hidden||!isFlowRunning()){stopFlowTimer();return;}
+      if(!isAmbientSlide(s)||document.hidden||flowAnim.state!=='playing'){sendAnimation(document.hidden?'TAB_HIDDEN':'SYNC_SLIDE');return;}
       if(s.flowType==='lanes'){
         flowAnim.lanesStep=(flowAnim.lanesStep+1)%4;
       }else if(s.flowType==='broker'){
@@ -37,15 +87,38 @@
       }
     },1350);
   }
-  document.addEventListener('visibilitychange',syncFlowLoop);
-  reducedMotionMedia.addEventListener?.('change',()=>{
-    flowAnim.override=null;
+  function sendAnimation(event){
+    if(event==='USER_TOGGLE')flowAnim.userIntent=flowAnim.state==='playing'?'pause':'play';
+    else if(event==='USER_PAUSE')flowAnim.userIntent='pause';
+    else if(event==='USER_PLAY')flowAnim.userIntent='play';
+    else if(event==='MOTION_CHANGE'&&flowAnim.userIntent==='play'&&reduced())flowAnim.userIntent='auto';
+    const ambient=isAmbientSlide(slides[state.index]);
+    const next=!ambient?'inactive':flowAnim.userIntent==='pause'?'paused_user':(reduced()&&flowAnim.userIntent!=='play')?'reduced_motion':document.hidden?'paused_hidden':'playing';
+    flowAnim.state=next;
     syncFlowBodyState();
-    syncFlowLoop();
+    if(next==='playing')startFlowTimer();
+    else stopFlowTimer();
+    return next;
+  }
+  function sendTransition(event,direction='none',handle=null){
+    if((event==='SKIP'||event==='START')&&transitionMachine.handle){
+      try{transitionMachine.handle.skipTransition();}catch(e){}
+    }
+    const next=TRANSITION_TRANSITIONS[transitionMachine.state][event]||transitionMachine.state;
+    transitionMachine={state:next,direction:next==='transitioning'?direction:'none',handle:next==='transitioning'?handle:null};
+    document.body.dataset.transitionState=transitionMachine.state;
+  }
+  document.addEventListener('visibilitychange',()=>sendAnimation(document.hidden?'TAB_HIDDEN':'TAB_VISIBLE'));
+  reducedMotionMedia.addEventListener?.('change',()=>{
+    sendAnimation('MOTION_CHANGE');
     const s=slides[state.index],container=viewport.querySelector('.slide-content');
-    if(s?.kind==='flow'&&container)container.innerHTML=body(s);
+    if(s?.kind==='flow'&&container){
+      const restorePause=container.querySelector('.flow-pause')===document.activeElement;
+      container.innerHTML=body(s);
+      if(restorePause)container.querySelector('.flow-pause')?.focus({preventScroll:true});
+    }
   });
-  let presenter=null,activeTransition=null,touchStartX=null,touchStartY=null;
+  let presenter=null,touchStartX=null,touchStartY=null;
   const seenCommands=new Set();
   let channel;
   try{channel=new BroadcastChannel(channelName);}catch(e){/* window messaging remains available. */}
@@ -156,7 +229,8 @@ callTool("add_to_route", {
   }
   function paint(){
     ensureControls();
-    syncFlowBodyState();
+    syncClockBodyState();
+    sendAnimation('SYNC_SLIDE');
     const slide=slides[state.index];
     document.body.style.setProperty('--slide-bg',slide.background||'var(--paper)');
     const stepSuffix=slide.builds.length?` · ${I18N.lang==='es'?'paso':'step'} ${state.step}/${slide.builds.length}`:'';
@@ -177,7 +251,6 @@ callTool("add_to_route", {
     if(nextBtn)nextBtn.disabled=state.index===slides.length-1&&state.step>=slide.builds.length;
     if(prevFocused&&prevBtn?.disabled&&nextBtn&&!nextBtn.disabled)nextBtn.focus();
     if(nextFocused&&nextBtn?.disabled&&prevBtn&&!prevBtn.disabled)prevBtn.focus();
-    syncFlowLoop();
     announce();
   }
   function announce(){const message={type:'deck-state',state:{...state},slideCount:slides.length,plannedMinutes:planned,city,session:channelName};channel?.postMessage(message);if(presenter&&!presenter.closed)presenter.postMessage(message,location.origin==='null'?'*':location.origin);}
@@ -190,7 +263,7 @@ callTool("add_to_route", {
     state={...state,index,step};
     const hash=`#${index+1}.${step}`;
     if(location.hash!==hash)history.pushState(null,'',hash);
-    if(activeTransition){try{activeTransition.skipTransition();}catch(e){}activeTransition=null;}
+    sendTransition('SKIP');
     const routeFocus=()=>{if(restoreSlideFocus)viewport.querySelector('.slide')?.focus({preventScroll:true});};
     if(animate&&!reduced()&&document.startViewTransition){
       const transitionType=index>prevIndex?'forward':index<prevIndex?'backward':'step';
@@ -198,10 +271,10 @@ callTool("add_to_route", {
         const t=typeof ViewTransition!=='undefined'&&'types' in ViewTransition.prototype
           ?document.startViewTransition({update:paint,types:[transitionType]})
           :document.startViewTransition(paint);
-        activeTransition=t;
-        t.finished.catch(()=>{}).finally(()=>{if(activeTransition===t)activeTransition=null;routeFocus();});
-      }catch(e){paint();routeFocus();}
-    }else{paint();routeFocus();}
+        sendTransition('START',transitionType,t);
+        t.finished.catch(()=>{}).finally(()=>{if(transitionMachine.handle===t)sendTransition('FINISH');routeFocus();});
+      }catch(e){sendTransition('FAIL');paint();routeFocus();}
+    }else{sendTransition('FINISH');paint();routeFocus();}
   }
   const fsElement=()=>document.fullscreenElement||document.webkitFullscreenElement||null;
   function syncFullscreenState(){
@@ -227,8 +300,34 @@ callTool("add_to_route", {
   function nextSlide(){if(state.index<slides.length-1)navigate(state.index+1,0);else navigate(state.index,slides[state.index].builds.length);}
   function previousSlide(){if(state.step>0)navigate(state.index,0);else if(state.index>0)navigate(state.index-1,0);}
   function openPresenter(){const u=new URL('presenter.html',location.href);u.searchParams.set('lang',I18N.lang);u.searchParams.set('session',channelName);u.searchParams.set('minutes',planned);u.searchParams.set('city',city);presenter=window.open(u.href,'sg-webmcp-presenter','popup,width=1360,height=900');if(!presenter)return;setTimeout(announce,300);}
-  function clock(action){const now=Date.now();if(action==='reset')state={...state,startedAt:null,pausedAt:null,pausedMs:0};else if(!state.startedAt)state={...state,startedAt:now,pausedAt:null,pausedMs:0};else if(state.pausedAt)state={...state,pausedMs:state.pausedMs+(now-state.pausedAt),pausedAt:null};else state={...state,pausedAt:now};announce();}
-  function receive(message){if(message?.type==='presenter-ready')announce();if(message?.type==='deck-command'){if(message.id&&seenCommands.has(message.id))return;if(message.id){seenCommands.add(message.id);if(seenCommands.size>128)seenCommands.delete(seenCommands.values().next().value);}const c=message.command;if(c==='next')next();if(c==='previous')previous();if(c==='clock')clock();if(c==='reset-clock')clock('reset');if(c==='goto'&&Number.isInteger(message.index))navigate(message.index,message.step||0);}}
+  function clock(action){state=transitionClock(state,action,Date.now());syncClockBodyState();announce();}
+  function toggleAnimation(){
+    if(!isAmbientSlide(slides[state.index]))return flowAnim.state;
+    const next=sendAnimation('USER_TOGGLE');
+    const s=slides[state.index],container=viewport.querySelector('.slide-content');
+    if(s&&container)container.innerHTML=body(s);
+    return next;
+  }
+  function getAllowedCommands(clockState){
+    const slide=slides[state.index];
+    const cmds=['navigate','goto','clock'];
+    if(state.index>0||state.step>0)cmds.push('previous','previousSlide');
+    if(state.index<slides.length-1||state.step<slide.builds.length)cmds.push('next','nextSlide');
+    if(clockState==='idle')cmds.push('start-clock');
+    else if(clockState==='running')cmds.push('pause-clock','reset-clock');
+    else cmds.push('start-clock','reset-clock');
+    if(!mockup)cmds.push('openPresenter');
+    if(isAmbientSlide(slide))cmds.push('toggleAnimation');
+    return cmds;
+  }
+  function getState(){
+    const {clockState,overrun}=deriveClock(state,planned);
+    return {...state,clockState,overrun,animationState:flowAnim.state,transitionState:transitionMachine.state,allowedCommands:getAllowedCommands(clockState)};
+  }
+  function getTransitions(){
+    return {clock:CLOCK_TRANSITIONS,animation:ANIMATION_TRANSITIONS,transition:TRANSITION_TRANSITIONS};
+  }
+  function receive(message){if(message?.type==='presenter-ready')announce();if(message?.type==='deck-command'){if(message.id&&seenCommands.has(message.id))return;if(message.id){seenCommands.add(message.id);if(seenCommands.size>128)seenCommands.delete(seenCommands.values().next().value);}const c=message.command;if(c==='next')next();if(c==='previous')previous();if(c==='clock'||c==='toggle-clock')clock('toggle');if(c==='start-clock')clock('start');if(c==='pause-clock')clock('pause');if(c==='reset-clock')clock('reset');if(c==='goto'&&Number.isInteger(message.index))navigate(message.index,message.step||0);}}
   if(channel)channel.addEventListener('message',event=>receive(event.data));
   addEventListener('message',event=>{if(event.source!==presenter)return;if(location.origin!=='null'&&event.origin!==location.origin)return;receive(event.data);});
   addEventListener('keydown',event=>{
@@ -247,13 +346,12 @@ callTool("add_to_route", {
   viewport.addEventListener('click',event=>{
     const pauseBtn=event.target.closest('.flow-pause');
     if(pauseBtn){
-      flowAnim.override=isFlowRunning()?'pause':'play';
-      syncFlowBodyState();
-      syncFlowLoop();
+      const restoreFocus=pauseBtn===document.activeElement||event.detail===0;
+      sendAnimation('USER_TOGGLE');
       const s=slides[state.index],container=viewport.querySelector('.slide-content');
       if(s&&container){
         container.innerHTML=body(s);
-        if(event.detail===0)container.querySelector('.flow-pause')?.focus({preventScroll:true});
+        if(restoreFocus)container.querySelector('.flow-pause')?.focus({preventScroll:true});
       }
       return;
     }
@@ -272,7 +370,9 @@ callTool("add_to_route", {
   document.querySelector('#next')?.addEventListener('click',e=>{next();if(e.detail>0)e.currentTarget.blur();});
   document.querySelector('#presenter')?.addEventListener('click',openPresenter);
   document.querySelector('#fullscreen')?.addEventListener('click',e=>{toggleFullscreen();if(e.detail>0)e.currentTarget.blur();});
-  addEventListener('hashchange',()=>{state={...state,...parse()};paint();});addEventListener('popstate',()=>{state={...state,...parse()};paint();});addEventListener('resize',scale);
-  state={...state,...parse()};scale();paint();
-  window.deck={next,previous,nextSlide,previousSlide,navigate,getState:()=>({...state}),openPresenter,clock};
+  addEventListener('hashchange',()=>{sendTransition('SKIP');state={...state,...parse()};paint();});
+  addEventListener('popstate',()=>{sendTransition('SKIP');state={...state,...parse()};paint();});
+  addEventListener('resize',scale);
+  state={...state,...parse()};scale();sendTransition('FINISH');paint();
+  window.deck={next,previous,nextSlide,previousSlide,navigate,getState,getTransitions,openPresenter,clock,toggleAnimation};
 })();

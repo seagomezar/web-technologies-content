@@ -7,14 +7,67 @@
   const es = I18N.lang === 'es';
   let channel, state = { index: 0, step: 0, startedAt: null, pausedAt: null, pausedMs: 0 };
   let planned = Number(params.get('minutes')) || TALK.plannedMinutes;
-  let connected = false;
+
+  const CLOCK_TRANSITIONS = Object.freeze({
+    idle: Object.freeze({ TOGGLE: 'running', START: 'running', PAUSE: 'idle', RESET: 'idle' }),
+    running: Object.freeze({ TOGGLE: 'paused', START: 'running', PAUSE: 'paused', RESET: 'idle' }),
+    paused: Object.freeze({ TOGGLE: 'running', START: 'running', PAUSE: 'paused', RESET: 'idle' }),
+  });
+  const CLOCK_LABELS = Object.freeze({
+    idle: es ? 'Iniciar reloj' : 'Start timer',
+    paused: es ? 'Continuar reloj' : 'Resume timer',
+    running: es ? 'Pausar reloj' : 'Pause timer',
+  });
+  const CONNECTION_TRANSITIONS = Object.freeze({
+    connecting: Object.freeze({ DECK_STATE: 'connected', TIMEOUT: 'standalone' }),
+    standalone: Object.freeze({ DECK_STATE: 'connected', TIMEOUT: 'standalone' }),
+    connected: Object.freeze({ DECK_STATE: 'connected', TIMEOUT: 'connected' }),
+  });
+  const CONNECTION_COPY = Object.freeze({
+    connecting: es ? 'Conectando con la presentación…' : 'Connecting to presentation…',
+    connected: es
+      ? 'Conectado · controla con teclado/clicker en la presentación o desde aquí'
+      : 'Connected · control from main deck keyboard/clicker or buttons below',
+    standalone: es
+      ? 'Sin conexión directa: abre esta vista presionando P desde la presentación.'
+      : 'Not connected yet: press P from the main slide deck to sync.',
+  });
+  let connectionState = 'connecting', connectTimer = null;
+
+  function deriveClock(s, plannedMinutes, now = Date.now()) {
+    const clockState = !s.startedAt ? 'idle' : s.pausedAt ? 'paused' : 'running';
+    const elapsed = s.startedAt ? Math.max(0, ((s.pausedAt || now) - s.startedAt - (s.pausedMs || 0)) / 1000) : 0;
+    return {
+      clockState,
+      elapsed,
+      remaining: plannedMinutes * 60 - elapsed,
+      overrun: plannedMinutes > 0 && elapsed >= plannedMinutes * 60,
+    };
+  }
+
+  function syncConnection(event) {
+    const prev = connectionState;
+    if (event) {
+      if (event === 'DECK_STATE' && connectTimer) {
+        clearTimeout(connectTimer);
+        connectTimer = null;
+      }
+      connectionState = CONNECTION_TRANSITIONS[connectionState][event] || connectionState;
+    }
+    const el = $('#connection');
+    if (el) {
+      el.dataset.connectionState = connectionState;
+      if (!event || prev !== connectionState) el.textContent = CONNECTION_COPY[connectionState];
+    }
+    document.body.dataset.connectionState = connectionState;
+    return connectionState;
+  }
 
   try { channel = new BroadcastChannel(session); } catch {}
 
   if (!es) {
     document.title = `Presenter | ${TALK.title}`;
     $('#pres-title').textContent = TALK.title;
-    $('#connection').textContent = 'Connecting to presentation…';
     $('#current-preview').title = 'Current slide';
     $('#next-preview').title = 'Next slide';
     $('#previous').textContent = '← Previous';
@@ -86,37 +139,67 @@
     $('#schedule').innerHTML = TALK.slides
       .map((s, i) => `<li class="${i === state.index ? 'active' : ''}"><button type="button" data-goto="${i}"${i === state.index ? ' aria-current="step"' : ''}>${String(i + 1).padStart(2, '0')} · ${esc(clean(s.title))} (${format(s.minutes * planned / total * 60)})</button></li>`)
       .join('');
-    tick();
+    tick(true);
   }
 
-  function tick() {
-    if (document.hidden) return;
+  function tick(force = false) {
+    if (!force && document.hidden) return;
     const now = Date.now();
     $('#wall-clock').textContent = new Date(now).toLocaleTimeString(es ? 'es-CO' : 'en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-    const elapsed = state.startedAt ? ((state.pausedAt || now) - state.startedAt - state.pausedMs) / 1000 : 0;
+    const { clockState, elapsed, remaining, overrun } = deriveClock(state, planned, now);
     $('#elapsed').textContent = format(elapsed);
-    $('#remaining').textContent = `Plan ${format(planned * 60 - elapsed)}`;
-    $('.clock').classList.toggle('overrun', elapsed > planned * 60);
-    $('#clock').textContent = !state.startedAt
-      ? (es ? 'Iniciar reloj' : 'Start timer')
-      : state.pausedAt
-        ? (es ? 'Continuar reloj' : 'Resume timer')
-        : (es ? 'Pausar reloj' : 'Pause timer');
+    $('#remaining').textContent = `Plan ${format(remaining)}`;
+    const clockEl = $('.clock');
+    if (clockEl) {
+      clockEl.dataset.clockState = clockState;
+      clockEl.dataset.clockOverrun = String(overrun);
+      clockEl.classList.toggle('overrun', overrun);
+    }
+    document.body.dataset.clockState = clockState;
+    $('#clock').textContent = CLOCK_LABELS[clockState];
   }
 
   function receive(data) {
     if (data?.type !== 'deck-state') return;
-    connected = true;
     state = data.state;
     planned = data.plannedMinutes;
-    $('#connection').textContent = es
-      ? 'Conectado · controla con teclado/clicker en la presentación o desde aquí'
-      : 'Connected · control from main deck keyboard/clicker or buttons below';
+    syncConnection('DECK_STATE');
     render();
   }
 
+  function getAllowedCommands(clockState) {
+    const slide = TALK.slides[state.index];
+    const cmds = ['goto', 'clock'];
+    if (state.index > 0 || state.step > 0) cmds.push('previous');
+    if (state.index < TALK.slides.length - 1 || state.step < slide.builds.length) cmds.push('next');
+    if (clockState === 'idle') cmds.push('start-clock');
+    else if (clockState === 'running') cmds.push('pause-clock', 'reset-clock');
+    else cmds.push('start-clock', 'reset-clock');
+    return cmds;
+  }
+
+  function getState() {
+    const { clockState, elapsed, remaining, overrun } = deriveClock(state, planned);
+    return {
+      ...state,
+      slideCount: TALK.slides.length,
+      plannedMinutes: planned,
+      session,
+      connectionState,
+      clockState,
+      elapsedSeconds: Math.round(elapsed),
+      remainingSeconds: Math.round(remaining),
+      overrun,
+      allowedCommands: getAllowedCommands(clockState),
+    };
+  }
+
+  function getTransitions() {
+    return { clock: CLOCK_TRANSITIONS, connection: CONNECTION_TRANSITIONS };
+  }
+
   channel?.addEventListener('message', e => receive(e.data));
-  document.addEventListener('visibilitychange', () => { if (!document.hidden) tick(); });
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) tick(true); });
   addEventListener('message', e => {
     if (e.source !== opener) return;
     if (location.origin !== 'null' && e.origin !== location.origin) return;
@@ -133,20 +216,16 @@
   $('#reset').addEventListener('click', () => command('reset-clock'));
 
   addEventListener('keydown', e => {
-    if (e.altKey || e.ctrlKey || e.metaKey || /INPUT|TEXTAREA|SELECT|BUTTON|SUMMARY/.test(e.target.tagName)) return;
+    if (e.isComposing || e.altKey || e.ctrlKey || e.metaKey || e.target.closest?.('input,textarea,select,button,summary,a,[contenteditable]')) return;
     if (['ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); command('next'); }
     if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); command('previous'); }
   });
 
   $('#sources').innerHTML = TALK.sources.map(s => `<li><a href="${esc(s.url)}" target="_blank" rel="noopener noreferrer">${esc(s.title)}</a></li>`).join('');
+  syncConnection();
   render();
   send({ type: 'presenter-ready' });
-  setInterval(tick, 500);
-  setTimeout(() => {
-    if (!connected) {
-      $('#connection').textContent = es
-        ? 'Sin conexión directa: abre esta vista presionando P desde la presentación.'
-        : 'Not connected yet: press P from the main slide deck to sync.';
-    }
-  }, 3000);
+  setInterval(() => tick(false), 500);
+  connectTimer = setTimeout(() => syncConnection('TIMEOUT'), 3000);
+  window.presenter = { getState, getTransitions, sendCommand: command };
 })();

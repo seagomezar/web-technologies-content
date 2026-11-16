@@ -12,13 +12,15 @@
     .topbar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 14px;background:#131a26;border-bottom:1.5px solid #263248}
     .brand{display:flex;align-items:center;gap:8px;font-weight:700;font-size:15px}
     .dot-live{width:9px;height:9px;border-radius:50%;background:#4ade80;box-shadow:0 0 8px #4ade80}
+    body[data-playback-state="paused"] .dot-live{background:#fbbc04;box-shadow:none}
     .controls{display:flex;align-items:center;gap:6px;flex-wrap:nowrap}
     .pill{margin:0;display:inline-flex;align-items:center;justify-content:center;min-inline-size:28px;min-block-size:28px;font:700 12px/1 'Roboto Mono',monospace;padding:6px 9px;border-radius:999px;border:1.5px solid #334155;background:#1e293b;color:#e2e8f0;cursor:pointer;transition:background-color .15s ease,border-color .15s ease,color .15s ease}
     .pill:hover{border-color:#60a5fa}
     .pill:focus-visible{outline:2px solid #93c5fd;outline-offset:2px}
     .pill:is(.active,[aria-pressed="true"]){background:#4285f4;border-color:#93c5fd;color:#fff}
-    .pill.rain.on{background:#0284c7;border-color:#7dd3fc;color:#fff}
-    .pill.phys.off{background:#b91c1c;border-color:#fca5a5;color:#fff}
+    .pill.rain.on,body[data-surface-state="wet"] .pill.rain{background:#0284c7;border-color:#7dd3fc;color:#fff}
+    .pill.phys.off,body[data-guardrail-state="disabled"] .pill.phys{background:#b91c1c;border-color:#fca5a5;color:#fff}
+    body[data-guardrail-state="disabled"] #path-status{color:#fca5a5}
     .grid{display:grid;grid-template-columns:250px 1fr 370px;gap:12px;padding:12px;height:100%;min-height:0}
     .card{background:#131a26;border:1.5px solid #263248;border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:10px;min-height:0;contain:layout style paint}
     .card-title{font:700 11px/1 'Roboto Mono',monospace;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em;display:flex;justify-content:space-between}
@@ -140,7 +142,34 @@
       const pathEl = document.getElementById('track-path');
       const totalLen = pathEl.getTotalLength();
       const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)');
-      let coach = 'superaj', rain = false, physics = true, paused = reduceMotion.matches, t = 0, lastPhase = -1;
+
+      const COCKPIT_TRANSITIONS = Object.freeze({
+        playback: Object.freeze({
+          playing: Object.freeze({ TOGGLE_PLAYBACK: 'paused', PAUSE: 'paused', PLAY: 'playing', MOTION_REDUCE: 'paused', MOTION_ALLOW: 'playing' }),
+          paused: Object.freeze({ TOGGLE_PLAYBACK: 'playing', PAUSE: 'paused', PLAY: 'playing', MOTION_REDUCE: 'paused', MOTION_ALLOW: 'playing' }),
+        }),
+        surface: Object.freeze({
+          dry: Object.freeze({ TOGGLE_SURFACE: 'wet', SET_WET: 'wet', SET_DRY: 'dry' }),
+          wet: Object.freeze({ TOGGLE_SURFACE: 'dry', SET_WET: 'wet', SET_DRY: 'dry' }),
+        }),
+        guardrails: Object.freeze({
+          enabled: Object.freeze({ TOGGLE_GUARDRAILS: 'disabled', DISABLE_GUARDRAILS: 'disabled', ENABLE_GUARDRAILS: 'enabled' }),
+          disabled: Object.freeze({ TOGGLE_GUARDRAILS: 'enabled', DISABLE_GUARDRAILS: 'disabled', ENABLE_GUARDRAILS: 'enabled' }),
+        }),
+        personas: Object.freeze(['superaj', 'aj', 'rachel', 'tony', 'garmin']),
+        sectorPhases: Object.freeze([0, 1, 2, 3, 4]),
+      });
+
+      let simTimer = null;
+      let userPlaybackIntent = 'auto';
+      let cockpit = {
+        playback: reduceMotion.matches ? 'paused' : 'playing',
+        surface: 'dry',
+        guardrails: 'enabled',
+        persona: 'superaj',
+        sectorPhase: 0,
+        progress: 0,
+      };
 
       const phases = [
         { range: [0.00, 0.16], nameEs: 'Recta Principal', nameEn: 'Main Straight', spd: 126, thr: 94, brk: 0, glat: 0.08, glong: 0.45, type: 'straight' },
@@ -186,6 +215,33 @@
       };
 
       const feedEl = document.getElementById('feed');
+      const coachBtns = document.querySelectorAll('[data-coach]');
+      const rainBtn = document.getElementById('btn-rain');
+      const physBtn = document.getElementById('btn-phys');
+      const pauseBtn = document.getElementById('btn-pause');
+      const gripTag = document.getElementById('grip-tag');
+      const fcOuter = document.getElementById('fc-outer');
+      const activePersonaEl = document.getElementById('active-persona');
+      const pathStatusEl = document.getElementById('path-status');
+      const carDot = document.getElementById('car-dot');
+      const carRing = document.getElementById('car-ring');
+      const valSpeed = document.getElementById('val-speed');
+      const unitSpeed = document.getElementById('unit-speed');
+      const barThr = document.getElementById('bar-thr');
+      const valThr = document.getElementById('val-thr');
+      const barBrk = document.getElementById('bar-brk');
+      const valBrk = document.getElementById('val-brk');
+      const valGlat = document.getElementById('val-glat');
+      const valGlong = document.getElementById('val-glong');
+      const valUsage = document.getElementById('val-usage');
+      const sectorName = document.getElementById('sector-name');
+      const fcDot = document.getElementById('fc-dot');
+
+      function resolveSectorPhase(progress) {
+        const idx = phases.findIndex(p => progress >= p.range[0] && progress < p.range[1]);
+        return idx >= 0 ? idx : 0;
+      }
+
       function pushMsg(kind, badge, text) {
         const div = document.createElement('div');
         div.className = 'msg ' + kind;
@@ -205,112 +261,40 @@
 
       function emitForPhase(idx) {
         const p = phases[idx];
+        const wet = cockpit.surface === 'wet';
+        const guarded = cockpit.guardrails === 'enabled';
         if (p.type === 't1') {
           pushMsg('feedforward', 'FEEDFORWARD · <150m', es ? callouts.t1.feedEs : callouts.t1.feedEn);
-          pushMsg('hot', 'HOT PATH · <50ms', callouts.t1.hot[coach]);
+          pushMsg('hot', 'HOT PATH · <50ms', callouts.t1.hot[cockpit.persona]);
         } else if (p.type === 't2') {
-          const txt = physics
+          const txt = guarded
             ? (es ? callouts.t2.coldPhysEs : callouts.t2.coldPhysEn)
             : (es ? callouts.t2.coldGenericEs : callouts.t2.coldGenericEn);
           pushMsg('cold', 'COLD PATH · GEMINI 3.8 FLASH', txt);
         } else if (p.type === 't5') {
-          pushMsg('hot', 'HOT PATH · <50ms', callouts.t5.hot[coach]);
+          pushMsg('hot', 'HOT PATH · <50ms', callouts.t5.hot[cockpit.persona]);
         } else if (p.type === 't9') {
           pushMsg('feedforward', 'PREDICTIVE · 8s', es ? callouts.t9.feedEs : callouts.t9.feedEn);
-          if (rain) pushMsg('hot', 'HOT SAFETY · <50ms', es ? callouts.t9.rainAlertEs : callouts.t9.rainAlertEn);
+          if (wet) pushMsg('hot', 'HOT SAFETY · <50ms', es ? callouts.t9.rainAlertEs : callouts.t9.rainAlertEn);
         }
       }
 
-      const coachBtns = document.querySelectorAll('[data-coach]');
-      coachBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-          coachBtns.forEach(b => {
-            const active = b === btn;
-            b.classList.toggle('active', active);
-            b.setAttribute('aria-pressed', String(active));
-          });
-          coach = btn.dataset.coach;
-          document.getElementById('active-persona').textContent = btn.textContent.trim().toUpperCase();
-          pushMsg('hot', 'HOT PATH · <50ms', callouts.t1.hot[coach]);
-        });
-      });
-
-      const rainBtn = document.getElementById('btn-rain');
-      rainBtn.addEventListener('click', () => {
-        rain = !rain;
-        rainBtn.classList.toggle('on', rain);
-        rainBtn.textContent = rain ? (es ? '🌧️ Lluvia (0.6g)' : '🌧️ Rain (0.6g)') : (es ? '☀️ Seco (1.0g)' : '☀️ Dry (1.0g)');
-        document.getElementById('grip-tag').textContent = rain ? 'GRIP 60%' : 'GRIP 100%';
-        document.getElementById('fc-outer').setAttribute('r', rain ? '30' : '46');
-      });
-
-      const physBtn = document.getElementById('btn-phys');
-      physBtn.addEventListener('click', () => {
-        physics = !physics;
-        physBtn.classList.toggle('off', !physics);
-        physBtn.textContent = physics ? (es ? '🧠 Física: ON' : '🧠 Physics: ON') : (es ? '⚠️ Física: OFF' : '⚠️ Physics: OFF');
-        emitForPhase(2);
-      });
-
-      const pauseBtn = document.getElementById('btn-pause');
-      function syncPauseBtn() {
-        const label = paused
-          ? (es ? 'Reanudar simulación' : 'Resume simulation')
-          : (es ? 'Pausar simulación' : 'Pause simulation');
-        pauseBtn.textContent = paused ? '▶' : '⏸';
-        pauseBtn.setAttribute('aria-label', label);
-        pauseBtn.title = label;
-      }
-      syncPauseBtn();
-      pauseBtn.addEventListener('click', () => {
-        paused = !paused;
-        syncPauseBtn();
-      });
-      reduceMotion.addEventListener('change', e => {
-        paused = e.matches;
-        syncPauseBtn();
-      });
-
-      emitForPhase(1);
-      emitForPhase(2);
-
-      const carDot = document.getElementById('car-dot');
-      const carRing = document.getElementById('car-ring');
-      const valSpeed = document.getElementById('val-speed');
-      const unitSpeed = document.getElementById('unit-speed');
-      const barThr = document.getElementById('bar-thr');
-      const valThr = document.getElementById('val-thr');
-      const barBrk = document.getElementById('bar-brk');
-      const valBrk = document.getElementById('val-brk');
-      const valGlat = document.getElementById('val-glat');
-      const valGlong = document.getElementById('val-glong');
-      const valUsage = document.getElementById('val-usage');
-      const sectorName = document.getElementById('sector-name');
-      const fcDot = document.getElementById('fc-dot');
-
-      setInterval(() => {
-        if (paused || document.hidden) return;
-        t = (t + 0.008) % 1;
+      function renderTelemetry() {
+        const t = cockpit.progress;
+        const wet = cockpit.surface === 'wet';
+        const p = phases[cockpit.sectorPhase];
         const pt = pathEl.getPointAtLength(t * totalLen);
         carDot.setAttribute('cx', pt.x.toFixed(1));
         carDot.setAttribute('cy', pt.y.toFixed(1));
         carRing.setAttribute('cx', pt.x.toFixed(1));
         carRing.setAttribute('cy', pt.y.toFixed(1));
 
-        const pIdx = phases.findIndex(p => t >= p.range[0] && t < p.range[1]);
-        const idx = pIdx >= 0 ? pIdx : 0;
-        const p = phases[idx];
-        if (idx !== lastPhase) {
-          lastPhase = idx;
-          emitForPhase(idx);
-        }
-
-        const gripScale = rain ? 0.62 : 1.0;
-        const spd = Math.round(p.spd * (rain ? 0.84 : 1) + Math.sin(t * 40) * 2);
-        const thr = Math.max(0, Math.min(100, Math.round(p.thr * (rain ? 0.85 : 1))));
+        const gripScale = wet ? 0.62 : 1.0;
+        const spd = Math.round(p.spd * (wet ? 0.84 : 1) + Math.sin(t * 40) * 2);
+        const thr = Math.max(0, Math.min(100, Math.round(p.thr * (wet ? 0.85 : 1))));
         const brk = Math.max(0, Math.min(100, Math.round(p.brk)));
-        const glat = p.glat * (rain ? 0.78 : 1);
-        const glong = p.glong * (rain ? 0.82 : 1);
+        const glat = p.glat * (wet ? 0.78 : 1);
+        const glong = p.glong * (wet ? 0.82 : 1);
         const totalG = Math.hypot(glat, glong);
         const usage = Math.min(135, Math.round((totalG / (1.45 * gripScale)) * 100));
 
@@ -328,7 +312,162 @@
         fcDot.setAttribute('cx', (glat * 28).toFixed(1));
         fcDot.setAttribute('cy', (-glong * 28).toFixed(1));
         fcDot.setAttribute('fill', usage > 98 ? '#ea4335' : usage > 75 ? '#fbbc04' : '#4ade80');
-      }, 100);
+      }
+
+      function syncSimLoop() {
+        const shouldRun = cockpit.playback === 'playing' && !document.hidden;
+        if (shouldRun && !simTimer) {
+          simTimer = setInterval(() => send({ type: 'TICK', delta: 0.008 }), 100);
+        } else if (!shouldRun && simTimer) {
+          clearInterval(simTimer);
+          simTimer = null;
+        }
+      }
+
+      function syncDom() {
+        const isPaused = cockpit.playback === 'paused';
+        const isWet = cockpit.surface === 'wet';
+        const isGuarded = cockpit.guardrails === 'enabled';
+
+        document.body.dataset.playbackState = cockpit.playback;
+        document.body.dataset.surfaceState = cockpit.surface;
+        document.body.dataset.guardrailState = cockpit.guardrails;
+        document.body.dataset.persona = cockpit.persona;
+        document.body.dataset.sectorPhase = String(cockpit.sectorPhase);
+
+        coachBtns.forEach(b => {
+          const active = b.dataset.coach === cockpit.persona;
+          b.classList.toggle('active', active);
+          b.setAttribute('aria-pressed', String(active));
+          if (active) activePersonaEl.textContent = b.textContent.trim().toUpperCase();
+        });
+
+        rainBtn.classList.toggle('on', isWet);
+        rainBtn.textContent = isWet ? (es ? '🌧️ Lluvia (0.6g)' : '🌧️ Rain (0.6g)') : (es ? '☀️ Seco (1.0g)' : '☀️ Dry (1.0g)');
+        gripTag.textContent = isWet ? 'GRIP 60%' : 'GRIP 100%';
+        fcOuter.setAttribute('r', isWet ? '30' : '46');
+
+        physBtn.classList.toggle('off', !isGuarded);
+        physBtn.textContent = isGuarded ? (es ? '🧠 Física: ON' : '🧠 Physics: ON') : (es ? '⚠️ Física: OFF' : '⚠️ Physics: OFF');
+        pathStatusEl.textContent = isGuarded
+          ? 'HOT <50ms · COLD Gemini 3.8'
+          : (es ? 'HOT <50ms · ⚠️ SIN FÍSICA' : 'HOT <50ms · ⚠️ NO PHYSICS');
+
+        const pauseLabel = isPaused
+          ? (es ? 'Reanudar simulación' : 'Resume simulation')
+          : (es ? 'Pausar simulación' : 'Pause simulation');
+        pauseBtn.textContent = isPaused ? '▶' : '⏸';
+        pauseBtn.setAttribute('aria-label', pauseLabel);
+        pauseBtn.title = pauseLabel;
+
+        syncSimLoop();
+        renderTelemetry();
+      }
+
+      function getState() {
+        return {
+          playback: cockpit.playback,
+          surface: cockpit.surface,
+          guardrails: cockpit.guardrails,
+          persona: cockpit.persona,
+          sectorPhase: cockpit.sectorPhase,
+          sectorId: phases[cockpit.sectorPhase].type,
+          progress: Number(cockpit.progress.toFixed(4)),
+          hidden: document.hidden,
+          reducedMotion: reduceMotion.matches,
+          allowedEvents: [
+            'TOGGLE_PLAYBACK',
+            cockpit.playback === 'playing' ? 'PAUSE' : 'PLAY',
+            'TOGGLE_SURFACE',
+            cockpit.surface === 'dry' ? 'SET_WET' : 'SET_DRY',
+            'TOGGLE_GUARDRAILS',
+            cockpit.guardrails === 'enabled' ? 'DISABLE_GUARDRAILS' : 'ENABLE_GUARDRAILS',
+            'SET_PERSONA',
+            'STEP',
+            'SEEK',
+          ],
+        };
+      }
+
+      function getTransitions() {
+        return COCKPIT_TRANSITIONS;
+      }
+
+      function send(input, extra = {}) {
+        const evt = typeof input === 'string' ? { type: input, ...extra } : (input || {});
+        const type = evt.type;
+        let phaseChanged = false;
+
+        if (type === 'TOGGLE_PLAYBACK' || type === 'PLAY' || type === 'PAUSE') {
+          const next = COCKPIT_TRANSITIONS.playback[cockpit.playback][type];
+          userPlaybackIntent = next === 'paused' ? 'pause' : 'play';
+          cockpit = { ...cockpit, playback: next };
+        } else if (type === 'MOTION_REDUCE' || type === 'MOTION_ALLOW') {
+          if (type === 'MOTION_REDUCE') userPlaybackIntent = 'auto';
+          if (userPlaybackIntent !== 'pause') {
+            cockpit = { ...cockpit, playback: COCKPIT_TRANSITIONS.playback[cockpit.playback][type] };
+          }
+        } else if (type === 'TOGGLE_SURFACE' || type === 'SET_WET' || type === 'SET_DRY' || type === 'SET_SURFACE') {
+          const mapped = type === 'SET_SURFACE' ? (evt.surface === 'wet' ? 'SET_WET' : evt.surface === 'dry' ? 'SET_DRY' : null) : type;
+          if (mapped) cockpit = { ...cockpit, surface: COCKPIT_TRANSITIONS.surface[cockpit.surface][mapped] };
+        } else if (type === 'TOGGLE_GUARDRAILS' || type === 'ENABLE_GUARDRAILS' || type === 'DISABLE_GUARDRAILS' || type === 'SET_GUARDRAILS') {
+          const mapped = type === 'SET_GUARDRAILS'
+            ? (evt.guardrails === 'disabled' ? 'DISABLE_GUARDRAILS' : evt.guardrails === 'enabled' ? 'ENABLE_GUARDRAILS' : null)
+            : type;
+          if (mapped) {
+            const nextGuard = COCKPIT_TRANSITIONS.guardrails[cockpit.guardrails][mapped];
+            if (nextGuard !== cockpit.guardrails) {
+              cockpit = { ...cockpit, guardrails: nextGuard };
+              emitForPhase(2);
+            }
+          }
+        } else if (type === 'SET_PERSONA') {
+          if (COCKPIT_TRANSITIONS.personas.includes(evt.persona)) {
+            cockpit = { ...cockpit, persona: evt.persona };
+            pushMsg('hot', 'HOT PATH · <50ms', callouts.t1.hot[cockpit.persona]);
+          }
+        } else if (type === 'TICK' || type === 'STEP') {
+          const delta = Number.isFinite(evt.delta) ? evt.delta : 0.008;
+          const nextProgress = ((cockpit.progress + delta) % 1 + 1) % 1;
+          const nextSector = resolveSectorPhase(nextProgress);
+          phaseChanged = nextSector !== cockpit.sectorPhase;
+          cockpit = { ...cockpit, progress: nextProgress, sectorPhase: nextSector };
+          if (phaseChanged) emitForPhase(nextSector);
+          if (type === 'TICK') {
+            document.body.dataset.sectorPhase = String(cockpit.sectorPhase);
+            renderTelemetry();
+            return getState();
+          }
+        } else if (type === 'SEEK') {
+          let nextProgress = cockpit.progress;
+          if (Number.isInteger(evt.sectorPhase) && evt.sectorPhase >= 0 && evt.sectorPhase < phases.length) {
+            nextProgress = phases[evt.sectorPhase].range[0];
+          } else if (Number.isFinite(evt.progress)) {
+            nextProgress = ((evt.progress % 1) + 1) % 1;
+          }
+          const nextSector = resolveSectorPhase(nextProgress);
+          phaseChanged = nextSector !== cockpit.sectorPhase;
+          cockpit = { ...cockpit, progress: nextProgress, sectorPhase: nextSector };
+          if (phaseChanged) emitForPhase(nextSector);
+        }
+
+        syncDom();
+        return getState();
+      }
+
+      coachBtns.forEach(btn => {
+        btn.addEventListener('click', () => send({ type: 'SET_PERSONA', persona: btn.dataset.coach }));
+      });
+      rainBtn.addEventListener('click', () => send('TOGGLE_SURFACE'));
+      physBtn.addEventListener('click', () => send('TOGGLE_GUARDRAILS'));
+      pauseBtn.addEventListener('click', () => send('TOGGLE_PLAYBACK'));
+      reduceMotion.addEventListener('change', e => send(e.matches ? 'MOTION_REDUCE' : 'MOTION_ALLOW'));
+      document.addEventListener('visibilitychange', syncSimLoop);
+
+      emitForPhase(1);
+      emitForPhase(2);
+      syncDom();
+      window.cockpitSim = { getState, send, getTransitions };
     })();
   </script>
 </body>
