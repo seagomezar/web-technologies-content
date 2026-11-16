@@ -1,12 +1,62 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useMemo } from 'react';
 import { GoogleGenAI } from '@google/genai';
 import { RACING_PHYSICS_KNOWLEDGE } from '../utils/coachingKnowledge';
-import type { CloudModel } from '../types';
+import type { CloudModel, GeminiCloudPhase } from '../types';
+import { useMachine } from '../utils/stateMachine';
 
-interface CloudStatus {
+export interface CloudStatus {
   state: 'idle' | 'loading' | 'error' | 'success';
+  phase: GeminiCloudPhase;
   error?: string;
   hasKey: boolean;
+}
+
+interface GeminiCloudContext {
+  readonly hasKey: boolean;
+  readonly activeModel: string | null;
+  readonly error?: string;
+  readonly requestId: number;
+}
+
+interface GeminiCloudPublicContext {
+  readonly hasKey: boolean;
+  readonly activeModel: string | null;
+  readonly error?: string;
+}
+
+type GeminiCloudEvents = {
+  SYNC_KEY: { hasKey: boolean };
+  REQUEST_PRIMARY: { model: string; requestId: number };
+  RETRY_FALLBACK: { model: string; requestId: number };
+  SUCCEED: { requestId: number };
+  FAIL: { error: string; hasKey: boolean; requestId: number };
+};
+
+function toLegacyCloudState(
+  phase: GeminiCloudPhase,
+): 'idle' | 'loading' | 'error' | 'success' {
+  switch (phase) {
+    case 'unconfigured':
+    case 'idle':
+      return 'idle';
+    case 'requesting_primary':
+    case 'retrying_fallback':
+      return 'loading';
+    case 'succeeded':
+      return 'success';
+    case 'error':
+      return 'error';
+  }
+}
+
+function formatGeminiCloudContext(
+  ctx: Readonly<GeminiCloudContext>,
+): GeminiCloudPublicContext {
+  return {
+    hasKey: ctx.hasKey,
+    activeModel: ctx.activeModel,
+    error: ctx.error,
+  };
 }
 
 function base64ToBlob(base64: string, mimeType = 'audio/wav'): Blob {
@@ -19,45 +69,253 @@ function base64ToBlob(base64: string, mimeType = 'audio/wav'): Blob {
 }
 
 export const useGeminiCloud = (externalApiKey?: string | null) => {
-  const [apiKey, setAutoApiKey] = useState<string | null>(() =>
-    externalApiKey ?? localStorage.getItem('gemini_api_key') ?? null
+  const [localKey, setLocalKey] = useState<string | null>(() =>
+    localStorage.getItem('gemini_api_key'),
+  );
+  const [manualOverride, setManualOverride] = useState<{
+    baseExternal: string | null | undefined;
+    key: string | null;
+  } | null>(null);
+
+  const apiKey =
+    manualOverride && manualOverride.baseExternal === externalApiKey
+      ? manualOverride.key
+      : externalApiKey !== undefined
+        ? externalApiKey
+        : localKey;
+
+  const { state: phase, context, send, machine } = useMachine<
+    GeminiCloudPhase,
+    GeminiCloudContext,
+    GeminiCloudEvents,
+    GeminiCloudPublicContext
+  >(
+    () => {
+      const initialHasKey = Boolean(
+        externalApiKey ?? localStorage.getItem('gemini_api_key'),
+      );
+      return {
+        id: 'gemini-cloud',
+        initial: initialHasKey ? 'idle' : 'unconfigured',
+        context: {
+          hasKey: initialHasKey,
+          activeModel: null,
+          error: undefined,
+          requestId: 0,
+        },
+        states: {
+          unconfigured: {
+            on: {
+              SYNC_KEY: {
+                target: (_ctx, payload) => (payload.hasKey ? 'idle' : 'unconfigured'),
+                assign: (ctx, payload) => ({
+                  ...ctx,
+                  hasKey: payload.hasKey,
+                  error: undefined,
+                }),
+              },
+              REQUEST_PRIMARY: {
+                target: 'requesting_primary',
+                assign: (_ctx, payload) => ({
+                  hasKey: true,
+                  activeModel: payload.model,
+                  error: undefined,
+                  requestId: payload.requestId,
+                }),
+              },
+              FAIL: {
+                target: 'error',
+                assign: (_ctx, payload) => ({
+                  hasKey: payload.hasKey,
+                  activeModel: null,
+                  error: payload.error,
+                  requestId: payload.requestId,
+                }),
+              },
+            },
+          },
+          idle: {
+            on: {
+              SYNC_KEY: {
+                target: (_ctx, payload) => (payload.hasKey ? 'idle' : 'unconfigured'),
+                assign: (ctx, payload) => ({
+                  ...ctx,
+                  hasKey: payload.hasKey,
+                  error: undefined,
+                }),
+              },
+              REQUEST_PRIMARY: {
+                target: 'requesting_primary',
+                assign: (_ctx, payload) => ({
+                  hasKey: true,
+                  activeModel: payload.model,
+                  error: undefined,
+                  requestId: payload.requestId,
+                }),
+              },
+              FAIL: {
+                target: 'error',
+                assign: (_ctx, payload) => ({
+                  hasKey: payload.hasKey,
+                  activeModel: null,
+                  error: payload.error,
+                  requestId: payload.requestId,
+                }),
+              },
+            },
+          },
+          requesting_primary: {
+            on: {
+              SYNC_KEY: {
+                target: 'requesting_primary',
+                assign: (ctx, payload) => ({ ...ctx, hasKey: payload.hasKey }),
+              },
+              RETRY_FALLBACK: {
+                guard: (ctx, payload) => payload.requestId === ctx.requestId,
+                target: 'retrying_fallback',
+                assign: (ctx, payload) => ({ ...ctx, activeModel: payload.model }),
+              },
+              SUCCEED: {
+                guard: (ctx, payload) => payload.requestId === ctx.requestId,
+                target: 'succeeded',
+                assign: ctx => ({ ...ctx, activeModel: null, error: undefined }),
+              },
+              FAIL: {
+                guard: (ctx, payload) => payload.requestId >= ctx.requestId,
+                target: 'error',
+                assign: (_ctx, payload) => ({
+                  hasKey: payload.hasKey,
+                  activeModel: null,
+                  error: payload.error,
+                  requestId: payload.requestId,
+                }),
+              },
+            },
+          },
+          retrying_fallback: {
+            on: {
+              SYNC_KEY: {
+                target: 'retrying_fallback',
+                assign: (ctx, payload) => ({ ...ctx, hasKey: payload.hasKey }),
+              },
+              SUCCEED: {
+                guard: (ctx, payload) => payload.requestId === ctx.requestId,
+                target: 'succeeded',
+                assign: ctx => ({ ...ctx, activeModel: null, error: undefined }),
+              },
+              FAIL: {
+                guard: (ctx, payload) => payload.requestId >= ctx.requestId,
+                target: 'error',
+                assign: (_ctx, payload) => ({
+                  hasKey: payload.hasKey,
+                  activeModel: null,
+                  error: payload.error,
+                  requestId: payload.requestId,
+                }),
+              },
+            },
+          },
+          succeeded: {
+            on: {
+              SYNC_KEY: {
+                target: (_ctx, payload) => (payload.hasKey ? 'succeeded' : 'unconfigured'),
+                assign: (ctx, payload) => ({ ...ctx, hasKey: payload.hasKey }),
+              },
+              REQUEST_PRIMARY: {
+                target: 'requesting_primary',
+                assign: (_ctx, payload) => ({
+                  hasKey: true,
+                  activeModel: payload.model,
+                  error: undefined,
+                  requestId: payload.requestId,
+                }),
+              },
+              FAIL: {
+                target: 'error',
+                assign: (_ctx, payload) => ({
+                  hasKey: payload.hasKey,
+                  activeModel: null,
+                  error: payload.error,
+                  requestId: payload.requestId,
+                }),
+              },
+            },
+          },
+          error: {
+            on: {
+              SYNC_KEY: {
+                target: (ctx, payload) => {
+                  if (payload.hasKey && !ctx.hasKey) return 'idle';
+                  if (!payload.hasKey && ctx.hasKey) return 'unconfigured';
+                  return 'error';
+                },
+                assign: (ctx, payload) => ({
+                  ...ctx,
+                  hasKey: payload.hasKey,
+                  error:
+                    payload.hasKey !== ctx.hasKey ? undefined : ctx.error,
+                }),
+              },
+              REQUEST_PRIMARY: {
+                target: 'requesting_primary',
+                assign: (_ctx, payload) => ({
+                  hasKey: true,
+                  activeModel: payload.model,
+                  error: undefined,
+                  requestId: payload.requestId,
+                }),
+              },
+              FAIL: {
+                target: 'error',
+                assign: (_ctx, payload) => ({
+                  hasKey: payload.hasKey,
+                  activeModel: null,
+                  error: payload.error,
+                  requestId: payload.requestId,
+                }),
+              },
+            },
+          },
+        },
+      };
+    },
+    { formatContext: formatGeminiCloudContext },
   );
 
-  const [status, setStatus] = useState<CloudStatus>({
-    state: 'idle',
-    hasKey: !!apiKey,
-  });
-
   useEffect(() => {
-    if (externalApiKey !== undefined) {
-      setAutoApiKey(externalApiKey);
-      setStatus(prev => ({ ...prev, hasKey: !!externalApiKey }));
-    }
-  }, [externalApiKey]);
+    send('SYNC_KEY', { hasKey: Boolean(apiKey) });
+  }, [apiKey, send]);
 
-  const setApiKey = useCallback((key: string) => {
-    if (key) {
-      localStorage.setItem('gemini_api_key', key);
-      setAutoApiKey(key);
-      setStatus(prev => ({ ...prev, hasKey: true }));
-    } else {
-      localStorage.removeItem('gemini_api_key');
-      setAutoApiKey(null);
-      setStatus(prev => ({ ...prev, hasKey: false }));
-    }
-  }, []);
+  const setApiKey = useCallback(
+    (key: string) => {
+      if (key) {
+        localStorage.setItem('gemini_api_key', key);
+        setLocalKey(key);
+        setManualOverride({ baseExternal: externalApiKey, key });
+        send('SYNC_KEY', { hasKey: true });
+      } else {
+        localStorage.removeItem('gemini_api_key');
+        setLocalKey(null);
+        setManualOverride({ baseExternal: externalApiKey, key: null });
+        send('SYNC_KEY', { hasKey: false });
+      }
+    },
+    [externalApiKey, send],
+  );
 
   const generateFeedback = useCallback(
     async (model: CloudModel, contextString: string) => {
+      const requestId = machine.getContext().requestId + 1;
       const effectiveKey = apiKey || localStorage.getItem('gemini_api_key');
       if (!effectiveKey) {
-        setStatus({ state: 'error', hasKey: false, error: 'API Key missing — add your Gemini API key via the Settings gear' });
+        send('FAIL', {
+          error: 'API Key missing — add your Gemini API key via the Settings gear',
+          hasKey: false,
+          requestId,
+        });
         return '';
       }
 
-      setStatus(prev => ({ ...prev, state: 'loading', error: undefined, hasKey: true }));
-
-      const client = new GoogleGenAI({ apiKey: effectiveKey });
       const targetModel = model === 'pro' ? 'gemini-4-argon' : 'gemini-3.8-flash';
       const systemInstruction = model === 'pro'
         ? 'You are an Elite Driver Coach.'
@@ -86,6 +344,10 @@ TASK: Identify the biggest time loss. Explain the error.
 ### Analysis
 [Explanation]`;
 
+      send('REQUEST_PRIMARY', { model: targetModel, requestId });
+
+      const client = new GoogleGenAI({ apiKey: effectiveKey });
+
       try {
         let text = '';
         try {
@@ -97,6 +359,7 @@ TASK: Identify the biggest time loss. Explain the error.
           text = interaction.output_text || '';
         } catch (primaryErr) {
           if (targetModel !== 'gemini-3.8-flash') {
+            send('RETRY_FALLBACK', { model: 'gemini-3.8-flash', requestId });
             const fallback = await client.interactions.create({
               model: 'gemini-3.8-flash',
               system_instruction: systemInstruction,
@@ -108,15 +371,19 @@ TASK: Identify the biggest time loss. Explain the error.
           }
         }
 
-        setStatus(prev => ({ ...prev, state: 'success' }));
+        send('SUCCEED', { requestId });
         return text;
       } catch (err: unknown) {
         console.error('Gemini Cloud failed:', err);
-        setStatus(prev => ({ ...prev, state: 'error', error: (err as Error).message }));
+        send('FAIL', {
+          error: (err as Error).message,
+          hasKey: true,
+          requestId,
+        });
         return '';
       }
     },
-    [apiKey]
+    [apiKey, machine, send],
   );
 
   const generateAudio = useCallback(async (text: string, voiceName = 'Zephyr'): Promise<Blob | null> => {
@@ -153,5 +420,17 @@ TASK: Identify the biggest time loss. Explain the error.
     }
   }, [apiKey]);
 
-  return { status, generateFeedback, generateAudio, setApiKey, apiKey };
+  const status: CloudStatus = useMemo(
+    () => ({
+      state: toLegacyCloudState(phase),
+      phase,
+      error: context.error,
+      hasKey: context.hasKey,
+    }),
+    [phase, context.error, context.hasKey],
+  );
+
+  const getSnapshot = useCallback(() => machine.getSnapshot(), [machine]);
+
+  return { status, generateFeedback, generateAudio, setApiKey, apiKey, getSnapshot };
 };

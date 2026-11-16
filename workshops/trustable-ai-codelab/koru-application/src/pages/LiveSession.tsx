@@ -1,8 +1,9 @@
-import { useState, useEffect, useRef, useCallback, useId } from 'react';
+import { useState, useEffect, useRef, useCallback, useId, useSyncExternalStore } from 'react';
 import { TelemetryStreamService } from '../services/telemetryStreamService';
 import { CoachingService } from '../services/coachingService';
 import { AudioService } from '../services/audioService';
 import { useTTS } from '../hooks/useTTS';
+import { registerKoruMachine } from '../utils/stateMachine';
 import { THUNDERHILL_EAST } from '../data/trackData';
 import TelemetryCharts from '../components/TelemetryCharts';
 import TrackMap from '../components/TrackMap';
@@ -18,7 +19,6 @@ interface LiveSessionProps {
 export default function LiveSession({ apiKey }: LiveSessionProps) {
   const [frames, setFrames] = useState<TelemetryFrame[]>([]);
   const [messages, setMessages] = useState<CoachMessage[]>([]);
-  const [status, setStatus] = useState<SSEConnectionStatus>('disconnected');
   const [activeCoach, setActiveCoach] = useState('superaj');
   const [audioEnabled, setAudioEnabled] = useState(true);
   const [sseUrl, setSseUrl] = useState('');
@@ -26,24 +26,37 @@ export default function LiveSession({ apiKey }: LiveSessionProps) {
   const sseInputId = useId();
   const ttsSelectId = useId();
 
-  const streamRef = useRef(TelemetryStreamService.getInstance());
-  const coachRef = useRef(new CoachingService());
-  const audioRef = useRef(new AudioService());
-  const { speak, setProvider, provider } = useTTS(apiKey, activeCoach);
+  const [stream] = useState(() => TelemetryStreamService.getInstance());
+  const [coach] = useState(() => new CoachingService());
+  const [audio] = useState(() => new AudioService());
+
+  const streamSnapshot = useSyncExternalStore(
+    stream.subscribe,
+    stream.getSnapshot,
+    stream.getSnapshot,
+  );
+  const status: SSEConnectionStatus =
+    streamSnapshot.state === 'streaming_sse' || streamSnapshot.state === 'replaying_file'
+      ? 'connected'
+      : streamSnapshot.state;
+
+  const { speak, setProvider, provider, ttsPhase } = useTTS(apiKey, activeCoach);
 
   useEffect(() => {
-    const audio = audioRef.current;
-    const stream = streamRef.current;
+    const unregisterStream = registerKoruMachine(stream.asInspectableMachine('telemetry-stream'));
+    const unregisterCoach = registerKoruMachine(coach.asInspectableMachine('coaching-gate'));
     void audio.init();
     return () => {
+      unregisterCoach();
+      unregisterStream();
       stream.disconnect();
       audio.destroy();
     };
-  }, []);
+  }, [audio, coach, stream]);
 
   useEffect(() => {
-    coachRef.current.setApiKey(apiKey || '');
-  }, [apiKey]);
+    coach.setApiKey(apiKey || '');
+  }, [apiKey, coach]);
 
   const audioEnabledRef = useRef(audioEnabled);
   useEffect(() => { audioEnabledRef.current = audioEnabled; }, [audioEnabled]);
@@ -52,15 +65,12 @@ export default function LiveSession({ apiKey }: LiveSessionProps) {
   useEffect(() => { speakRef.current = speak; }, [speak]);
 
   useEffect(() => {
-    const stream = streamRef.current;
-
-    const unsubStatus = stream.onStatus(setStatus);
     const unsubFrame = stream.onFrame((frame) => {
       setFrames(prev => [...prev.slice(-500), frame]);
-      coachRef.current.processFrame(frame);
+      coach.processFrame(frame);
     });
 
-    const unsubCoach = coachRef.current.onCoaching(msg => {
+    const unsubCoach = coach.onCoaching(msg => {
       const coachMsg: CoachMessage = {
         id: `${Date.now()}-${Math.random()}`,
         path: msg.path,
@@ -74,32 +84,37 @@ export default function LiveSession({ apiKey }: LiveSessionProps) {
       }
     });
 
-    return () => { unsubStatus(); unsubFrame(); unsubCoach(); };
-  }, []);
+    return () => { unsubFrame(); unsubCoach(); };
+  }, [coach, stream]);
 
   const handleConnect = useCallback(() => {
-    if (status === 'connected') {
-      streamRef.current.disconnect();
+    if (status === 'connected' || status === 'connecting') {
+      stream.disconnect();
     } else {
       const url = sseUrl.trim() || '/mock-telemetry.txt';
-      streamRef.current.connect(url);
+      stream.connect(url);
     }
-  }, [status, sseUrl]);
+  }, [status, sseUrl, stream]);
 
   const handleQuickPreset = useCallback((presetUrl: string) => {
     setSseUrl(presetUrl);
-    streamRef.current.connect(presetUrl);
-  }, []);
+    stream.connect(presetUrl);
+  }, [stream]);
 
   const handleCoachChange = useCallback((id: string) => {
     setActiveCoach(id);
-    coachRef.current.setCoach(id);
-  }, []);
+    coach.setCoach(id);
+  }, [coach]);
 
   const currentFrame = frames[frames.length - 1] || null;
 
   return (
-    <div className="page live-session">
+    <div
+      className="page live-session"
+      data-machine="telemetry-stream"
+      data-state={streamSnapshot.state}
+      aria-busy={status === 'connecting' || undefined}
+    >
       <header className="page-header">
         <h1><Radio size={20} aria-hidden="true" /> Live Session</h1>
         <div className="live-controls">
@@ -133,14 +148,22 @@ export default function LiveSession({ apiKey }: LiveSessionProps) {
           />
           <button
             type="button"
-            className={`connect-btn ${status === 'connected' ? 'connected' : ''}`}
+            className={`connect-btn ${status === 'connected' ? 'connected' : status === 'connecting' ? 'connecting' : ''}`}
             onClick={handleConnect}
           >
             {status === 'connected'
               ? <><Unplug size={14} aria-hidden="true" /> Disconnect</>
-              : <><Radio size={14} aria-hidden="true" /> Connect</>}
+              : status === 'connecting'
+                ? <><Unplug size={14} aria-hidden="true" /> Cancel</>
+                : <><Radio size={14} aria-hidden="true" /> Connect</>}
           </button>
-          <span className={`status-badge status-${status}`} role="status">{status}</span>
+          <span
+            className={`status-badge status-${status}`}
+            data-stream-mode={streamSnapshot.context.mode ?? undefined}
+            role="status"
+          >
+            {status}
+          </span>
           <label htmlFor={ttsSelectId} className="visually-hidden">
             Voice synthesis provider
           </label>
@@ -178,6 +201,7 @@ export default function LiveSession({ apiKey }: LiveSessionProps) {
             onCoachChange={handleCoachChange}
             audioEnabled={audioEnabled}
             onAudioToggle={() => setAudioEnabled(!audioEnabled)}
+            ttsPhase={ttsPhase}
           />
         </div>
       </div>

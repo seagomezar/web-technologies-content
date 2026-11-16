@@ -1,6 +1,11 @@
-import { useRef, useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import type { TelemetryFrame, Corner } from '../types';
 import { THUNDERHILL_EAST } from '../data/trackData';
+import {
+  createMachine,
+  registerKoruMachine,
+  type KoruMachineSnapshot,
+} from '../utils/stateMachine';
 
 interface MistakeZone {
   distance: number;
@@ -9,81 +14,187 @@ interface MistakeZone {
   advice: string;
 }
 
+export type PredictiveCoachingState = 'uncalibrated' | 'armed';
+
+interface PredictiveCoachingContext {
+  readonly zones: MistakeZone[];
+  readonly lastTriggeredCorner: string | null;
+}
+
+interface PredictiveCoachingPublicContext {
+  readonly zoneCount: number;
+  readonly lastTriggeredCorner: string | null;
+}
+
+type PredictiveCoachingEvents = {
+  CALIBRATE: { zones: MistakeZone[] };
+  TRIGGER_ZONE: { cornerName: string };
+  RESET: undefined;
+};
+
 /**
  * Predictive coaching: compares recent completed lap vs ideal lap
  * to find "Mistake Zones" and alert the driver before they arrive.
  */
 export const usePredictiveCoaching = () => {
-  const mistakeZonesRef = useRef<MistakeZone[]>([]);
-  const lastTriggeredRef = useRef<string | null>(null);
+  const [machine] = useState(() =>
+    createMachine<
+      PredictiveCoachingState,
+      PredictiveCoachingContext,
+      PredictiveCoachingEvents
+    >({
+      id: 'predictive-coaching',
+      initial: 'uncalibrated',
+      context: {
+        zones: [],
+        lastTriggeredCorner: null,
+      },
+      states: {
+        uncalibrated: {
+          on: {
+            CALIBRATE: {
+              target: (_ctx, payload) =>
+                payload.zones.length > 0 ? 'armed' : 'uncalibrated',
+              assign: (_ctx, payload) => ({
+                zones: payload.zones,
+                lastTriggeredCorner: null,
+              }),
+            },
+            RESET: {
+              target: 'uncalibrated',
+              assign: () => ({ zones: [], lastTriggeredCorner: null }),
+            },
+          },
+        },
+        armed: {
+          on: {
+            CALIBRATE: {
+              target: (_ctx, payload) =>
+                payload.zones.length > 0 ? 'armed' : 'uncalibrated',
+              assign: (_ctx, payload) => ({
+                zones: payload.zones,
+                lastTriggeredCorner: null,
+              }),
+            },
+            TRIGGER_ZONE: {
+              target: 'armed',
+              assign: (ctx, payload) => ({
+                ...ctx,
+                lastTriggeredCorner: payload.cornerName,
+              }),
+            },
+            RESET: {
+              target: 'uncalibrated',
+              assign: () => ({ zones: [], lastTriggeredCorner: null }),
+            },
+          },
+        },
+      },
+    }),
+  );
+
+  useEffect(() => {
+    return registerKoruMachine<
+      PredictiveCoachingState,
+      keyof PredictiveCoachingEvents & string,
+      Readonly<PredictiveCoachingContext>,
+      PredictiveCoachingPublicContext
+    >(machine, {
+      formatContext: ctx => ({
+        zoneCount: ctx.zones.length,
+        lastTriggeredCorner: ctx.lastTriggeredCorner,
+      }),
+    });
+  }, [machine]);
 
   /** Analyze a completed lap against the ideal lap to find mistake zones */
-  const analyzeLap = useCallback((
-    recentLap: TelemetryFrame[],
-    idealLap: TelemetryFrame[],
-  ) => {
-    const zones: MistakeZone[] = [];
+  const analyzeLap = useCallback(
+    (recentLap: TelemetryFrame[], idealLap: TelemetryFrame[]) => {
+      const zones: MistakeZone[] = [];
 
-    // Build distance-aligned speed profiles
-    const recentByDist = alignByDistance(recentLap);
-    const idealByDist = alignByDistance(idealLap);
+      // Build distance-aligned speed profiles
+      const recentByDist = alignByDistance(recentLap);
+      const idealByDist = alignByDistance(idealLap);
 
-    // Compare at each 5m step
-    for (const [dist, recentSpeed] of recentByDist) {
-      const idealSpeed = idealByDist.get(dist);
-      if (idealSpeed === undefined) continue;
+      // Compare at each 5m step
+      for (const [dist, recentSpeed] of recentByDist) {
+        const idealSpeed = idealByDist.get(dist);
+        if (idealSpeed === undefined) continue;
 
-      const delta = recentSpeed - idealSpeed;
-      if (delta < -15) { // Lost 15+ km/h vs ideal
-        const corner = findNearestCorner(dist);
-        zones.push({
-          distance: dist,
-          speedDelta: delta,
-          cornerName: corner?.name || `${dist}m`,
-          advice: corner?.advice || `Lost ${Math.abs(delta).toFixed(0)} km/h here`,
-        });
+        const delta = recentSpeed - idealSpeed;
+        if (delta < -15) {
+          // Lost 15+ km/h vs ideal
+          const corner = findNearestCorner(dist);
+          zones.push({
+            distance: dist,
+            speedDelta: delta,
+            cornerName: corner?.name || `${dist}m`,
+            advice: corner?.advice || `Lost ${Math.abs(delta).toFixed(0)} km/h here`,
+          });
+        }
       }
-    }
 
-    // Deduplicate: keep the worst delta per corner
-    const byCorner = new Map<string, MistakeZone>();
-    for (const zone of zones) {
-      const existing = byCorner.get(zone.cornerName);
-      if (!existing || zone.speedDelta < existing.speedDelta) {
-        byCorner.set(zone.cornerName, zone);
+      // Deduplicate: keep the worst delta per corner
+      const byCorner = new Map<string, MistakeZone>();
+      for (const zone of zones) {
+        const existing = byCorner.get(zone.cornerName);
+        if (!existing || zone.speedDelta < existing.speedDelta) {
+          byCorner.set(zone.cornerName, zone);
+        }
       }
-    }
 
-    mistakeZonesRef.current = Array.from(byCorner.values());
-    lastTriggeredRef.current = null;
-    return mistakeZonesRef.current;
-  }, []);
+      const deduplicated = Array.from(byCorner.values());
+      machine.send('CALIBRATE', { zones: deduplicated });
+      return deduplicated;
+    },
+    [machine],
+  );
 
   /** Check if the current position is approaching a mistake zone */
-  const checkLookahead = useCallback((currentFrame: TelemetryFrame): MistakeZone | null => {
-    if (mistakeZonesRef.current.length === 0) return null;
+  const checkLookahead = useCallback(
+    (currentFrame: TelemetryFrame): MistakeZone | null => {
+      if (machine.getState() !== 'armed') return null;
+      const { zones, lastTriggeredCorner } = machine.getContext();
+      if (zones.length === 0) return null;
 
-    // Lookahead distance: 8 seconds at current speed (km/h -> m/s)
-    const lookaheadM = (currentFrame.speed / 3.6) * 8;
-    const currentDist = currentFrame.distance || 0;
+      // Lookahead distance: 8 seconds at current speed (km/h -> m/s)
+      const lookaheadM = (currentFrame.speed / 3.6) * 8;
+      const currentDist = currentFrame.distance || 0;
 
-    for (const zone of mistakeZonesRef.current) {
-      const distToZone = zone.distance - currentDist;
+      for (const zone of zones) {
+        const distToZone = zone.distance - currentDist;
 
-      // Zone is ahead and within lookahead range
-      if (distToZone > 0 && distToZone < lookaheadM) {
-        // Don't re-trigger same zone
-        if (lastTriggeredRef.current === zone.cornerName) continue;
+        // Zone is ahead and within lookahead range
+        if (distToZone > 0 && distToZone < lookaheadM) {
+          // Don't re-trigger same zone
+          if (lastTriggeredCorner === zone.cornerName) continue;
 
-        lastTriggeredRef.current = zone.cornerName;
-        return zone;
+          machine.send('TRIGGER_ZONE', { cornerName: zone.cornerName });
+          return zone;
+        }
       }
-    }
 
-    return null;
-  }, []);
+      return null;
+    },
+    [machine],
+  );
 
-  return { analyzeLap, checkLookahead, getMistakeZones: () => mistakeZonesRef.current };
+  const reset = useCallback(() => {
+    machine.send('RESET');
+  }, [machine]);
+
+  const getMistakeZones = useCallback(() => machine.getContext().zones, [machine]);
+
+  const getSnapshot = useCallback(
+    (): KoruMachineSnapshot<
+      PredictiveCoachingState,
+      keyof PredictiveCoachingEvents & string,
+      Readonly<PredictiveCoachingContext>
+    > => machine.getSnapshot(),
+    [machine],
+  );
+
+  return { analyzeLap, checkLookahead, getMistakeZones, getSnapshot, reset };
 };
 
 // ── Helpers ─────────────────────────────────────────────────

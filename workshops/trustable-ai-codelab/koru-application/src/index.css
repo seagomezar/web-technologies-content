@@ -983,6 +983,7 @@ html, body, #root {
 
 .connect-btn:hover { border-color: #444; }
 .connect-btn.connected { border-color: var(--green); color: var(--green); }
+.connect-btn.connecting { border-color: var(--amber); color: var(--amber); }
 
 .status-badge {
   font-size: 0.6875rem;

@@ -106,6 +106,46 @@ export type CoachAction =
 
 export type SSEConnectionStatus = 'disconnected' | 'connecting' | 'connected' | 'error';
 
+export type TelemetryStreamMode = 'sse' | 'file';
+
+export type TelemetryStreamState =
+  | 'disconnected'
+  | 'connecting'
+  | 'streaming_sse'
+  | 'replaying_file'
+  | 'error';
+
+export type ReplayTransportState = 'empty' | 'paused' | 'playing' | 'ended';
+
+export type ReplayAnalysisState = 'idle' | 'analyzing' | 'ready' | 'error';
+
+export type LapComparisonState =
+  | 'empty'
+  | 'partial_lap1'
+  | 'partial_lap2'
+  | 'ready'
+  | 'comparing'
+  | 'compared'
+  | 'error';
+
 export type TTSProvider = 'browser' | 'gemini';
 
+export type TTSPhase =
+  | 'idle'
+  | 'synthesizing_gemini'
+  | 'playing_audio'
+  | 'speaking_browser_fallback';
+
 export type CloudModel = 'flash' | 'pro';
+
+export type GeminiCloudPhase =
+  | 'unconfigured'
+  | 'idle'
+  | 'requesting_primary'
+  | 'retrying_fallback'
+  | 'succeeded'
+  | 'error';
+
+export type HotCooldownState = 'ready' | 'cooldown';
+
+export type ColdPathState = 'idle' | 'in_flight' | 'cooldown';

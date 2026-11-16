@@ -2,6 +2,9 @@ import { useState, useEffect, lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Landing from './pages/Landing';
+import { ensureKoruMachineRegistry } from './utils/stateMachine';
+
+ensureKoruMachineRegistry();
 
 const Dashboard = lazy(() => import('./pages/Dashboard'));
 const LiveSession = lazy(() => import('./pages/LiveSession'));

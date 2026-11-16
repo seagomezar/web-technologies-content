@@ -1,5 +1,6 @@
 import { useId, type CSSProperties } from 'react';
 import { Play, Pause, SkipBack, SkipForward, Gauge } from 'lucide-react';
+import type { ReplayTransportState } from '../types';
 
 interface PlaybackControlsProps {
   isPlaying: boolean;
@@ -10,6 +11,7 @@ interface PlaybackControlsProps {
   speed: number;
   onSpeedChange: (speed: number) => void;
   currentTime?: string;
+  transportState?: ReplayTransportState;
 }
 
 const SPEED_OPTIONS = [0.1, 0.25, 0.5, 1, 2, 5, 10];
@@ -23,14 +25,28 @@ export default function PlaybackControls({
   speed,
   onSpeedChange,
   currentTime,
+  transportState,
 }: PlaybackControlsProps) {
   const sliderId = useId();
   const speedSelectId = useId();
   const maxFrame = Math.max(0, totalFrames - 1);
   const progressText = currentTime || formatFrame(currentFrame, totalFrames);
+  const resolvedState: ReplayTransportState =
+    transportState ??
+    (totalFrames <= 0
+      ? 'empty'
+      : isPlaying
+        ? 'playing'
+        : currentFrame >= maxFrame
+          ? 'ended'
+          : 'paused');
 
   return (
-    <div className="playback-controls">
+    <div
+      className="playback-controls"
+      data-machine="replay-transport"
+      data-state={resolvedState}
+    >
       <div className="playback-buttons">
         <button
           type="button"
@@ -43,7 +59,13 @@ export default function PlaybackControls({
         <button
           type="button"
           className="play-btn"
-          aria-label={isPlaying ? 'Pause replay' : 'Play replay'}
+          aria-label={
+            isPlaying
+              ? 'Pause replay'
+              : resolvedState === 'ended'
+                ? 'Restart replay'
+                : 'Play replay'
+          }
           onClick={onPlayPause}
         >
           {isPlaying ? <Pause size={20} aria-hidden="true" /> : <Play size={20} aria-hidden="true" />}

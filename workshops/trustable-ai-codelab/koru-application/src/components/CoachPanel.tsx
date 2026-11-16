@@ -1,6 +1,7 @@
 import { COACHES, DEFAULT_COACH } from '../utils/coachingKnowledge';
 import { MessageCircle, Volume2, VolumeX } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
+import type { TTSPhase } from '../types';
 
 interface CoachMessage {
   id: string;
@@ -15,6 +16,7 @@ interface CoachPanelProps {
   onCoachChange: (id: string) => void;
   audioEnabled: boolean;
   onAudioToggle: () => void;
+  ttsPhase?: TTSPhase;
 }
 
 export default function CoachPanel({
@@ -23,11 +25,16 @@ export default function CoachPanel({
   onCoachChange,
   audioEnabled,
   onAudioToggle,
+  ttsPhase = 'idle',
 }: CoachPanelProps) {
   const coach = COACHES[activeCoach] || COACHES[DEFAULT_COACH];
 
   return (
-    <div className="coach-panel">
+    <div
+      className="coach-panel"
+      data-machine="tts-pipeline"
+      data-state={ttsPhase}
+    >
       {/* Coach selector */}
       <div className="coach-header">
         <div className="coach-info">

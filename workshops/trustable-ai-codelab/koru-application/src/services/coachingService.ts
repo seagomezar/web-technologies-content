@@ -1,9 +1,36 @@
 import { GoogleGenAI } from '@google/genai';
-import type { TelemetryFrame, CoachAction, Corner } from '../types';
+import type {
+  TelemetryFrame,
+  CoachAction,
+  Corner,
+  HotCooldownState,
+  ColdPathState,
+} from '../types';
 import { COACHES, DEFAULT_COACH, DECISION_MATRIX, RACING_PHYSICS_KNOWLEDGE } from '../utils/coachingKnowledge';
 import { THUNDERHILL_EAST, SONOMA_CORNERS } from '../data/trackData';
+import { createMachine, type InspectableMachine } from '../utils/stateMachine';
 
 type CoachingCallback = (msg: { path: 'hot' | 'cold' | 'feedforward'; action?: CoachAction; text: string }) => void;
+
+export interface CoachingServiceSnapshot {
+  readonly hotCooldownState: HotCooldownState;
+  readonly coldState: ColdPathState;
+  readonly activeCornerId: number | null;
+  readonly coachId: string;
+  readonly lastHotAction: CoachAction | null;
+  readonly hasApiKey: boolean;
+}
+
+type HotGateEvents = {
+  ENTER_COOLDOWN: undefined;
+  EXPIRE_COOLDOWN: undefined;
+};
+
+type ColdGateEvents = {
+  DISPATCH_COLD: undefined;
+  SETTLE_COLD: undefined;
+  EXPIRE_COLD: undefined;
+};
 
 const ALL_CORNERS: Corner[] = [...THUNDERHILL_EAST.corners, ...SONOMA_CORNERS];
 
@@ -24,12 +51,108 @@ export class CoachingService {
   private hotCooldownMs = 1500;
   private apiKey: string | null = null;
 
+  private readonly hotGateMachine = createMachine<
+    HotCooldownState,
+    Record<string, never>,
+    HotGateEvents
+  >({
+    id: 'coaching-hot-gate',
+    initial: 'ready',
+    context: {},
+    states: {
+      ready: {
+        on: {
+          ENTER_COOLDOWN: 'cooldown',
+        },
+      },
+      cooldown: {
+        on: {
+          EXPIRE_COOLDOWN: 'ready',
+        },
+      },
+    },
+  });
+
+  private readonly coldGateMachine = createMachine<
+    ColdPathState,
+    Record<string, never>,
+    ColdGateEvents
+  >({
+    id: 'coaching-cold-gate',
+    initial: 'idle',
+    context: {},
+    states: {
+      idle: {
+        on: {
+          DISPATCH_COLD: 'in_flight',
+        },
+      },
+      in_flight: {
+        on: {
+          SETTLE_COLD: 'cooldown',
+        },
+      },
+      cooldown: {
+        on: {
+          EXPIRE_COLD: 'idle',
+        },
+      },
+    },
+  });
+
   setCoach(id: string) { this.coachId = id; }
   getCoach() { return COACHES[this.coachId] || COACHES[DEFAULT_COACH]; }
   setApiKey(key: string) { this.apiKey = key || null; }
   onCoaching(cb: CoachingCallback) {
     this.listeners.push(cb);
     return () => { this.listeners = this.listeners.filter(l => l !== cb); };
+  }
+
+  private syncCooldownGates(now = Date.now()) {
+    if (
+      this.hotGateMachine.getState() === 'cooldown' &&
+      now - this.lastHotTime >= this.hotCooldownMs
+    ) {
+      this.hotGateMachine.send('EXPIRE_COOLDOWN');
+    }
+
+    if (
+      this.coldGateMachine.getState() === 'cooldown' &&
+      now - this.lastColdTime >= this.coldCooldownMs
+    ) {
+      this.coldGateMachine.send('EXPIRE_COLD');
+    }
+  }
+
+  /** Inspectable snapshot of Split-Brain hot cooldown, cold in-flight/cooldown gate, and active corner geofence */
+  getSnapshot = (): CoachingServiceSnapshot => {
+    this.syncCooldownGates(Date.now());
+    return Object.freeze({
+      hotCooldownState: this.hotGateMachine.getState(),
+      coldState: this.coldGateMachine.getState(),
+      activeCornerId: this.lastCorner?.id ?? null,
+      coachId: this.coachId,
+      lastHotAction: this.lastHotAction,
+      hasApiKey: Boolean(this.apiKey),
+    });
+  };
+
+  asInspectableMachine(
+    id = 'coaching-gate',
+  ): InspectableMachine<ColdPathState, keyof ColdGateEvents & string, CoachingServiceSnapshot> {
+    return {
+      id,
+      getSnapshot: () => {
+        const snapshot = this.getSnapshot();
+        const coldSnap = this.coldGateMachine.getSnapshot();
+        return {
+          id,
+          state: snapshot.coldState,
+          allowedEvents: coldSnap.allowedEvents,
+          context: snapshot,
+        };
+      },
+    };
   }
 
   private emit(msg: Parameters<CoachingCallback>[0]) {
@@ -49,7 +172,8 @@ export class CoachingService {
 
   private runHotPath(frame: TelemetryFrame) {
     const now = Date.now();
-    if (now - this.lastHotTime < this.hotCooldownMs) return;
+    this.syncCooldownGates(now);
+    if (this.hotGateMachine.getState() === 'cooldown') return;
 
     const data = {
       brake: frame.brake,
@@ -66,6 +190,7 @@ export class CoachingService {
 
         this.lastHotAction = rule.action;
         this.lastHotTime = now;
+        this.hotGateMachine.send('ENTER_COOLDOWN');
 
         const text = this.humanizeAction(rule.action, frame);
         // ⚡ PROBE 3 — reflex path firing:
@@ -248,10 +373,12 @@ export class CoachingService {
 
   private async runColdPath(frame: TelemetryFrame) {
     const now = Date.now();
-    if (now - this.lastColdTime < this.coldCooldownMs) return;
+    this.syncCooldownGates(now);
+    if (this.coldGateMachine.getState() !== 'idle') return;
     if (!this.apiKey) return;
 
     this.lastColdTime = now;
+    this.coldGateMachine.send('DISPATCH_COLD');
     const coach = this.getCoach();
 
     const cornerName = this.lastCorner?.name || 'straight';
@@ -279,6 +406,9 @@ Give a short coaching instruction followed by a brief physics-based explanation.
       if (text) this.emit({ path: 'cold', text });
     } catch (err) {
       console.error('Strategy path failed:', err);
+    } finally {
+      this.coldGateMachine.send('SETTLE_COLD');
+      this.syncCooldownGates(Date.now());
     }
   }
 

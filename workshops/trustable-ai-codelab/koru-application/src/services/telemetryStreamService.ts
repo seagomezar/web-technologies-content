@@ -1,7 +1,48 @@
-import type { TelemetryFrame, GpsSSEPoint, SSEConnectionStatus } from '../types';
+import type {
+  TelemetryFrame,
+  GpsSSEPoint,
+  SSEConnectionStatus,
+  TelemetryStreamMode,
+  TelemetryStreamState,
+} from '../types';
 import { parseTelemetryCSV } from '../utils/telemetryParser';
+import {
+  createMachine,
+  type InspectableMachine,
+  type KoruMachineSnapshot,
+} from '../utils/stateMachine';
 
 type TelemetryCallback = (frame: TelemetryFrame) => void;
+
+export interface TelemetryStreamContext {
+  readonly mode: TelemetryStreamMode | null;
+  readonly url: string;
+  readonly error?: string;
+  readonly sessionId: number;
+}
+
+export interface TelemetryStreamPublicContext {
+  readonly mode: TelemetryStreamMode | null;
+  readonly url: string;
+  readonly error?: string;
+}
+
+type TelemetryStreamEvents = {
+  CONNECT: { mode: TelemetryStreamMode; url: string; sessionId: number };
+  SSE_OPEN: { sessionId: number };
+  REPLAY_READY: { sessionId: number };
+  FAIL: { error: string; sessionId: number };
+  DISCONNECT: undefined;
+};
+
+export type TelemetryStreamEvent = keyof TelemetryStreamEvents & string;
+
+function toSSEConnectionStatus(state: TelemetryStreamState): SSEConnectionStatus {
+  if (state === 'streaming_sse' || state === 'replaying_file') {
+    return 'connected';
+  }
+  return state;
+}
 
 /**
  * Singleton service that connects to a GPS SSE stream (or replays a mock file)
@@ -12,10 +53,182 @@ export class TelemetryStreamService {
   private eventSource: EventSource | null = null;
   private listeners: TelemetryCallback[] = [];
   private replayTimer: ReturnType<typeof setTimeout> | null = null;
+  private replayAbortController: AbortController | null = null;
   private prevPoint: GpsSSEPoint | null = null;
   private prevTime = 0;
-  private status: SSEConnectionStatus = 'disconnected';
+  private nextSessionId = 0;
   private statusListeners: ((s: SSEConnectionStatus) => void)[] = [];
+
+  private readonly machine = createMachine<
+    TelemetryStreamState,
+    TelemetryStreamContext,
+    TelemetryStreamEvents
+  >({
+    id: 'telemetry-stream',
+    initial: 'disconnected',
+    context: {
+      mode: null,
+      url: '',
+      error: undefined,
+      sessionId: 0,
+    },
+    states: {
+      disconnected: {
+        on: {
+          CONNECT: {
+            target: 'connecting',
+            assign: (_ctx, payload) => ({
+              mode: payload.mode,
+              url: payload.url,
+              error: undefined,
+              sessionId: payload.sessionId,
+            }),
+          },
+          DISCONNECT: 'disconnected',
+        },
+      },
+      connecting: {
+        on: {
+          SSE_OPEN: {
+            guard: (ctx, payload) =>
+              ctx.mode === 'sse' && payload.sessionId === ctx.sessionId,
+            target: 'streaming_sse',
+          },
+          REPLAY_READY: {
+            guard: (ctx, payload) =>
+              ctx.mode === 'file' && payload.sessionId === ctx.sessionId,
+            target: 'replaying_file',
+          },
+          FAIL: {
+            guard: (ctx, payload) => payload.sessionId === ctx.sessionId,
+            target: 'error',
+            assign: (ctx, payload) => ({
+              ...ctx,
+              error: payload.error,
+            }),
+          },
+          DISCONNECT: {
+            target: 'disconnected',
+            assign: ctx => ({
+              mode: null,
+              url: '',
+              error: undefined,
+              sessionId: ctx.sessionId,
+            }),
+          },
+          CONNECT: {
+            target: 'connecting',
+            assign: (_ctx, payload) => ({
+              mode: payload.mode,
+              url: payload.url,
+              error: undefined,
+              sessionId: payload.sessionId,
+            }),
+          },
+        },
+      },
+      streaming_sse: {
+        on: {
+          SSE_OPEN: {
+            guard: (ctx, payload) =>
+              ctx.mode === 'sse' && payload.sessionId === ctx.sessionId,
+            target: 'streaming_sse',
+          },
+          FAIL: {
+            guard: (ctx, payload) => payload.sessionId === ctx.sessionId,
+            target: 'error',
+            assign: (ctx, payload) => ({
+              ...ctx,
+              error: payload.error,
+            }),
+          },
+          DISCONNECT: {
+            target: 'disconnected',
+            assign: ctx => ({
+              mode: null,
+              url: '',
+              error: undefined,
+              sessionId: ctx.sessionId,
+            }),
+          },
+          CONNECT: {
+            target: 'connecting',
+            assign: (_ctx, payload) => ({
+              mode: payload.mode,
+              url: payload.url,
+              error: undefined,
+              sessionId: payload.sessionId,
+            }),
+          },
+        },
+      },
+      replaying_file: {
+        on: {
+          FAIL: {
+            guard: (ctx, payload) => payload.sessionId === ctx.sessionId,
+            target: 'error',
+            assign: (ctx, payload) => ({
+              ...ctx,
+              error: payload.error,
+            }),
+          },
+          DISCONNECT: {
+            target: 'disconnected',
+            assign: ctx => ({
+              mode: null,
+              url: '',
+              error: undefined,
+              sessionId: ctx.sessionId,
+            }),
+          },
+          CONNECT: {
+            target: 'connecting',
+            assign: (_ctx, payload) => ({
+              mode: payload.mode,
+              url: payload.url,
+              error: undefined,
+              sessionId: payload.sessionId,
+            }),
+          },
+        },
+      },
+      error: {
+        on: {
+          SSE_OPEN: {
+            guard: (ctx, payload) =>
+              ctx.mode === 'sse' && payload.sessionId === ctx.sessionId,
+            target: 'streaming_sse',
+            assign: ctx => ({
+              ...ctx,
+              error: undefined,
+            }),
+          },
+          DISCONNECT: {
+            target: 'disconnected',
+            assign: ctx => ({
+              mode: null,
+              url: '',
+              error: undefined,
+              sessionId: ctx.sessionId,
+            }),
+          },
+          CONNECT: {
+            target: 'connecting',
+            assign: (_ctx, payload) => ({
+              mode: payload.mode,
+              url: payload.url,
+              error: undefined,
+              sessionId: payload.sessionId,
+            }),
+          },
+        },
+      },
+    },
+    onTransition: ({ to }) => {
+      const externalStatus = toSSEConnectionStatus(to);
+      this.statusListeners.forEach(cb => cb(externalStatus));
+    },
+  });
 
   static getInstance(): TelemetryStreamService {
     if (!TelemetryStreamService.instance) {
@@ -24,44 +237,110 @@ export class TelemetryStreamService {
     return TelemetryStreamService.instance;
   }
 
-  getStatus(): SSEConnectionStatus { return this.status; }
+  getStatus(): SSEConnectionStatus {
+    return toSSEConnectionStatus(this.machine.getState());
+  }
+
+  getStreamState(): TelemetryStreamState {
+    return this.machine.getState();
+  }
+
+  getMode(): TelemetryStreamMode | null {
+    return this.machine.getContext().mode;
+  }
+
+  getSnapshot = (): KoruMachineSnapshot<
+    TelemetryStreamState,
+    TelemetryStreamEvent,
+    Readonly<TelemetryStreamContext>
+  > => {
+    return this.machine.getSnapshot();
+  };
+
+  subscribe = (listener: () => void): (() => void) => {
+    return this.machine.subscribe(listener);
+  };
+
+  asInspectableMachine(
+    id = 'telemetry-stream',
+  ): InspectableMachine<TelemetryStreamState, TelemetryStreamEvent, TelemetryStreamPublicContext> {
+    return {
+      id,
+      getSnapshot: () => {
+        const snap = this.machine.getSnapshot();
+        return {
+          id,
+          state: snap.state,
+          allowedEvents: snap.allowedEvents,
+          context: {
+            mode: snap.context.mode,
+            url: snap.context.url,
+            error: snap.context.error,
+          },
+        };
+      },
+    };
+  }
 
   onStatus(cb: (s: SSEConnectionStatus) => void) {
     this.statusListeners.push(cb);
-    return () => { this.statusListeners = this.statusListeners.filter(l => l !== cb); };
-  }
-
-  private setStatus(s: SSEConnectionStatus) {
-    this.status = s;
-    this.statusListeners.forEach(cb => cb(s));
+    return () => {
+      this.statusListeners = this.statusListeners.filter(l => l !== cb);
+    };
   }
 
   onFrame(cb: TelemetryCallback) {
     this.listeners.push(cb);
-    return () => { this.listeners = this.listeners.filter(l => l !== cb); };
+    return () => {
+      this.listeners = this.listeners.filter(l => l !== cb);
+    };
   }
 
   private emit(frame: TelemetryFrame) {
     this.listeners.forEach(cb => cb(frame));
   }
 
+  private teardownTransport() {
+    if (this.eventSource) {
+      this.eventSource.close();
+      this.eventSource = null;
+    }
+    if (this.replayAbortController) {
+      this.replayAbortController.abort();
+      this.replayAbortController = null;
+    }
+    if (this.replayTimer) {
+      clearTimeout(this.replayTimer);
+      this.replayTimer = null;
+    }
+    this.prevPoint = null;
+    this.prevTime = 0;
+  }
+
   /** Connect to a live SSE endpoint or replay a mock .txt / .csv file */
   connect(url: string) {
-    this.disconnect();
+    this.teardownTransport();
+    const sessionId = ++this.nextSessionId;
 
     const cleanPath = url.split(/[?#]/)[0].toLowerCase();
     if (cleanPath.endsWith('.txt') || cleanPath.endsWith('.csv')) {
-      void this.replayFile(url);
+      this.machine.send('CONNECT', { mode: 'file', url, sessionId });
+      void this.replayFile(url, sessionId);
       return;
     }
 
-    this.setStatus('connecting');
-    this.eventSource = new EventSource(url);
+    this.machine.send('CONNECT', { mode: 'sse', url, sessionId });
+    const es = new EventSource(url);
+    this.eventSource = es;
 
-    this.eventSource.onopen = () => this.setStatus('connected');
-    this.eventSource.onerror = () => this.setStatus('error');
+    es.onopen = () => {
+      this.machine.send('SSE_OPEN', { sessionId });
+    };
+    es.onerror = () => {
+      this.machine.send('FAIL', { error: `SSE stream error for ${url}`, sessionId });
+    };
 
-    this.eventSource.addEventListener('TPV', (e) => {
+    es.addEventListener('TPV', (e) => {
       try {
         const data = JSON.parse(e.data);
         const point = this.parseSSEPoint(data);
@@ -69,7 +348,7 @@ export class TelemetryStreamService {
       } catch { /* skip bad frames */ }
     });
 
-    this.eventSource.onmessage = (e) => {
+    es.onmessage = (e) => {
       try {
         const data = JSON.parse(e.data);
         const point = this.parseSSEPoint(data);
@@ -93,17 +372,9 @@ export class TelemetryStreamService {
   }
 
   disconnect() {
-    if (this.eventSource) {
-      this.eventSource.close();
-      this.eventSource = null;
-    }
-    if (this.replayTimer) {
-      clearTimeout(this.replayTimer);
-      this.replayTimer = null;
-    }
-    this.prevPoint = null;
-    this.prevTime = 0;
-    this.setStatus('disconnected');
+    this.nextSessionId++;
+    this.teardownTransport();
+    this.machine.send('DISCONNECT');
   }
 
   private parseSSEPoint(data: Record<string, unknown>): GpsSSEPoint | null {
@@ -119,20 +390,28 @@ export class TelemetryStreamService {
       brake: data.brake !== undefined ? Number(data.brake) : undefined,
       throttle: data.throttle !== undefined ? Number(data.throttle) : undefined,
       rpm: Number(data.rpm) || undefined,
-      gear: Number(data.gear) || undefined,
-      steering: Number(data.steering) || undefined,
+      gear: data.gear !== undefined ? Number(data.gear) : undefined,
+      steering: data.steering !== undefined ? Number(data.steering) : undefined,
       gLat: data.gLat !== undefined ? Number(data.gLat) : undefined,
       gLong: data.gLong !== undefined ? Number(data.gLong) : undefined,
     };
   }
 
-  private async replayFile(url: string) {
-    this.setStatus('connecting');
+  private async replayFile(url: string, sessionId: number) {
+    const abortController = new AbortController();
+    this.replayAbortController = abortController;
+
     try {
-      const res = await fetch(url);
+      const res = await fetch(url, { signal: abortController.signal });
       if (!res.ok) throw new Error(`Failed to fetch ${url}`);
       const text = await res.text();
-      if (this.status !== 'connecting') return;
+      if (
+        abortController.signal.aborted ||
+        this.machine.getState() !== 'connecting' ||
+        this.machine.getContext().sessionId !== sessionId
+      ) {
+        return;
+      }
 
       const lines = text.trim().split(/\r?\n/).filter(l => l.trim() && !l.trim().startsWith('<'));
       if (lines.length === 0) throw new Error('Empty telemetry replay file');
@@ -143,10 +422,16 @@ export class TelemetryStreamService {
       if (isCsv) {
         const frames = parseTelemetryCSV(text);
         if (frames.length === 0) throw new Error('No valid CSV telemetry frames found');
-        this.setStatus('connected');
+        if (!this.machine.send('REPLAY_READY', { sessionId })) return;
 
         let i = 0;
         const playNextCsv = () => {
+          if (
+            this.machine.getState() !== 'replaying_file' ||
+            this.machine.getContext().sessionId !== sessionId
+          ) {
+            return;
+          }
           if (i >= frames.length) {
             i = 0; // Loop replay
             this.prevPoint = null;
@@ -159,10 +444,16 @@ export class TelemetryStreamService {
         return;
       }
 
-      this.setStatus('connected');
+      if (!this.machine.send('REPLAY_READY', { sessionId })) return;
 
       let i = 0;
       const playNext = () => {
+        if (
+          this.machine.getState() !== 'replaying_file' ||
+          this.machine.getContext().sessionId !== sessionId
+        ) {
+          return;
+        }
         if (i >= lines.length) {
           i = 0; // Loop replay
           this.prevPoint = null;
@@ -177,8 +468,19 @@ export class TelemetryStreamService {
       };
       playNext();
     } catch (err) {
+      if (abortController.signal.aborted || (err instanceof DOMException && err.name === 'AbortError')) {
+        return;
+      }
+      if (this.machine.getContext().sessionId !== sessionId) {
+        return;
+      }
       console.error('Replay file load failed:', err);
-      this.setStatus('error');
+      const message = err instanceof Error ? err.message : 'Replay file load failed';
+      this.machine.send('FAIL', { error: message, sessionId });
+    } finally {
+      if (this.replayAbortController === abortController) {
+        this.replayAbortController = null;
+      }
     }
   }
 

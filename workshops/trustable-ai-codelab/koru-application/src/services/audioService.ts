@@ -1,4 +1,5 @@
 import type { CoachAction } from '../types';
+import { createMachine, type KoruMachineSnapshot } from '../utils/stateMachine';
 
 const ACTIONS: CoachAction[] = [
   'THRESHOLD', 'TRAIL_BRAKE', 'BRAKE', 'WAIT',
@@ -14,6 +15,26 @@ const FALLBACK_PHRASES: Partial<Record<CoachAction, string>> = {
   DONT_BE_A_WUSS: "Don't hesitate, send it",
 };
 
+export type AudioServiceState =
+  | 'uninitialized'
+  | 'initializing'
+  | 'ready'
+  | 'speech_fallback'
+  | 'closed';
+
+interface AudioServiceContext {
+  readonly bufferedActions: number;
+  readonly lastAction: CoachAction | null;
+}
+
+type AudioServiceEvents = {
+  INIT_START: undefined;
+  INIT_READY: { bufferedActions: number };
+  INIT_FALLBACK: undefined;
+  RECORD_PLAY: { action: CoachAction };
+  CLOSE: undefined;
+};
+
 /**
  * Pre-cached MP3 audio service with AudioContext for instant playback.
  * Falls back to Web Speech API if AudioContext or optional MP3 clips are unavailable.
@@ -25,12 +46,89 @@ export class AudioService {
   private lastPlayTime = 0;
   private minInterval = 1500; // ms anti-spam
 
+  private readonly machine = createMachine<
+    AudioServiceState,
+    AudioServiceContext,
+    AudioServiceEvents
+  >({
+    id: 'audio-service',
+    initial: 'uninitialized',
+    context: {
+      bufferedActions: 0,
+      lastAction: null,
+    },
+    states: {
+      uninitialized: {
+        on: {
+          INIT_START: 'initializing',
+          RECORD_PLAY: {
+            target: 'speech_fallback',
+            assign: (ctx, payload) => ({ ...ctx, lastAction: payload.action }),
+          },
+          CLOSE: 'closed',
+        },
+      },
+      initializing: {
+        on: {
+          INIT_READY: {
+            target: 'ready',
+            assign: (ctx, payload) => ({ ...ctx, bufferedActions: payload.bufferedActions }),
+          },
+          INIT_FALLBACK: 'speech_fallback',
+          RECORD_PLAY: {
+            target: 'initializing',
+            assign: (ctx, payload) => ({ ...ctx, lastAction: payload.action }),
+          },
+          CLOSE: 'closed',
+        },
+      },
+      ready: {
+        on: {
+          RECORD_PLAY: {
+            target: 'ready',
+            assign: (ctx, payload) => ({ ...ctx, lastAction: payload.action }),
+          },
+          CLOSE: {
+            target: 'closed',
+            assign: ctx => ({ ...ctx, bufferedActions: 0 }),
+          },
+        },
+      },
+      speech_fallback: {
+        on: {
+          INIT_START: 'initializing',
+          RECORD_PLAY: {
+            target: 'speech_fallback',
+            assign: (ctx, payload) => ({ ...ctx, lastAction: payload.action }),
+          },
+          CLOSE: 'closed',
+        },
+      },
+      closed: {
+        on: {
+          INIT_START: 'initializing',
+        },
+      },
+    },
+  });
+
+  getSnapshot = (): KoruMachineSnapshot<
+    AudioServiceState,
+    keyof AudioServiceEvents & string,
+    Readonly<AudioServiceContext>
+  > => {
+    return this.machine.getSnapshot();
+  };
+
   async init() {
+    this.machine.send('INIT_START');
     try {
       this.audioCtx = new AudioContext();
       await this.preloadAll();
+      this.machine.send('INIT_READY', { bufferedActions: this.buffers.size });
     } catch (err) {
       console.warn('AudioContext not available, using Speech API fallback:', err);
+      this.machine.send('INIT_FALLBACK');
     }
   }
 
@@ -58,6 +156,7 @@ export class AudioService {
 
     this.lastAction = action;
     this.lastPlayTime = now;
+    this.machine.send('RECORD_PLAY', { action });
 
     const buffer = this.buffers.get(action);
     if (buffer && this.audioCtx) {
@@ -92,5 +191,6 @@ export class AudioService {
   destroy() {
     void this.audioCtx?.close();
     this.buffers.clear();
+    this.machine.send('CLOSE');
   }
 }
