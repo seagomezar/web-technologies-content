@@ -31,11 +31,11 @@
 
   function syncAnim() {
     const slide = slides[state.index];
-    if (!slide || slide.kind !== 'splitbrain' || reduced()) { stopAnim(); return; }
+    if (!slide || slide.kind !== 'splitbrain' || reduced() || document.hidden) { stopAnim(); return; }
     if (sbTimer) return;
     sbTimer = setInterval(() => {
       const s = slides[state.index];
-      if (!s || s.kind !== 'splitbrain') { stopAnim(); return; }
+      if (!s || s.kind !== 'splitbrain' || document.hidden) { stopAnim(); return; }
       sbActive = (sbActive + 1) % 4;
       viewport.querySelectorAll('.sb-lane').forEach((el, idx) => el.classList.toggle('active', idx === sbActive));
     }, 1500);
@@ -70,7 +70,7 @@
   }
 
   function renderPhysicsSvg(es) {
-    return `<svg viewBox="0 0 230 230" width="220" height="220" aria-label="Friction Circle">
+    return `<svg viewBox="0 0 230 230" width="220" height="220" role="img" aria-label="${es ? 'Diagrama del círculo de fricción' : 'Friction Circle diagram'}">
       <circle cx="115" cy="115" r="96" fill="#f8fafc" stroke="#1e1e1e" stroke-width="2.5"/>
       <circle cx="115" cy="115" r="64" fill="none" stroke="#94a3b8" stroke-dasharray="4 4"/>
       <path d="M 115 19 A 96 96 0 0 1 211 115" fill="none" stroke="#34a853" stroke-width="6"/>
@@ -104,8 +104,8 @@
         </div>
         <div class="speaker-col">
           <div class="speaker-photo-row">
-            <img class="speaker-photo" src="${esc(slide.photo)}" alt="${esc(slide.speakerName)}">
-            ${slide.codelabBadge ? `<img class="codelab-badge-img" src="${esc(slide.codelabBadge)}" alt="Official Racing Coach Codelab Badge">` : ''}
+            <img class="speaker-photo" src="${esc(slide.photo)}" width="225" height="285"${slide.kind === 'title' ? ' fetchpriority="high"' : ''} alt="${esc(slide.speakerName)}">
+            ${slide.codelabBadge ? `<img class="codelab-badge-img" src="${esc(slide.codelabBadge)}" width="122" height="122" alt="Official Racing Coach Codelab Badge">` : ''}
           </div>
           <img class="speaker-badge" src="${esc(slide.badge)}" alt="Google Developer Expert · Web Technologies">
           <div class="speaker-meta">${esc(slide.speakerName)}<span>${esc(slide.speakerRole)}</span>${slide.speakerSite ? `<a class="speaker-site" href="${esc(slide.speakerSiteUrl || 'https://' + slide.speakerSite)}" target="_blank" rel="noopener">${esc(slide.speakerSite)}</a>` : ''}${slide.speakerTitle ? `<span class="speaker-title">${esc(slide.speakerTitle)}</span>` : ''}</div>
@@ -122,14 +122,14 @@
         </div>
         <div class="section-goals">
           <h3>${esc(slide.goalsTitle)}</h3>
-          ${slide.goals.map((g, i) => `<div class="goal-item ${i > 0 && slide.builds.length ? 'build' : ''} ${slide.builds.length && i > state.step ? 'pending' : ''}"><span class="goal-num">0${i + 1}</span><span>${g}</span></div>`).join('')}
+          ${slide.goals.map((g, i) => `<div class="goal-item ${i > 0 && slide.builds.length ? 'build' : ''} ${slide.builds.length && i > state.step ? 'pending' : ''}"${slide.builds.length && i > state.step ? ' inert' : ''}><span class="goal-num">0${i + 1}</span><span>${g}</span></div>`).join('')}
         </div>
       </div></div>`;
     }
 
     if (slide.kind === 'roadmap') {
       return `${wsHeader(slide)}<div class="ws-body"><div class="roadmap-grid">
-        ${slide.phases.map((p, i) => `<div class="roadmap-col ${esc(p.color)} ${i > 0 && slide.builds.length ? 'build' : ''} ${slide.builds.length && i > state.step ? 'pending' : ''}">
+        ${slide.phases.map((p, i) => `<div class="roadmap-col ${esc(p.color)} ${i > 0 && slide.builds.length ? 'build' : ''} ${slide.builds.length && i > state.step ? 'pending' : ''}"${slide.builds.length && i > state.step ? ' inert' : ''}>
           <div class="roadmap-head"><strong>${esc(p.title)}</strong><span class="time-pill">${esc(p.time)}</span></div>
           <ul class="roadmap-list">${p.steps.map(st => `<li><b>${esc(st.step)}</b>${esc(st.label)}</li>`).join('')}</ul>
         </div>`).join('')}
@@ -140,7 +140,7 @@
       return `${wsHeader(slide)}<div class="ws-body">
         <div class="diagram-row">
           ${slide.diagram.map((d, i) => `${i ? `<span class="arrow ${d.step ? 'build' : ''} ${d.step > state.step ? 'pending' : ''}" aria-hidden="true">→</span>` : ''}
-          <div class="diagram-card ${esc(d.color)} ${d.step ? 'build' : ''} ${d.step > state.step ? 'pending' : ''}">
+          <div class="diagram-card ${esc(d.color)} ${d.step ? 'build' : ''} ${d.step > state.step ? 'pending' : ''}"${d.step > state.step ? ' inert' : ''}>
             <div class="diagram-card-top">
               ${d.tag ? `<span class="card-tag">${esc(d.tag)}</span>` : ''}
               <strong>${d.title}</strong>
@@ -157,7 +157,7 @@
       return `${wsHeader(slide)}<div class="ws-body">
         ${slide.contextBar ? `<div class="comp-context">${slide.contextBar}</div>` : ''}
         <div class="comp-grid">
-          ${slide.cards.map((c, i) => `<div class="comp-card ${esc(c.tone)} ${i > 0 && slide.builds.length ? 'build' : ''} ${slide.builds.length && i > state.step ? 'pending' : ''}">
+          ${slide.cards.map((c, i) => `<div class="comp-card ${esc(c.tone)} ${i > 0 && slide.builds.length ? 'build' : ''} ${slide.builds.length && i > state.step ? 'pending' : ''}"${slide.builds.length && i > state.step ? ' inert' : ''}>
             <div class="comp-head"><strong>${c.title}</strong><span class="verdict-pill">${esc(c.verdict)}</span></div>
             <div class="comp-quote">${c.quote}</div>
             <ul class="comp-points">${c.points.map(pt => `<li>${pt}</li>`).join('')}</ul>
@@ -174,7 +174,7 @@
           <div><span class="card-tag">10Hz SSE STREAM</span><h3 style="margin-top:8px">${esc(slide.source.title)}</h3><p style="font-size:15.5px;line-height:1.3;margin-top:6px">${esc(slide.source.body)}</p></div>
           <pre class="sb-mini-code">${esc(slide.source.sample)}</pre>
         </div>
-        <div class="sb-arrow">⇉</div>
+        <div class="sb-arrow" aria-hidden="true">⇉</div>
         <div class="sb-paths">
           ${slide.lanes.map((l, idx) => `<div class="sb-lane ${esc(l.tone)} ${idx === highlightIdx ? 'active' : ''}">
             <div class="sb-lane-id">${esc(l.name)}<span>${esc(l.sub)}</span></div>
@@ -182,7 +182,7 @@
             <span class="sb-lat">${esc(l.latency)}</span>
           </div>`).join('')}
         </div>
-        <div class="sb-arrow">⇉</div>
+        <div class="sb-arrow" aria-hidden="true">⇉</div>
         <div class="sb-sink">
           <div><span class="card-tag">TRUSTED UX</span><h3 style="margin-top:8px">${esc(slide.sink.title)}</h3><p style="font-size:15.5px;line-height:1.3;margin-top:6px">${esc(slide.sink.body)}</p></div>
           <div class="tip-box" style="background:#fff;font-size:14px">${slide.sink.footer}</div>
@@ -199,7 +199,7 @@
         <span class="step-pill ${esc(slide.pillTone || '')}">${esc(slide.eyebrow || '')}</span>
         <h2>${slide.title}</h2>
         <p class="subhead">${slide.subtitle || ''}</p>
-        ${slide.filePath ? `<span class="file-badge">📄 ${esc(slide.filePath)}</span>` : ''}
+        ${slide.filePath ? `<span class="file-badge"><span aria-hidden="true">📄 </span>${esc(slide.filePath)}</span>` : ''}
         ${slide.checklist?.length ? `<ul class="term-steps">${slide.checklist.map((item, idx) => `<li><b>0${idx + 1}</b>${item}</li>`).join('')}</ul>` : ''}
         ${slide.tip ? `<div class="tip-box ${esc(slide.tipTone || '')}">${slide.tip}</div>` : ''}
       </div>
@@ -241,7 +241,7 @@
     if (slide.kind === 'personas') {
       return `${wsHeader(slide)}<div class="ws-body">
         <div class="personas-grid">
-          ${slide.personas.map((p, i) => `<div class="persona-card ${i > 0 && slide.builds.length ? 'build' : ''} ${slide.builds.length && i > state.step ? 'pending' : ''}">
+          ${slide.personas.map((p, i) => `<div class="persona-card ${i > 0 && slide.builds.length ? 'build' : ''} ${slide.builds.length && i > state.step ? 'pending' : ''}"${slide.builds.length && i > state.step ? ' inert' : ''}>
             <div class="persona-top">
               <div class="persona-avatar">${esc(p.icon)}</div>
               <div><div class="persona-name">${esc(p.name)}</div><div class="persona-style">${esc(p.style)}</div></div>
@@ -256,9 +256,9 @@
 
     if (slide.kind === 'visual') {
       return `${wsHeader(slide)}<div class="ws-body"><div class="visual-grid">
-        <div class="visual-frame"><img src="${esc(slide.image)}" alt="${esc(slide.imageAlt || slide.title)}"></div>
+        <div class="visual-frame"><img src="${esc(slide.image)}" fetchpriority="high" alt="${esc(slide.imageAlt || slide.title)}"></div>
         <div class="visual-notes">
-          ${slide.callouts.map((c, i) => `<div class="visual-note ${i > 0 && slide.builds.length ? 'build' : ''} ${slide.builds.length && i > state.step ? 'pending' : ''}"><span class="note-title">${esc(c.title)}</span>${c.body}</div>`).join('')}
+          ${slide.callouts.map((c, i) => `<div class="visual-note ${i > 0 && slide.builds.length ? 'build' : ''} ${slide.builds.length && i > state.step ? 'pending' : ''}"${slide.builds.length && i > state.step ? ' inert' : ''}><span class="note-title">${esc(c.title)}</span>${c.body}</div>`).join('')}
         </div>
       </div></div>`;
     }
@@ -271,7 +271,7 @@
     if (slide.kind === 'steps') {
       return `${wsHeader(slide)}<div class="ws-body">
         <div class="diagram-row">
-          ${slide.items.map((it, i) => `<div class="diagram-card ${['blue', 'yellow', 'green', 'red'][i % 4]} ${slide.builds.length && i > 0 ? 'build' : ''} ${slide.builds.length && i > state.step ? 'pending' : ''}">
+          ${slide.items.map((it, i) => `<div class="diagram-card ${['blue', 'yellow', 'green', 'red'][i % 4]} ${slide.builds.length && i > 0 ? 'build' : ''} ${slide.builds.length && i > state.step ? 'pending' : ''}"${slide.builds.length && i > state.step ? ' inert' : ''}>
             <div class="diagram-card-top">
               <span class="card-tag">${esc(it.tag || `0${i + 1}`)}</span>
               <strong>${it.title}</strong>
@@ -287,9 +287,9 @@
     if (slide.kind === 'domains') {
       return `${wsHeader(slide)}<div class="ws-body">
         <table class="domain-table">
-          <thead><tr>${slide.headers.map(h => `<th>${esc(h)}</th>`).join('')}</tr></thead>
+          <thead><tr>${slide.headers.map(h => `<th scope="col">${esc(h)}</th>`).join('')}</tr></thead>
           <tbody>
-            ${slide.rows.map((r, i) => `<tr class="${slide.builds.length && i > state.step ? 'build pending' : ''}">${r.map(cell => `<td>${cell}</td>`).join('')}</tr>`).join('')}
+            ${slide.rows.map((r, i) => `<tr class="${slide.builds.length && i > state.step ? 'build pending' : ''}"${slide.builds.length && i > state.step ? ' inert' : ''}>${r.map(cell => `<td>${cell}</td>`).join('')}</tr>`).join('')}
           </tbody>
         </table>
         ${slide.takeaway ? `<div class="takeaway-bar"><strong>4 PREGUNTAS</strong><span>${slide.takeaway}</span></div>` : ''}
@@ -309,6 +309,18 @@
   function ensureControls() {
     const bar = document.querySelector('.controlbar');
     if (!bar || bar.querySelector('#slide-select')) return;
+    if (I18N.lang === 'en') {
+      viewport.setAttribute('aria-label', `${TALK.title} · DevFest ${city}`);
+      bar.setAttribute('aria-label', 'Slide controls');
+      const keyHelp = document.querySelector('#key-help');
+      if (keyHelp) keyHelp.textContent = '← → / Space · Shift+← → skip slide · P presenter · F fullscreen · C controls';
+      document.querySelector('#previous')?.setAttribute('aria-label', 'Previous slide');
+      document.querySelector('#next')?.setAttribute('aria-label', 'Next slide');
+      const presBtn = document.querySelector('#presenter');
+      if (presBtn) presBtn.textContent = 'Presenter (P)';
+      const fsBtn = document.querySelector('#fullscreen');
+      if (fsBtn) fsBtn.textContent = 'Fullscreen (F)';
+    }
     const select = document.createElement('select');
     select.id = 'slide-select';
     select.setAttribute('aria-label', I18N.lang === 'es' ? 'Ir a la diapositiva' : 'Jump to slide');
@@ -317,6 +329,9 @@
     const stepBadge = document.createElement('span');
     stepBadge.id = 'step-status';
     stepBadge.className = 'step-status';
+    stepBadge.setAttribute('role', 'status');
+    stepBadge.setAttribute('aria-live', 'polite');
+    stepBadge.setAttribute('aria-atomic', 'true');
     const nextBtn = bar.querySelector('#next');
     bar.insertBefore(select, nextBtn);
     bar.insertBefore(stepBadge, nextBtn);
@@ -327,12 +342,12 @@
     const slide = slides[state.index];
     document.body.style.setProperty('--slide-bg', slide.background || 'var(--paper)');
     const stepSuffix = slide.builds.length ? ` · ${I18N.lang === 'es' ? 'paso' : 'step'} ${state.step}/${slide.builds.length}` : '';
-    viewport.innerHTML = `<article class="slide" aria-label="${state.index + 1} / ${slides.length}">
+    viewport.innerHTML = `<article class="slide" tabindex="-1" aria-label="${state.index + 1} / ${slides.length} · ${esc(clean(slide.title))}">
       <div class="panel-shape" aria-hidden="true"></div>
       <div class="lockup" aria-label="Web @DevFest ${esc(city)}"><span class="brace" aria-hidden="true">{</span><div class="lockup-copy">Web<br><strong>@DevFest</strong><div class="city">${esc(city)}</div></div><span class="brace" aria-hidden="true">}</span></div>
       <div class="slide-content">${body(slide)}</div>
       <span class="slide-number"><span>${String(state.index + 1).padStart(2, '0')} / ${slides.length}${stepSuffix}</span><span aria-hidden="true">·</span><a href="https://www.sebastian-gomez.com/" target="_blank" rel="noopener">www.sebastian-gomez.com</a></span>
-      <img class="gdg-logo" src="assets/gdg-logo.png" alt="Google Developer Groups">
+      <img class="gdg-logo" src="assets/gdg-logo.png" width="636" height="192" alt="Google Developer Groups">
     </article>`;
     document.title = `${state.index + 1}. ${clean(slide.title)} | ${TALK.title}`;
     const progress = document.querySelector('#progress');
@@ -359,19 +374,36 @@
 
   function navigate(index, step = 0, animate = true) {
     stopAnim();
+    const prevIndex = state.index;
     index = Math.max(0, Math.min(slides.length - 1, index));
     step = Math.max(0, Math.min(slides[index].builds.length, step));
+    const direction = index > prevIndex ? 'forward' : index < prevIndex ? 'backward' : 'step';
+    const hadSlideFocus = viewport.contains(document.activeElement);
     state = { ...state, index, step };
     const hash = `#${index + 1}.${step}`;
     if (location.hash !== hash) history.pushState(null, '', hash);
     if (activeTransition) { try { activeTransition.skipTransition(); } catch {} activeTransition = null; }
+    const routeFocus = () => {
+      if (window.self === window.top && (hadSlideFocus || (animate && (!document.activeElement || document.activeElement === document.body)))) {
+        viewport.querySelector('.slide')?.focus({ preventScroll: true });
+      }
+    };
     if (animate && !reduced() && document.startViewTransition) {
+      let t;
       try {
-        const t = document.startViewTransition(paint);
-        activeTransition = t;
-        t.finished.catch(() => {}).finally(() => { if (activeTransition === t) activeTransition = null; });
-      } catch { paint(); }
-    } else paint();
+        t = document.startViewTransition({ update: paint, types: [direction] });
+      } catch {
+        try { t = document.startViewTransition(paint); } catch { paint(); routeFocus(); return; }
+      }
+      activeTransition = t;
+      t.finished.catch(() => {}).finally(() => {
+        if (activeTransition === t) activeTransition = null;
+        routeFocus();
+      });
+    } else {
+      paint();
+      routeFocus();
+    }
   }
 
   function next() {
@@ -428,7 +460,11 @@
     }
   }
 
-  if (channel) channel.onmessage = e => receive(e.data);
+  channel?.addEventListener('message', e => receive(e.data));
+  document.addEventListener('visibilitychange', syncAnim);
+  document.addEventListener('fullscreenchange', () => {
+    document.querySelector('#fullscreen')?.setAttribute('aria-pressed', String(Boolean(document.fullscreenElement)));
+  });
   addEventListener('message', e => {
     if (e.source !== presenter) return;
     if (location.origin !== 'null' && e.origin !== location.origin) return;

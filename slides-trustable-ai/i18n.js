@@ -22,14 +22,15 @@
     const nav = document.createElement('nav');
     nav.className = 'language-switch';
     nav.setAttribute('aria-label', lang === 'es' ? 'Idioma' : 'Language');
-    nav.innerHTML = ['es', 'en']
-      .map(
-        code =>
-          `<a lang="${code}" hreflang="${code}" href="${url(location.href, code)}" ${
-            lang === code ? 'aria-current="true"' : ''
-          }>${code === 'es' ? 'Español' : 'English'}</a>`
-      )
-      .join('');
+    for (const code of ['es', 'en']) {
+      const link = document.createElement('a');
+      link.lang = code;
+      link.hreflang = code;
+      link.href = url(location.href, code);
+      if (lang === code) link.setAttribute('aria-current', 'page');
+      link.textContent = code === 'es' ? 'Español' : 'English';
+      nav.append(link);
+    }
     (document.querySelector('header') || document.body).append(nav);
 
     const sync = () =>

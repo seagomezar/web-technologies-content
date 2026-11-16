@@ -1,8 +1,9 @@
 /* Workshop presentation layout & controls — engineered for 1600x900 zero-overflow precision */
-*{box-sizing:border-box}
+*,*::before,*::after{box-sizing:border-box}
 html,body{margin:0;width:100%;height:100%;overflow:hidden}
-.viewport{position:fixed;inset:0;display:grid;place-items:center;cursor:pointer}
+.viewport{position:fixed;inset:0;display:grid;place-items:center;cursor:pointer;touch-action:pan-y pinch-zoom}
 .slide{position:absolute;width:1600px;height:900px;transform:scale(var(--scale,1));transform-origin:center;overflow:hidden;view-transition-name:slide}
+.slide:focus{outline:none}
 .slide-content{position:absolute;inset:0;display:block}
 .slide-content h1,.slide-content h2,.slide-content h3,.slide-content h4,.slide-content p{margin:0}
 
@@ -34,7 +35,7 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden}
 .speaker-badge{width:295px;height:auto;display:block}
 .speaker-meta{font:700 18px/1.25 'Google Sans',Arial,sans-serif;text-align:center}
 .speaker-meta span{display:block;font:400 14px/1.3 'Roboto Mono',monospace;color:#444}
-.speaker-meta a.speaker-site{display:inline-block;margin-top:3px;font:700 14px/1.25 'Roboto Mono',monospace;color:#0b57d0;text-decoration:none;border-bottom:1.5px solid #0b57d0}
+.speaker-meta a.speaker-site{display:inline-block;margin-top:3px;font:700 14px/1.25 'Roboto Mono',monospace;color:#0b57d0;text-decoration:underline;text-decoration-thickness:1.5px;text-underline-offset:3px;text-decoration-color:currentColor}
 .speaker-meta span.speaker-title{margin-top:4px;font:700 14px/1.25 'Roboto Mono',monospace;color:var(--ink)}
 
 /* 2. Section Divider Slides */
@@ -98,7 +99,8 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden}
 .sb-source h3,.sb-sink h3{font-size:21px;line-height:1.15}
 .sb-mini-code{background:#0f172a;color:#e2e8f0;border-radius:12px;padding:10px;font:400 12.5px/1.35 'Roboto Mono',monospace}
 .sb-paths{display:grid;grid-template-rows:repeat(4,1fr);gap:9px;height:100%}
-.sb-lane{border:2px solid var(--ink);border-radius:15px;padding:9px 14px;background:#fff;display:grid;grid-template-columns:145px 1fr auto;align-items:center;gap:12px;transition:transform .18s ease,box-shadow .18s ease}
+.sb-lane{border:2px solid var(--ink);border-radius:15px;padding:9px 14px;background:#fff;display:grid;grid-template-columns:145px 1fr auto;align-items:center;gap:12px}
+@media(prefers-reduced-motion:no-preference){.sb-lane{transition:transform .18s ease,box-shadow .18s ease}}
 .sb-lane.active{border-width:2.5px;box-shadow:5px 5px 0 var(--ink);transform:translateX(3px)}
 .sb-lane.hot.active{background:var(--pastel-red)}
 .sb-lane.cold.active{background:var(--pastel-blue)}
@@ -180,15 +182,15 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden}
 
 /* 12. Cross-Domain Matrix */
 .domain-table{width:100%;border-collapse:separate;border-spacing:0;border:2.5px solid var(--ink);border-radius:18px;overflow:hidden;background:#fff;font-size:15.5px}
-.domain-table th,.domain-table td{padding:10px 13px;border-bottom:1.5px solid #ddd;text-align:left;vertical-align:top;line-height:1.26}
+.domain-table th,.domain-table td{padding:10px 13px;text-align:left;vertical-align:top;line-height:1.26}
 .domain-table th{background:var(--pastel-blue);font:700 13.5px/1.2 'Roboto Mono',monospace;border-bottom:2px solid var(--ink)}
-.domain-table tr:last-child td{border-bottom:0}
+.domain-table tbody tr:not(:last-child) td{border-bottom:1.5px solid #ddd}
 .domain-table td:first-child{font-weight:700;background:#fafafa;width:195px}
 
 /* 13. Statement / Resources */
 .spec-list{display:flex;flex-direction:column;gap:8px;background:#fff;border:2.5px solid var(--ink);border-radius:18px;padding:14px 20px}
-.spec-row{display:grid;grid-template-columns:280px 1fr;gap:16px;align-items:baseline;padding:5px 0;border-bottom:1px solid #e2e2e2}
-.spec-row:last-child{border-bottom:0}
+.spec-row{display:grid;grid-template-columns:280px 1fr;gap:16px;align-items:baseline;padding:5px 0}
+.spec-row:not(:last-child){border-bottom:1px solid #e2e2e2}
 .spec-row dt{font:700 16.5px/1.25 'Roboto Mono',monospace;color:#174ea6}
 .spec-row dd{margin:0;font-size:18px;line-height:1.3}
 .resource-links{display:flex;flex-wrap:wrap;gap:10px}
@@ -196,7 +198,7 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden}
 .resource-pill:hover{background:var(--pastel-blue)}
 
 /* Build transitions */
-.build{transition:opacity .2s ease,transform .2s ease}
+@media(prefers-reduced-motion:no-preference){.build{transition:opacity .2s ease,transform .2s ease}}
 .build.pending{opacity:.22;transform:translateY(6px);pointer-events:none}
 
 /* Navigation control bar */
@@ -204,20 +206,31 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden}
 .controlbar:hover,.controlbar:focus-within{opacity:1}
 body.hide-controls .controlbar,body.embedded-preview .controlbar,body.embedded-preview .key-help,body.embedded-preview .language-switch{display:none!important}
 .controlbar button,.controlbar select{font:600 13px/1.2 'Google Sans',Arial,sans-serif;border:1.5px solid var(--ink);border-radius:8px;background:#fff;color:#1e1e1e;padding:7px 11px;cursor:pointer}
+@media(pointer:coarse){.controlbar button,.controlbar select{min-block-size:40px;min-inline-size:40px}}
 .controlbar button:hover:not(:disabled),.controlbar select:hover{background:var(--pastel-blue)}
 .controlbar button:disabled{opacity:.4;cursor:default}
 .controlbar select{max-width:230px;font-weight:400}
-.step-status{font:400 12px/1 'Roboto Mono',monospace;padding:5px 8px;background:var(--pastel-yellow);border:1px solid var(--ink);border-radius:6px;white-space:nowrap}
+.step-status{font:400 12px/1 'Roboto Mono',monospace;padding:5px 8px;background:var(--pastel-yellow);border:1px solid var(--ink);border-radius:6px;white-space:nowrap;font-variant-numeric:tabular-nums}
 .controlbar button:focus-visible,.controlbar select:focus-visible,.resource-pill:focus-visible{outline:4px solid #4285f4;outline-offset:4px}
 .progress-rail{position:fixed;left:0;bottom:0;width:100%;height:5px;background:#0002;z-index:19}
-.progress-rail span{display:block;height:100%;background:#4285f4;transition:width .2s}
+.progress-rail span{display:block;height:100%;background:#4285f4}
+@media(prefers-reduced-motion:no-preference){.progress-rail span{transition:width .2s ease}}
 .key-help{position:fixed;left:16px;bottom:14px;font:12px 'Roboto Mono',monospace;opacity:.78;background:#ffffffd9;padding:4px 10px;border-radius:6px;border:1px solid #ccc;z-index:15;pointer-events:none}
 body.hide-controls .key-help{opacity:0}
 
 ::view-transition{pointer-events:none}
+::view-transition-group(slide){animation-duration:.22s;animation-timing-function:cubic-bezier(.22,1,.36,1)}
 ::view-transition-old(slide){animation:fade-out .16s ease both}
 ::view-transition-new(slide){animation:fade-in .16s ease both}
+html:active-view-transition-type(forward)::view-transition-old(slide){animation:slide-to-left .22s cubic-bezier(.22,1,.36,1) both}
+html:active-view-transition-type(forward)::view-transition-new(slide){animation:slide-from-right .22s cubic-bezier(.22,1,.36,1) both}
+html:active-view-transition-type(backward)::view-transition-old(slide){animation:slide-to-right .22s cubic-bezier(.22,1,.36,1) both}
+html:active-view-transition-type(backward)::view-transition-new(slide){animation:slide-from-left .22s cubic-bezier(.22,1,.36,1) both}
 @keyframes fade-out{to{opacity:0}}
 @keyframes fade-in{from{opacity:0}}
-@media(prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important}::view-transition-old(slide),::view-transition-new(slide){animation:none!important}}
+@keyframes slide-to-left{to{opacity:0;transform:translateX(-36px)}}
+@keyframes slide-from-right{from{opacity:0;transform:translateX(36px)}}
+@keyframes slide-to-right{to{opacity:0;transform:translateX(36px)}}
+@keyframes slide-from-left{from{opacity:0;transform:translateX(-36px)}}
+@media(prefers-reduced-motion:reduce){::view-transition-group(*),::view-transition-old(*),::view-transition-new(*){animation:none!important}}
 @media print{html,body{height:auto;overflow:visible}.viewport{position:static;display:block}.slide{position:relative;transform:none;width:1600px;height:900px;break-after:page}.controlbar,.progress-rail,.key-help{display:none}}

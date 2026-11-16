@@ -38,13 +38,18 @@ h1,h2,h3,h4{font-family:'Google Sans',Arial,sans-serif;font-weight:700;letter-sp
 .lockup-copy strong{font-weight:700}
 .city{font-size:13px;letter-spacing:0;text-align:center;border:2px solid var(--ink);border-radius:20px;background:#fff;margin-top:10px;padding:4px 10px;font-weight:700}
 
-.gdg-logo{position:absolute;width:250px;right:65px;bottom:34px;z-index:2}
+.gdg-logo{position:absolute;width:250px;height:auto;right:65px;bottom:34px;z-index:2}
 .speaker{font-size:24px;line-height:1.35}
 .subhead{font-size:22px;line-height:1.32;letter-spacing:-.02em}
 .eyebrow{font-size:18px;letter-spacing:.03em;font-weight:400}
 .slide-number{font-size:20px;position:absolute;left:70px;bottom:34px;z-index:2;display:inline-flex;align-items:center;gap:10px}
-.slide-number a{color:var(--ink);text-decoration:none;font-weight:400;border-bottom:1.5px solid rgba(30,30,30,.45)}
-.slide-number a:hover{color:#0b57d0;border-bottom-color:#0b57d0}
+.slide-number a{color:var(--ink);font-weight:400;text-decoration:underline;text-decoration-thickness:1.5px;text-underline-offset:3px;text-decoration-color:rgba(30,30,30,.45)}
+.slide-number a:hover{color:#0b57d0;text-decoration-color:currentColor}
+.clock{font-variant-numeric:tabular-nums}
+:where(a:any-link,button,select,summary):focus-visible{outline:3px solid var(--blue);outline-offset:3px}
+details::details-content{interpolate-size:allow-keywords;overflow:clip;contain:layout}
+details:not([open])::details-content{block-size:0}
+@media(prefers-reduced-motion:no-preference){details::details-content{transition:block-size .24s ease-in-out,content-visibility .24s ease-in-out;transition-behavior:allow-discrete}}
 
 /* Signature notched organizer panel */
 .panel-shape{

@@ -1,40 +1,42 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Koru Interactive Telemetry &amp; Split-Brain Simulator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulador Koru de Telemetría y Split-Brain</title>
   <link rel="stylesheet" href="theme.css">
   <style>
-    *{box-sizing:border-box;margin:0;padding:0}
-    html,body{width:100%;height:100%;background:#0c1017;color:#f1f5f9;font-family:'Google Sans',Arial,sans-serif;overflow:hidden}
+    *,*::before,*::after{box-sizing:border-box}
+    html,body{margin:0;padding:0;width:100%;height:100%;background:#0c1017;color:#f1f5f9;font-family:'Google Sans',Arial,sans-serif;overflow:hidden}
     .sim{display:grid;grid-template-rows:48px 1fr;width:100%;height:100%}
     .topbar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 14px;background:#131a26;border-bottom:1.5px solid #263248}
     .brand{display:flex;align-items:center;gap:8px;font-weight:700;font-size:15px}
     .dot-live{width:9px;height:9px;border-radius:50%;background:#4ade80;box-shadow:0 0 8px #4ade80}
     .controls{display:flex;align-items:center;gap:6px;flex-wrap:nowrap}
-    .pill{font:700 12px/1 'Roboto Mono',monospace;padding:6px 9px;border-radius:999px;border:1.5px solid #334155;background:#1e293b;color:#e2e8f0;cursor:pointer;transition:all .15s}
+    .pill{margin:0;display:inline-flex;align-items:center;justify-content:center;min-inline-size:28px;min-block-size:28px;font:700 12px/1 'Roboto Mono',monospace;padding:6px 9px;border-radius:999px;border:1.5px solid #334155;background:#1e293b;color:#e2e8f0;cursor:pointer;transition:background-color .15s ease,border-color .15s ease,color .15s ease}
     .pill:hover{border-color:#60a5fa}
-    .pill.active{background:#4285f4;border-color:#93c5fd;color:#fff}
+    .pill:focus-visible{outline:2px solid #93c5fd;outline-offset:2px}
+    .pill:is(.active,[aria-pressed="true"]){background:#4285f4;border-color:#93c5fd;color:#fff}
     .pill.rain.on{background:#0284c7;border-color:#7dd3fc;color:#fff}
     .pill.phys.off{background:#b91c1c;border-color:#fca5a5;color:#fff}
     .grid{display:grid;grid-template-columns:250px 1fr 370px;gap:12px;padding:12px;height:100%;min-height:0}
-    .card{background:#131a26;border:1.5px solid #263248;border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:10px;min-height:0}
+    .card{background:#131a26;border:1.5px solid #263248;border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:10px;min-height:0;contain:layout style paint}
     .card-title{font:700 11px/1 'Roboto Mono',monospace;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em;display:flex;justify-content:space-between}
     .gauges{display:grid;grid-template-columns:1fr 90px;gap:10px;align-items:center}
     .speed-box{text-align:center;background:#0c1017;border:1px solid #263248;border-radius:12px;padding:10px 6px}
-    .speed-val{font:700 44px/1 'Roboto Mono',monospace;color:#f8fafc}
-    .speed-unit{font:400 12px/1.2 'Roboto Mono',monospace;color:#94a3b8;margin-top:4px}
+    .speed-val{font:700 44px/1 'Roboto Mono',monospace;color:#f8fafc;font-variant-numeric:tabular-nums}
+    .speed-unit{font:400 12px/1.2 'Roboto Mono',monospace;color:#94a3b8;margin-top:4px;font-variant-numeric:tabular-nums}
     .pedals{display:flex;gap:10px;justify-content:center}
-    .pedal{display:flex;flex-direction:column;align-items:center;gap:4px;font:700 10px/1 'Roboto Mono',monospace;color:#94a3b8}
+    .pedal{display:flex;flex-direction:column;align-items:center;gap:4px;font:700 10px/1 'Roboto Mono',monospace;color:#94a3b8;font-variant-numeric:tabular-nums}
     .bar-wrap{width:20px;height:78px;background:#0c1017;border:1px solid #334155;border-radius:6px;display:flex;align-items:flex-end;overflow:hidden}
-    .bar{width:100%;transition:height .12s linear}
+    .bar{width:100%;height:100%;transform-origin:bottom;transform:scaleY(var(--level,0))}
+    @media(prefers-reduced-motion:no-preference){.bar{transition:transform .12s linear}}
     .bar.thr{background:#34a853}
     .bar.brk{background:#ea4335}
     .fcircle{display:flex;align-items:center;gap:12px;background:#0c1017;border:1px solid #263248;border-radius:12px;padding:8px 10px;margin-top:auto}
     .fc-svg{width:84px;height:84px;flex-shrink:0}
-    .fc-stats{font:400 11.5px/1.45 'Roboto Mono',monospace;color:#cbd5e1}
-    .track-wrap{position:relative;flex:1;min-height:0;display:flex;align-items:center;justify-content:center;background:#0c1017;border:1px solid #263248;border-radius:12px;overflow:hidden}
+    .fc-stats{font:400 11.5px/1.45 'Roboto Mono',monospace;color:#cbd5e1;font-variant-numeric:tabular-nums}
+    .track-wrap{position:relative;flex:1;min-height:0;display:flex;align-items:center;justify-content:center;background:#0c1017;border:1px solid #263248;border-radius:12px;overflow:hidden;contain:layout style paint}
     .track-svg{width:100%;height:100%;max-height:310px}
     .corner-banner{font:700 12px/1.2 'Roboto Mono',monospace;padding:6px 10px;border-radius:8px;background:#1e293b;color:#fde68a;border:1px solid #475569;display:flex;justify-content:space-between}
     .feed{display:flex;flex-direction:column;gap:8px;overflow:hidden;flex:1}
@@ -51,16 +53,16 @@
 <body>
   <div class="sim">
     <header class="topbar">
-      <div class="brand"><span class="dot-live"></span><span id="sim-title">koru · Simulador Split-Brain (10Hz)</span></div>
-      <div class="controls">
-        <button class="pill active" data-coach="superaj">SA Super AJ</button>
-        <button class="pill" data-coach="aj">AJ</button>
-        <button class="pill" data-coach="rachel">RC Rachel</button>
-        <button class="pill" data-coach="tony">TY Tony</button>
-        <button class="pill" data-coach="garmin">GM Garmin</button>
-        <button class="pill rain" id="btn-rain">☀️ Seco (1.0g)</button>
-        <button class="pill phys" id="btn-phys">🧠 Física: ON</button>
-        <button class="pill" id="btn-pause">⏸</button>
+      <div class="brand"><span class="dot-live" aria-hidden="true"></span><span id="sim-title">koru · Simulador Split-Brain (10Hz)</span></div>
+      <div class="controls" role="group" id="sim-controls" aria-label="Controles del simulador">
+        <button type="button" class="pill active" data-coach="superaj" aria-pressed="true">SA Super AJ</button>
+        <button type="button" class="pill" data-coach="aj" aria-pressed="false">AJ</button>
+        <button type="button" class="pill" data-coach="rachel" aria-pressed="false">RC Rachel</button>
+        <button type="button" class="pill" data-coach="tony" aria-pressed="false">TY Tony</button>
+        <button type="button" class="pill" data-coach="garmin" aria-pressed="false">GM Garmin</button>
+        <button type="button" class="pill rain" id="btn-rain">☀️ Seco (1.0g)</button>
+        <button type="button" class="pill phys" id="btn-phys">🧠 Física: ON</button>
+        <button type="button" class="pill" id="btn-pause" aria-label="Pausar simulación" title="Pausar simulación">⏸</button>
       </div>
     </header>
 
@@ -73,12 +75,12 @@
             <div class="speed-unit" id="unit-speed">MPH · 190 km/h</div>
           </div>
           <div class="pedals">
-            <div class="pedal"><span>THR</span><div class="bar-wrap"><div class="bar thr" id="bar-thr" style="height:75%"></div></div><span id="val-thr">75%</span></div>
-            <div class="pedal"><span>BRK</span><div class="bar-wrap"><div class="bar brk" id="bar-brk" style="height:0%"></div></div><span id="val-brk">0%</span></div>
+            <div class="pedal"><span>THR</span><div class="bar-wrap"><div class="bar thr" id="bar-thr" style="--level:0.75"></div></div><span id="val-thr">75%</span></div>
+            <div class="pedal"><span>BRK</span><div class="bar-wrap"><div class="bar brk" id="bar-brk" style="--level:0"></div></div><span id="val-brk">0%</span></div>
           </div>
         </div>
         <div class="fcircle">
-          <svg class="fc-svg" viewBox="-55 -55 110 110" aria-label="Friction circle">
+          <svg class="fc-svg" id="fc-svg" viewBox="-55 -55 110 110" role="img" aria-label="Círculo de fricción">
             <circle cx="0" cy="0" r="46" fill="none" stroke="#334155" stroke-width="2" id="fc-outer"/>
             <circle cx="0" cy="0" r="28" fill="none" stroke="#1e293b" stroke-dasharray="3 3"/>
             <line x1="-48" y1="0" x2="48" y2="0" stroke="#334155"/>
@@ -96,7 +98,7 @@
       <section class="card">
         <div class="card-title"><span id="lbl-track">Circuito &amp; Geocercas (150m)</span><span>SSE /events · 10Hz</span></div>
         <div class="track-wrap">
-          <svg class="track-svg" viewBox="0 0 460 280">
+          <svg class="track-svg" viewBox="0 0 460 280" role="img" aria-labelledby="lbl-track">
             <path id="track-path" d="M 75 215 L 75 80 Q 75 36 125 36 L 290 36 Q 355 36 375 88 L 395 150 Q 406 205 352 222 L 250 236 Q 205 242 190 190 L 178 145 Q 165 112 135 142 L 112 212 Q 95 245 75 215 Z" fill="none" stroke="#334155" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
             <path d="M 75 215 L 75 80 Q 75 36 125 36 L 290 36 Q 355 36 375 88 L 395 150 Q 406 205 352 222 L 250 236 Q 205 242 190 190 L 178 145 Q 165 112 135 142 L 112 212 Q 95 245 75 215 Z" fill="none" stroke="#60a5fa" stroke-width="2.5" stroke-dasharray="6 5" opacity="0.75"/>
             <g fill="#fbbc04" font-family="Roboto Mono, monospace" font-size="11" font-weight="700">
@@ -124,7 +126,10 @@
       const es = new URLSearchParams(location.search).get('lang') !== 'en';
       if (!es) {
         document.documentElement.lang = 'en';
+        document.title = 'Koru Interactive Telemetry & Split-Brain Simulator';
         document.getElementById('sim-title').textContent = 'koru · Split-Brain Simulator (10Hz)';
+        document.getElementById('sim-controls').setAttribute('aria-label', 'Simulator controls');
+        document.getElementById('fc-svg').setAttribute('aria-label', 'Friction circle');
         document.getElementById('lbl-gauges').textContent = 'Derived Telemetry';
         document.getElementById('lbl-track').textContent = 'Track & Geofences (150m)';
         document.getElementById('lbl-feed').textContent = 'Live Coach Radio';
@@ -134,7 +139,8 @@
 
       const pathEl = document.getElementById('track-path');
       const totalLen = pathEl.getTotalLength();
-      let coach = 'superaj', rain = false, physics = true, paused = false, t = 0, lastPhase = -1;
+      const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)');
+      let coach = 'superaj', rain = false, physics = true, paused = reduceMotion.matches, t = 0, lastPhase = -1;
 
       const phases = [
         { range: [0.00, 0.16], nameEs: 'Recta Principal', nameEn: 'Main Straight', spd: 126, thr: 94, brk: 0, glat: 0.08, glong: 0.45, type: 'straight' },
@@ -183,8 +189,16 @@
       function pushMsg(kind, badge, text) {
         const div = document.createElement('div');
         div.className = 'msg ' + kind;
-        const now = new Date().toLocaleTimeString([], { hour12: false, minute: '2-digit', second: '2-digit' });
-        div.innerHTML = `<div class="msg-head"><span>${badge}</span><span>${now}</span></div><div>${text}</div>`;
+        const head = document.createElement('div');
+        head.className = 'msg-head';
+        const badgeEl = document.createElement('span');
+        badgeEl.textContent = badge;
+        const timeEl = document.createElement('span');
+        timeEl.textContent = new Date().toLocaleTimeString([], { hour12: false, minute: '2-digit', second: '2-digit' });
+        head.append(badgeEl, timeEl);
+        const bodyEl = document.createElement('div');
+        bodyEl.textContent = text;
+        div.append(head, bodyEl);
         feedEl.prepend(div);
         while (feedEl.children.length > 4) feedEl.lastElementChild.remove();
       }
@@ -207,50 +221,81 @@
         }
       }
 
-      document.querySelectorAll('[data-coach]').forEach(btn => {
-        btn.onclick = () => {
-          document.querySelectorAll('[data-coach]').forEach(b => b.classList.remove('active'));
-          btn.classList.add('active');
+      const coachBtns = document.querySelectorAll('[data-coach]');
+      coachBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          coachBtns.forEach(b => {
+            const active = b === btn;
+            b.classList.toggle('active', active);
+            b.setAttribute('aria-pressed', String(active));
+          });
           coach = btn.dataset.coach;
           document.getElementById('active-persona').textContent = btn.textContent.trim().toUpperCase();
           pushMsg('hot', 'HOT PATH · <50ms', callouts.t1.hot[coach]);
-        };
+        });
       });
 
       const rainBtn = document.getElementById('btn-rain');
-      rainBtn.onclick = () => {
+      rainBtn.addEventListener('click', () => {
         rain = !rain;
         rainBtn.classList.toggle('on', rain);
         rainBtn.textContent = rain ? (es ? '🌧️ Lluvia (0.6g)' : '🌧️ Rain (0.6g)') : (es ? '☀️ Seco (1.0g)' : '☀️ Dry (1.0g)');
         document.getElementById('grip-tag').textContent = rain ? 'GRIP 60%' : 'GRIP 100%';
         document.getElementById('fc-outer').setAttribute('r', rain ? '30' : '46');
-      };
+      });
 
       const physBtn = document.getElementById('btn-phys');
-      physBtn.onclick = () => {
+      physBtn.addEventListener('click', () => {
         physics = !physics;
         physBtn.classList.toggle('off', !physics);
         physBtn.textContent = physics ? (es ? '🧠 Física: ON' : '🧠 Physics: ON') : (es ? '⚠️ Física: OFF' : '⚠️ Physics: OFF');
         emitForPhase(2);
-      };
+      });
 
       const pauseBtn = document.getElementById('btn-pause');
-      pauseBtn.onclick = () => {
-        paused = !paused;
+      function syncPauseBtn() {
+        const label = paused
+          ? (es ? 'Reanudar simulación' : 'Resume simulation')
+          : (es ? 'Pausar simulación' : 'Pause simulation');
         pauseBtn.textContent = paused ? '▶' : '⏸';
-      };
+        pauseBtn.setAttribute('aria-label', label);
+        pauseBtn.title = label;
+      }
+      syncPauseBtn();
+      pauseBtn.addEventListener('click', () => {
+        paused = !paused;
+        syncPauseBtn();
+      });
+      reduceMotion.addEventListener('change', e => {
+        paused = e.matches;
+        syncPauseBtn();
+      });
 
       emitForPhase(1);
       emitForPhase(2);
 
+      const carDot = document.getElementById('car-dot');
+      const carRing = document.getElementById('car-ring');
+      const valSpeed = document.getElementById('val-speed');
+      const unitSpeed = document.getElementById('unit-speed');
+      const barThr = document.getElementById('bar-thr');
+      const valThr = document.getElementById('val-thr');
+      const barBrk = document.getElementById('bar-brk');
+      const valBrk = document.getElementById('val-brk');
+      const valGlat = document.getElementById('val-glat');
+      const valGlong = document.getElementById('val-glong');
+      const valUsage = document.getElementById('val-usage');
+      const sectorName = document.getElementById('sector-name');
+      const fcDot = document.getElementById('fc-dot');
+
       setInterval(() => {
-        if (paused) return;
+        if (paused || document.hidden) return;
         t = (t + 0.008) % 1;
         const pt = pathEl.getPointAtLength(t * totalLen);
-        document.getElementById('car-dot').setAttribute('cx', pt.x.toFixed(1));
-        document.getElementById('car-dot').setAttribute('cy', pt.y.toFixed(1));
-        document.getElementById('car-ring').setAttribute('cx', pt.x.toFixed(1));
-        document.getElementById('car-ring').setAttribute('cy', pt.y.toFixed(1));
+        carDot.setAttribute('cx', pt.x.toFixed(1));
+        carDot.setAttribute('cy', pt.y.toFixed(1));
+        carRing.setAttribute('cx', pt.x.toFixed(1));
+        carRing.setAttribute('cy', pt.y.toFixed(1));
 
         const pIdx = phases.findIndex(p => t >= p.range[0] && t < p.range[1]);
         const idx = pIdx >= 0 ? pIdx : 0;
@@ -269,21 +314,20 @@
         const totalG = Math.hypot(glat, glong);
         const usage = Math.min(135, Math.round((totalG / (1.45 * gripScale)) * 100));
 
-        document.getElementById('val-speed').textContent = String(spd);
-        document.getElementById('unit-speed').textContent = `${spd} MPH · ${Math.round(spd * 1.609)} km/h`;
-        document.getElementById('bar-thr').style.height = thr + '%';
-        document.getElementById('val-thr').textContent = thr + '%';
-        document.getElementById('bar-brk').style.height = brk + '%';
-        document.getElementById('val-brk').textContent = brk + '%';
-        document.getElementById('val-glat').textContent = (glat >= 0 ? '+' : '') + glat.toFixed(2) + 'g';
-        document.getElementById('val-glong').textContent = (glong >= 0 ? '+' : '') + glong.toFixed(2) + 'g';
-        document.getElementById('val-usage').textContent = usage + '%';
-        document.getElementById('sector-name').textContent = '📍 ' + (es ? p.nameEs : p.nameEn);
+        valSpeed.textContent = String(spd);
+        unitSpeed.textContent = `${spd} MPH · ${Math.round(spd * 1.609)} km/h`;
+        barThr.style.setProperty('--level', (thr / 100).toFixed(2));
+        valThr.textContent = thr + '%';
+        barBrk.style.setProperty('--level', (brk / 100).toFixed(2));
+        valBrk.textContent = brk + '%';
+        valGlat.textContent = (glat >= 0 ? '+' : '') + glat.toFixed(2) + 'g';
+        valGlong.textContent = (glong >= 0 ? '+' : '') + glong.toFixed(2) + 'g';
+        valUsage.textContent = usage + '%';
+        sectorName.textContent = '📍 ' + (es ? p.nameEs : p.nameEn);
 
-        const dot = document.getElementById('fc-dot');
-        dot.setAttribute('cx', (glat * 28).toFixed(1));
-        dot.setAttribute('cy', (-glong * 28).toFixed(1));
-        dot.setAttribute('fill', usage > 98 ? '#ea4335' : usage > 75 ? '#fbbc04' : '#4ade80');
+        fcDot.setAttribute('cx', (glat * 28).toFixed(1));
+        fcDot.setAttribute('cy', (-glong * 28).toFixed(1));
+        fcDot.setAttribute('fill', usage > 98 ? '#ea4335' : usage > 75 ? '#fbbc04' : '#4ade80');
       }, 100);
     })();
   </script>

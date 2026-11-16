@@ -1,8 +1,8 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Workshop práctico oficial: Construyendo IA Confiable a 100 MPH — DevFest Pereira 2026 con Sebastián Gómez.">
   <title>IA Confiable a 100 MPH | Workshop DevFest Pereira 2026</title>
   <link rel="stylesheet" href="../i18n.css">
@@ -18,12 +18,12 @@
 <body>
   <main class="viewport" id="viewport" aria-label="Presentación Workshop IA Confiable a 100 MPH"></main>
   <div class="key-help" id="key-help">← → / Espacio · Shift+← → saltar slide · P presentador · F pantalla completa · C controles</div>
-  <div class="progress-rail"><span id="progress"></span></div>
+  <div class="progress-rail" aria-hidden="true"><span id="progress"></span></div>
   <nav class="controlbar" aria-label="Controles de la presentación">
-    <button id="previous" aria-label="Anterior">←</button>
-    <button id="next" aria-label="Siguiente">→</button>
-    <button id="presenter">Presentador (P)</button>
-    <button id="fullscreen">Pantalla completa (F)</button>
+    <button type="button" id="previous" aria-label="Diapositiva anterior" aria-keyshortcuts="ArrowLeft PageUp">←</button>
+    <button type="button" id="next" aria-label="Siguiente diapositiva" aria-keyshortcuts="ArrowRight PageDown">→</button>
+    <button type="button" id="presenter" aria-keyshortcuts="P">Presentador (P)</button>
+    <button type="button" id="fullscreen" aria-pressed="false" aria-keyshortcuts="F">Pantalla completa (F)</button>
   </nav>
 </body>
 </html>

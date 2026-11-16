@@ -12,7 +12,11 @@
   try { channel = new BroadcastChannel(session); } catch {}
 
   if (!es) {
+    document.title = `Presenter | ${TALK.title}`;
     $('#pres-title').textContent = TALK.title;
+    $('#connection').textContent = 'Connecting to presentation…';
+    $('#current-preview').title = 'Current slide';
+    $('#next-preview').title = 'Next slide';
     $('#previous').textContent = '← Previous';
     $('#next').textContent = 'Next →';
     $('#reset').textContent = 'Reset timer';
@@ -80,15 +84,13 @@
       : `Plan: enter at ${format(before * 60)} · spend ${format(duration * 60)} · finish at ${format((before + duration) * 60)}.`;
 
     $('#schedule').innerHTML = TALK.slides
-      .map((s, i) => `<li class="${i === state.index ? 'active' : ''}"><button data-goto="${i}">${String(i + 1).padStart(2, '0')} · ${esc(clean(s.title))} (${format(s.minutes * planned / total * 60)})</button></li>`)
+      .map((s, i) => `<li class="${i === state.index ? 'active' : ''}"><button type="button" data-goto="${i}"${i === state.index ? ' aria-current="step"' : ''}>${String(i + 1).padStart(2, '0')} · ${esc(clean(s.title))} (${format(s.minutes * planned / total * 60)})</button></li>`)
       .join('');
-    document.querySelectorAll('[data-goto]').forEach(b => {
-      b.onclick = () => command('goto', { index: Number(b.dataset.goto) });
-    });
     tick();
   }
 
   function tick() {
+    if (document.hidden) return;
     const now = Date.now();
     $('#wall-clock').textContent = new Date(now).toLocaleTimeString(es ? 'es-CO' : 'en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
     const elapsed = state.startedAt ? ((state.pausedAt || now) - state.startedAt - state.pausedMs) / 1000 : 0;
@@ -113,25 +115,30 @@
     render();
   }
 
-  if (channel) channel.onmessage = e => receive(e.data);
+  channel?.addEventListener('message', e => receive(e.data));
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) tick(); });
   addEventListener('message', e => {
     if (e.source !== opener) return;
     if (location.origin !== 'null' && e.origin !== location.origin) return;
     receive(e.data);
   });
 
-  $('#previous').onclick = () => command('previous');
-  $('#next').onclick = () => command('next');
-  $('#clock').onclick = () => command('clock');
-  $('#reset').onclick = () => command('reset-clock');
+  $('#schedule').addEventListener('click', e => {
+    const btn = e.target.closest('[data-goto]');
+    if (btn) command('goto', { index: Number(btn.dataset.goto) });
+  });
+  $('#previous').addEventListener('click', () => command('previous'));
+  $('#next').addEventListener('click', () => command('next'));
+  $('#clock').addEventListener('click', () => command('clock'));
+  $('#reset').addEventListener('click', () => command('reset-clock'));
 
   addEventListener('keydown', e => {
-    if (/INPUT|TEXTAREA|SELECT|BUTTON/.test(e.target.tagName)) return;
+    if (e.altKey || e.ctrlKey || e.metaKey || /INPUT|TEXTAREA|SELECT|BUTTON|SUMMARY/.test(e.target.tagName)) return;
     if (['ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); command('next'); }
     if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); command('previous'); }
   });
 
-  $('#sources').innerHTML = TALK.sources.map(s => `<li><a href="${esc(s.url)}" target="_blank" rel="noreferrer">${esc(s.title)}</a></li>`).join('');
+  $('#sources').innerHTML = TALK.sources.map(s => `<li><a href="${esc(s.url)}" target="_blank" rel="noopener noreferrer">${esc(s.title)}</a></li>`).join('');
   render();
   send({ type: 'presenter-ready' });
   setInterval(tick, 500);
