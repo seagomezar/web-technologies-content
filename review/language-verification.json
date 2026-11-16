@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-11-05T23:54:07.611Z",
+  "checkedAt": "2026-11-16T01:35:33.705Z",
   "languages": [
     "en",
     "es"
@@ -40,10 +40,19 @@
     {
       "name": "es: all 17 native adapter workflows preserve contracts, stable select values and session cleanup",
       "status": "pass"
+    },
+    {
+      "name": "Offline language switching preserves city, timing, slide and build without network requests",
+      "status": "pass"
+    },
+    {
+      "name": "Spanish setup, provenance, full review, URL inventory, 20 judgments and CSV exist",
+      "status": "pass"
     }
   ],
   "limitations": [
     "Native adapter checks use explicit contract doubles; model quality and language support are not inferred.",
     "Original source documents, technical contracts, licenses and explicitly English model samples retain their declared language."
-  ]
+  ],
+  "status": "passed"
 }

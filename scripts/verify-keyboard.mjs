@@ -7,7 +7,7 @@ const browser=await chromium.launch({channel:'chrome'});
 try {
   const context=await browser.newContext({reducedMotion:'reduce'});
   const page=await context.newPage();
-  await page.goto('http://localhost:8080/slides/index.html?lang=es#6.0');
+  await page.goto('http://localhost:8080/slides/index.html?lang=es#8.0');
   await page.locator('.demo-link').focus();
   const opened=context.waitForEvent('page');
   await page.keyboard.press('Enter');
@@ -15,11 +15,11 @@ try {
   await demo.waitForLoadState();
   assert.equal(new URL(demo.url()).pathname,'/demos/reading-route.html');
   assert.equal(new URL(demo.url()).searchParams.get('lang'),'es');
-  assert.equal(new URL(page.url()).hash,'#6.0');
+  assert.equal(new URL(page.url()).hash,'#8.0');
   await demo.close();
   await page.evaluate(()=>document.querySelector('.demo-link').blur());
   await page.keyboard.press('Enter');
-  await page.waitForFunction(()=>deck.getState().index===5&&deck.getState().step===1);
+  await page.waitForFunction(()=>deck.getState().index===8&&deck.getState().step===0);
   await page.locator('#presenter').focus();
   const present=context.waitForEvent('page');
   await page.keyboard.press('Enter');

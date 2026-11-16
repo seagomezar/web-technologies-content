@@ -626,5 +626,13 @@
   "Enforce hard invariants with deterministic code before consulting a language model.": "Impone las reglas invariantes con código determinista antes de consultar a un modelo de lenguaje.",
   "Evaluate coverage, abstentions, and accepted errors across 8 labeled test cases.": "Evalúa la cobertura, las abstenciones y los errores en 8 casos de prueba etiquetados.",
   "Run the baseline evaluator, adjust the margin slider, and inspect per-item results.": "Ejecuta el evaluador de referencia, ajusta el margen e inspecciona los resultados por elemento.",
-  "Routing uncertain cases to review reduces accepted errors at the cost of coverage.": "Enviar los casos inciertos a revisión reduce los errores aceptados a cambio de menor cobertura automática."
+  "Routing uncertain cases to review reduces accepted errors at the cost of coverage.": "Enviar los casos inciertos a revisión reduce los errores aceptados a cambio de menor cobertura automática.",
+  "Open Trustable AI Workshop": "Abrir Workshop IA a 100 MPH",
+  "Workshop · DevFest Pereira 2026: Building Trustable AI at 100 MPH": "Workshop · DevFest Pereira 2026: Construyendo IA Confiable a 100 MPH",
+  "Official 90-minute Google Codelab workshop (37 slides, live cockpit simulator, facilitator presenter view, and modernized Python SSE + React/Gemini 3.8 code covering all 12 steps).": "Workshop práctico oficial de Google Codelabs de 90 minutos (37 diapositivas, simulador de cabina en vivo, vista de facilitador y código modernizado Python SSE + React/Gemini 3.8 para los 12 pasos).",
+  "Workshop Slide Deck (37 slides)": "Diapositivas del Workshop (37 slides)",
+  "Facilitator Presenter View": "Vista del Facilitador (Presentador)",
+  "Interactive Split-Brain Simulator": "Simulador Split-Brain Interactivo",
+  "Updated GitHub Repo": "Repo GitHub Actualizado",
+  "Workshop Code & Setup Guide": "Código del Workshop y Guía Local"
 }

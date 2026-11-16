@@ -2,7 +2,7 @@
 
 [English](README.md) · Español
 
-Siete propuestas de contenido para sebastian-gomez.com, cada una con tres demos HTML originales, y una charla de WebMCP en inglés y español con 16 diapositivas y un plan de 30 minutos.
+Siete propuestas de contenido para sebastian-gomez.com, cada una con tres demos HTML originales, y una charla de WebMCP en inglés y español con 20 diapositivas y un plan de 30 minutos.
 La revisión abarca las 20 comunicaciones del CSV y las 62 URL distintas normalizadas del archivo.
 
 ## Abrir el trabajo
@@ -145,3 +145,12 @@ Ejecuta `uv run --with pandas python scripts/export-review-csv.py` para validar 
 Ejecuta `python3 scripts/package-deliverables.py` para reconstruir el ZIP portátil bilingüe.
 
 No se ha desplegado el sitio ni enviado correos, formularios o inscripciones a pruebas.
+
+## Workshop DevFest Pereira 2026: Construyendo IA Confiable a 100 MPH
+
+- [Presentación del Workshop (37 diapositivas, ES/EN)](slides-trustable-ai/index.html?lang=es)
+- [Vista del Facilitador / Presentador (plan de 90 min)](slides-trustable-ai/presenter.html?lang=es)
+- [Simulador Split-Brain Interactivo](slides-trustable-ai/live-sim.html?lang=es)
+- [Repositorio Oficial Actualizado en GitHub (`seagomezar/trustable-ai-codelab`)](https://github.com/seagomezar/trustable-ai-codelab)
+- [Código local reparado y modernizado (FastAPI SSE + Koru React + Gemini 3.8)](workshops/trustable-ai-codelab/README.md)
+- Verificación automatizada del workshop: `node scripts/verify-trustable-ai-workshop.mjs`
