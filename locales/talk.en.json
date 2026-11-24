@@ -1,7 +1,7 @@
 {
-  "title": "WebMCP: Safe, Testable Browser Tools with Shared UI State",
+  "title": "WebMCP: Browser Tools with Shared UI State",
   "defaults": {
-    "structure": "One hands-on talk around WebMCP, 24 visual slides, and three Stitch-designed demos",
+    "structure": "30-minute hands-on WebMCP talk: 24 slides and 3 live demos",
     "language": "English",
     "city": "City to be confirmed"
   },
@@ -9,13 +9,13 @@
     {
       "id": "opening",
       "title": "Your website<br>has tools, too.",
-      "subtitle": "WebMCP: Expose your web app's functions and forms<br>to AI agents safely and verifiably.",
+      "subtitle": "WebMCP exposes your app's functions and forms<br>to browser AI agents.",
       "speaker": "Sebastián Gómez · Google Developer Expert (Web Technologies)",
       "photo": "assets/sebastian-gomez.jpg",
       "badge": "assets/gde-web-badge.svg",
       "builds": [],
       "notes": [
-        "A web page already knows how to search, filter, build a reading list, or confirm an order. How can we offer those same actions to an agent without brittle DOM scraping or losing a human-friendly UI?\n\nThis 30-minute walkthrough draws directly on Chrome's official WebMCP docs and videos: Imperative & Declarative APIs, defending against permission fatigue and Indirect Prompt Injection, DevTools debugging, and non-deterministic testing with webmcp-evals."
+        "Your page already knows how to search, filter, build a reading list, or confirm an order. The question is how to hand those actions to an agent without scraping the DOM or duplicating the UI.\n\nIn 30 minutes we cover Chrome's WebMCP APIs (imperative and declarative), defending against permission fatigue and Indirect Prompt Injection, DevTools inspection, and testing with webmcp-evals."
       ]
     },
     {
@@ -29,7 +29,7 @@
           "verdictTone": "warn",
           "tone": "yellow",
           "nodes": [
-            { "title": "1. User", "sub": "Asks to add a blog post to read" },
+            { "title": "1. User", "sub": "Asks to save an article" },
             { "edge": "prompt", "title": "2. LLM Client", "sub": "Claude · IDE · CLI" },
             { "edge": "JSON-RPC", "title": "3. MCP Server", "sub": "Separate service & auth" },
             { "edge": "API / SQL", "title": "4. Database", "sub": "Open web tab stays unaware" }
@@ -38,13 +38,13 @@
       ],
       "builds": [],
       "notes": [
-        "Before looking at code, let's clarify traditional server MCP: when the user asks an external client to add an article, the agent calls a separate MCP server. Your open browser tab shares neither that session nor the live visual update."
+        "In traditional server MCP, the user prompts an external client and the agent calls a separate MCP server. Your open browser tab shares neither that session nor the screen update."
       ]
     },
     {
       "id": "webmcp-lane",
       "flowOnly": true,
-      "title": "WebMCP · Inside the active browser tab.",
+      "title": "WebMCP · Inside the active tab.",
       "lanes": [
         {
           "id": "webmcp",
@@ -53,47 +53,47 @@
           "verdictTone": "ok",
           "tone": "blue",
           "nodes": [
-            { "title": "1. End User", "sub": "With your app open on screen" },
-            { "edge": "prompt", "title": "2. Browser Agent", "sub": "Gemini · Extension · DevTools" },
-            { "edge": "modelContext", "title": "3. Your Web App (JS / HTML)", "sub": "Runs add_to_route({ articleId })" },
-            { "edge": "render", "title": "4. Live DOM", "sub": "Cookies, localStorage & synced UI" }
+            { "title": "1. User", "sub": "With your app open" },
+            { "edge": "prompt", "title": "2. Agent", "sub": "Gemini · Extension · DevTools" },
+            { "edge": "modelContext", "title": "3. Your Web App (JS / HTML)", "sub": "add_to_route({ articleId })" },
+            { "edge": "render", "title": "4. Live DOM", "sub": "Same cookies & instant UI" }
           ]
         }
       ],
       "builds": [],
       "notes": [
-        "With WebMCP, that exact same prompt runs inside the user's active browser session: reusing cookies, localStorage, and live page state while updating the visible DOM right in front of them."
+        "With WebMCP, that same request runs inside the open tab. It reuses cookies, localStorage, and live memory state, and updates the UI right in front of the user."
       ]
     },
     {
       "id": "browser-broker",
-      "title": "Which LLM or agent sends the prompt?",
+      "title": "Which agent sends the prompt?",
       "agentComment": "Gemini / Prompt API",
       "sources": [
         {
           "title": "Option A · In-Browser Model",
           "color": "blue",
           "chips": ["Gemini in Chrome", "Prompt API", "On-device"],
-          "body": "The user types a prompt in the browser side panel; the model runs on-device (#prompt-api-tool-use) or in the browser cloud."
+          "body": "The user types in the side panel; the model runs on-device (#prompt-api-tool-use) or in Chrome's cloud."
         }
       ],
       "hub": {
         "badge": "BROWSER BROKER",
         "title": "document.modelContext",
         "points": [
-          "Discovers tools from the active tab",
-          "Validates arguments against JSON Schema",
-          "Executes in your document's context"
+          "Lists tools from the active tab",
+          "Validates arguments via JSON Schema",
+          "Executes inside your document"
         ]
       },
       "target": {
         "badge": "YOUR WEB APP",
         "title": "registerTool({ execute })",
-        "body": "Adds the article about \"small models\" to your blog posts reading list in the live DOM."
+        "body": "Adds \"small models\" to the reading list in the live DOM."
       },
       "builds": [],
       "notes": [
-        "First option: an in-browser LLM or the official example extension in on-device Prompt API mode. The canonical browser interface is document.modelContext."
+        "Prompts can come from Gemini in Chrome or the example extension running Prompt API on-device. Either way, the browser broker is document.modelContext."
       ]
     },
     {
@@ -106,125 +106,125 @@
           "title": "Option B · Connected Agent",
           "color": "yellow",
           "chips": ["WebMCP Extension", "DevTools MCP", "Claude / Gemini"],
-          "body": "An extension agent or MCP bridge discovers and runs page tools instead of scraping the DOM."
+          "body": "An extension or MCP bridge discovers and calls page tools instead of scraping the DOM."
         }
       ],
       "hub": {
         "badge": "BROWSER BROKER",
         "title": "document.modelContext",
         "points": [
-          "getTools() lists imperative & declarative tools",
-          "ontoolchange broadcasts dynamic updates",
+          "getTools() lists JS and HTML tools",
+          "ontoolchange fires on updates",
           "Enforces Permissions-Policy: tools"
         ]
       },
       "target": {
         "badge": "YOUR WEB APP",
         "title": "registerTool({ execute })",
-        "body": "Updates the exact same visible state and DOM used by human buttons."
+        "body": "Updates the same state and DOM as your human buttons."
       },
       "builds": [],
       "notes": [
-        "Second option: GoogleChromeLabs' example agentic extension or chrome-devtools-mcp with --categoryExperimentalWebmcp. Both consume the exact same document.modelContext contract."
+        "External agents connect through GoogleChromeLabs/webmcp-extension or chrome-devtools-mcp with --categoryExperimentalWebmcp. Both read the same document.modelContext contract."
       ]
     },
     {
       "id": "intent",
       "eyebrow": "Actuation vs. Contract",
       "title": "Why WebMCP instead<br>of scraping the DOM?",
-      "subtitle": "Synthesizing screenshots + DOM + AX tree is slow and brittle.",
+      "subtitle": "Guessing clicks from screenshots and DOM is slow and brittle.",
       "meme": {
         "src": "assets/webmcp/meme-dom-scraping.jpg",
         "alt": "Stressed robot trying to balance a wobbling Jenga tower of HTML buttons vs a cool sunglasses robot tapping one glowing WebMCP tool button",
         "leftLabel": "Without WebMCP: DOM Scraping",
         "rightLabel": "With WebMCP: Your Contract",
-        "bottom": "One CSS class rename breaks the scraper. Your typed tool keeps working."
+        "bottom": "Rename one CSS class and the scraper falls. Your typed tool keeps working."
       },
       "points": [
         {
-          "title": "No hunting for buttons",
-          "body": "Your app explicitly declares add_to_route({ articleId }) and its JSON Schema.",
+          "title": "No selector hunting",
+          "body": "Your app declares add_to_route({ articleId }) with its JSON Schema.",
           "color": "blue",
           "step": 1
         },
         {
           "title": "One function, shared UI",
-          "body": "Human clicks and agent calls run the exact same callback on the visible DOM.",
+          "body": "Human clicks and agent calls run the same callback on the DOM.",
           "color": "green",
           "step": 2
         }
       ],
       "builds": ["A tool", "A shared page"],
       "notes": [
-        "Without WebMCP, an agent has to synthesize screenshots, DOM nodes, and the accessibility tree just to guess which button to click. Like the Jenga tower on the left, one layout tweak breaks it.",
-        "The agent needs a bounded action, such as adding an article. With WebMCP, you declare that function on document.modelContext with an explicit JSON schema so the agent calls it directly.",
-        "The payoff is immediate: zero duplicate backend or UI, and every update happens live in front of the user."
+        "Without WebMCP, an agent combines screenshots, DOM nodes, and the accessibility tree to guess where to click. Like the Jenga tower on the left, one layout or language change breaks it.",
+        "The agent needs a bounded action on document.modelContext with a fixed schema so it stops hunting buttons and calls your function directly.",
+        "You avoid duplicating your backend or UI, and every change appears live in the same tab."
       ]
     },
     {
       "id": "cuj-flows",
       "eyebrow": "User Journey Design (CUJ)",
       "title": "From 1 tool to<br>chained workflows.",
-      "subtitle": "Design around user goals, not isolated UI buttons.",
+      "subtitle": "Group tools by user task, not by button.",
       "media": [
         {
           "src": "assets/webmcp/contact-flow.jpg",
           "badge": "1 step · findClient",
           "tone": "tone-ok",
-          "caption": "Simple goal: one focused tool fulfills the user's intent."
+          "caption": "Direct task: 1 tool completes the lookup."
         },
         {
           "src": "assets/webmcp/email-flow.jpg",
-          "badge": "3 steps · Full CUJ",
+          "badge": "3 steps · Full workflow",
           "tone": "tone-warn",
-          "caption": "Multi-step goal: recordTranscript → summarizeNotes → draftEmail."
+          "caption": "Multi-step task: recordTranscript → summarizeNotes → draftEmail."
         }
       ],
       "points": [
         {
-          "title": "One shared app service",
-          "body": "UI buttons, declarative forms, and registerTool() invoke the same service.",
+          "title": "One shared service",
+          "body": "Buttons, declarative forms, and registerTool() call the same logic.",
           "color": "blue"
         },
         {
-          "title": "Role-play before coding",
-          "body": "Simulate the user-agent conversation to uncover missing state or parameters.",
+          "title": "Simulate before coding",
+          "body": "Walk through the user-agent dialogue to spot missing parameters.",
           "color": "yellow",
           "step": 1
         }
       ],
-      "builds": ["Role-play the journey"],
+      "builds": ["Simulate the dialogue"],
       "notes": [
-        "These two official Chrome diagrams capture tool strategy: start from the Critical User Journey (CUJ). Simple goals take one tool (findClient); complex goals chain clean steps.",
-        "Before coding, role-play the conversation turn by turn to identify required context, UI reactions, and how to share a single application service."
+        "These two diagrams from developer.chrome.com show the range: a single lookup takes findClient; a multi-step task chains recordTranscript, summarizeNotes, and draftEmail.",
+        "Before writing code, rehearse the conversation turn by turn to see what the user asks, what context the agent lacks, and which shared service updates the UI."
       ]
     },
     {
       "id": "demo-route",
       "title": "Reading List: Imperative + Declarative.",
-      "subtitle": "Try add_to_route alongside the declarative &lt;form toolname=\"filter_catalog\"&gt;.",
+      "subtitle": "Try add_to_route and the &lt;form toolname=\"filter_catalog\"&gt; form.",
       "demoTitle": "Reading List · Shared State",
       "steps": [],
       "builds": [],
       "notes": [
-        "Demo 01 redesigned in Stitch and embedded with allow=\"tools\". Exposes 4 real tools: add_to_route, remove_from_route, list_reading_route (readOnlyHint: true), and the declarative HTML form filter_catalog. Serve via http://localhost:8080 when testing with the extension."
+        "Demo 01 embedded with allow=\"tools\". It exposes 4 tools: add_to_route, remove_from_route, list_reading_route (readOnlyHint: true), and the HTML form filter_catalog. Open over HTTPS or http://localhost:8080 when testing with the extension."
       ]
     },
     {
       "id": "tool-design",
       "kind": "code",
       "title": "Imperative API:<br>registerTool.",
-      "subtitle": "Name ≤30 chars, explicit enum, and shared callback.",
-      "builds": ["A bounded contract", "Shared callback"],
+      "subtitle": "Name ≤30 chars, live enum, and shared callback.",
+      "builds": ["Bounded contract", "Shared callback"],
       "stepCallouts": [
-        "Provide a concise name (≤30 chars) and positive-language description.",
-        "Constrain articleId with an enum generated from your live catalog.",
-        "Pass your UI's existing add function straight to execute."
+        "Use a short name (≤30 chars) and state when to call the tool.",
+        "Build the enum from your catalog so the agent only picks valid IDs.",
+        "Pass your buttons' existing add function directly to execute."
       ],
       "notes": [
-        "The Imperative API calls document.modelContext.registerTool(). Keep add_to_route short and describe when to invoke it in positive terms.",
-        "Our schema() helper builds a strict JSON Schema with required and additionalProperties: false, bounding articleId to live catalog IDs.",
-        "execute receives add: the exact same validation and render callback triggered when a human clicks the Add button."
+        "The imperative API registers functions via document.modelContext.registerTool(). Keep add_to_route short and say directly when to invoke it.",
+        "schema() enforces required and additionalProperties: false, while enum restricts articleId to real catalog IDs.",
+        "execute points to add: the same function that validates, skips duplicates, and re-renders after a human click."
       ],
       "codeDemo": "reading-route",
       "code": "await document.modelContext.registerTool({\n  name: \"add_to_route\",\n  description: \"Add a reading\",\n  inputSchema: schema({\n    articleId: {\n      type: \"string\",\n      enum: articles.map(a => a.id)\n    }\n  }),\n  execute: add\n});",
@@ -235,17 +235,17 @@
       "id": "declarative-api",
       "kind": "code",
       "title": "Declarative API:<br>HTML Forms.",
-      "subtitle": "Turn existing HTML forms into tools with zero duplicated logic.",
+      "subtitle": "Expose HTML forms as tools without duplicate code.",
       "builds": ["Form attributes", "SubmitEvent.respondWith"],
       "stepCallouts": [
-        "Add toolname, tooldescription, and toolautosubmit straight onto <form>.",
-        "Annotate fields with toolparamdescription to refine the generated JSON Schema.",
-        "Check e.agentInvoked on submit and resolve structured results via e.respondWith()."
+        "Add toolname, tooldescription, and toolautosubmit to <form>.",
+        "Use toolparamdescription to clarify each field in the JSON Schema.",
+        "Check e.agentInvoked on submit and answer via e.respondWith(promise)."
       ],
       "notes": [
-        "You don't always need JavaScript registration: the Declarative API turns a standard HTML <form> into a WebMCP tool via toolname and tooldescription.",
-        "Chrome synthesizes the JSON Schema from inputs, selects, labels, and toolparamdescription, and applies :tool-form-active and :tool-submit-active CSS states while active.",
-        "In the submit handler, e.agentInvoked tells you an agent triggered the form and e.respondWith() sends structured results back without a full page reload."
+        "You do not always need JavaScript to register a tool. A standard <form> with toolname and tooldescription becomes a WebMCP tool.",
+        "Chrome builds the JSON Schema from inputs, selects, and toolparamdescription, and toggles :tool-form-active and :tool-submit-active while the agent fills the form.",
+        "On submit, e.agentInvoked confirms an agent triggered it, and e.respondWith() returns structured data without reloading the page."
       ],
       "codeDemo": "reading-route",
       "code": "<form toolname=\"filter_catalog\"\n  tooldescription=\"Filter articles\"\n  toolautosubmit>\n  <input name=\"query\"\n    toolparamdescription=\"Search keyword\">\n</form>\n// On submit:\nif (e.agentInvoked) {\n  e.preventDefault();\n  e.respondWith(Promise.resolve(res));\n}",
@@ -256,15 +256,15 @@
       "id": "errors",
       "kind": "code",
       "title": "Structured errors<br>with retryable.",
-      "subtitle": "Actionable failures let the agent self-correct.",
-      "builds": ["A clear next step"],
+      "subtitle": "Clear errors let the agent fix its next call.",
+      "builds": ["Recovery guidance"],
       "stepCallouts": [
-        "Reject unknown IDs before mutating state and return a stable code.",
-        "Explain how to recover and set retryable: true."
+        "Validate before mutating state and return a stable error code.",
+        "Say how to fix the argument and mark retryable: true."
       ],
       "notes": [
-        "Official best practices emphasize strict code validation. If an unknown articleId arrives, reject it cleanly before mutating state.",
-        "Returning a stable code (UNKNOWN_ARTICLE), recovery guidance, and retryable: true lets the agent adjust its parameters on the next turn."
+        "Validate inputs in code before touching state. When an unknown articleId arrives, reject it without mutating the list.",
+        "Returning UNKNOWN_ARTICLE, the expected value, and retryable: true lets the agent correct its call on the next turn."
       ],
       "codeDemo": "reading-route",
       "code": "if (!article) {\n  return {\n    code: \"UNKNOWN_ARTICLE\",\n    error: \"Choose a known articleId.\",\n    retryable: true\n  };\n}",
@@ -275,15 +275,15 @@
       "id": "types",
       "kind": "code",
       "title": "JSON Schema &<br>Character Budgets.",
-      "subtitle": "Strict contracts + Google's recommended character limits.",
+      "subtitle": "Strict schemas and Chrome's recommended character limits.",
       "builds": ["Official budgets"],
       "stepCallouts": [
-        "Build a strict object schema marking every declared property as required.",
-        "Disallow extra keys and stay within Google budgets: name ≤30, desc ≤500, out ≤1.5K."
+        "Mark every declared property as required.",
+        "Reject extra keys and stay within limits: name ≤30, desc ≤500, out ≤1.5K."
       ],
       "notes": [
-        "This helper enforces required properties and additionalProperties: false to minimize parameter hallucinations.",
-        "In addition, Chrome's secure-tools guide recommends character budgets: ≤30 chars for tool/param names, ≤150 per param description, ≤500 per tool description, and ≤1.5K per output."
+        "This helper enforces required and additionalProperties: false so the model cannot invent fields.",
+        "Chrome's secure-tools guide also recommends character budgets: ≤30 chars for names, ≤150 per parameter, ≤500 for descriptions, and ≤1.5K for outputs."
       ],
       "codeDemo": "reading-route",
       "code": "const schema = properties => ({\n  type: \"object\",\n  properties,\n  required: Object.keys(properties),\n  additionalProperties: false\n});\n// Budgets: name<=30, desc<=500, out<=1.5K",
@@ -294,7 +294,7 @@
       "id": "permission-fatigue",
       "eyebrow": "Security · Hint #1",
       "title": "Permission fatigue<br>& readOnlyHint.",
-      "subtitle": "Prompting for everything undermines real security.",
+      "subtitle": "If every read asks permission, users stop reading.",
       "meme": {
         "src": "assets/webmcp/meme-permission-fatigue.jpg",
         "alt": "Developer calmly sipping coffee surrounded by raining yellow alert popups while blindly tapping a huge green allow button",
@@ -303,66 +303,66 @@
       },
       "points": [
         {
-          "title": "Default: assumes side effects",
-          "body": "Safe agents assume every tool mutates state unless told otherwise.",
+          "title": "Default: assumes changes",
+          "body": "Without hints, agents assume the tool mutates state.",
           "color": "yellow"
         },
         {
           "title": "readOnlyHint: true",
-          "body": "Signals pure reads (no UI, backend, or physical changes) so agents skip noisy prompts.",
+          "body": "Marks pure reads (no UI or backend changes) and skips noisy prompts.",
           "color": "green",
           "step": 1
         }
       ],
       "builds": ["Add readOnlyHint"],
       "notes": [
-        "In Google's official security video, Kasper and Maud demonstrate why spamming popups on read-only actions creates permission fatigue: users stop reading and blindly click Allow.",
-        "Adding readOnlyHint: true on side-effect-free queries lets trusted agents execute reads smoothly and save user attention for actions that truly matter."
+        "In Chrome's security video, Kasper and Maud show the trap: prompting on every read exhausts the user, who starts clicking Allow without looking.",
+        "Adding readOnlyHint: true on side-effect-free queries lets the agent read quietly and saves prompts for actions with impact."
       ]
     },
     {
       "id": "security-hints",
       "eyebrow": "Security · Hint #2",
       "title": "readOnlyHint: false vs.<br>consequentialHint: true.",
-      "subtitle": "Real screenshots from Chrome's official WebMCP extension.",
+      "subtitle": "Screenshots from Chrome's official WebMCP extension.",
       "media": [
         {
           "src": "assets/webmcp/ext-permission.png",
           "badge": "readOnlyHint: false",
           "tone": "tone-warn",
-          "caption": "Reversible mutation: offers “Allow on site for this chat”."
+          "caption": "Reversible change: offers “Allow on site for this chat”."
         },
         {
           "src": "assets/webmcp/ext-consequential.png",
           "badge": "consequentialHint: true",
           "tone": "tone-danger",
-          "caption": "High-stakes / irreversible: mandatory red warning, NO “Always allow”."
+          "caption": "Irreversible action: mandatory red warning, no “Always allow”."
         }
       ],
       "points": [
         {
-          "title": "Clear risk boundary",
-          "body": "Payments, bookings, deletions, or physical locks should set consequentialHint: true.",
+          "title": "When to set consequentialHint",
+          "body": "Payments, bookings, deletions, or physical locks need consequentialHint: true.",
           "color": "red"
         },
         {
           "title": "Hints ≠ guarantees",
-          "body": "Annotations guide trusted agents; your app still enforces its own rules.",
+          "body": "Annotations guide trusted agents; your code still validates.",
           "color": "blue",
           "step": 1
         }
       ],
-      "builds": ["Trust & enforcement"],
+      "builds": ["Trust & validation"],
       "notes": [
-        "Compare the two real extension prompts: on the left, a normal write tool offers 'Allow for this chat'. If a dangerous tool used that and a user opted in, a hallucination or injection could run it silently.",
-        "On the right, consequentialHint: true forces a red warning every single time and removes 'Always allow'. Remember: hints advise agents, while your app must still validate."
+        "On the left, a regular write offers 'Allow for this chat'. If a risky tool uses that tier and a user opts in, a mistake or attack can fire it silently.",
+        "On the right, consequentialHint: true always shows a red warning and removes 'Always allow'. Hints advise the agent; they never replace app-side checks."
       ]
     },
     {
       "id": "prompt-injection",
       "eyebrow": "Security · Hint #3",
       "title": "Indirect Prompt Injection<br>& Spotlighting.",
-      "subtitle": "When third-party data tries to hijack your agent.",
+      "subtitle": "When third-party text tries to hijack the agent.",
       "meme": {
         "src": "assets/webmcp/meme-prompt-injection.jpg",
         "alt": "Sneaky raccoon in sunglasses and fake mustache hiding behind a yellow playlist card passing a glowing red remote to a naive AI robot flipping a wall light switch",
@@ -371,51 +371,51 @@
       },
       "points": [
         {
-          "title": "The hidden attack vector",
-          "body": "User comments, reviews, or shared playlists can smuggle malicious directives.",
+          "title": "Third-party text",
+          "body": "Comments, reviews, or shared playlists can hide directives for the LLM.",
           "color": "red"
         },
         {
-          "title": "Spotlighting defense",
-          "body": "untrustedContentHint: true tells the agent to Base64-encode or fence the output as data.",
+          "title": "Spotlighting",
+          "body": "untrustedContentHint: true asks the agent to Base64-encode or fence the output.",
           "color": "blue",
           "step": 1
         }
       ],
       "builds": ["How Spotlighting helps"],
       "notes": [
-        "LLMs process instructions and data in one token stream. In Google's Smart Home demo, poisoned song metadata hijacks an agent into turning off lights that had 'Always allow'.",
-        "Setting untrustedContentHint: true on UGC tools signals the agent to apply Spotlighting—Base64 encoding on server models or random delimiters on-device—so the LLM treats it strictly as data."
+        "LLMs read instructions and data in the same token stream. In Chrome's Smart Home demo, a poisoned song title tricks the agent into turning off lights that had 'Always allow'.",
+        "Marking read_guest_notes with untrustedContentHint: true triggers Spotlighting: Base64 encoding on cloud models or random tags on-device so the LLM treats it strictly as data."
       ]
     },
     {
       "id": "demo-consent",
       "title": "Security Sandbox &<br>Human Consent Gate.",
-      "subtitle": "Toggle all 3 hints live, inspect the injected guest note, and test confirmation.",
+      "subtitle": "Toggle all 3 hints live, inspect the injection, and test confirmation.",
       "demoTitle": "WebMCP Security & Human Consent Sandbox",
       "steps": [
-        "Toggle Developer Controls switches (dynamically re-registers tools via AbortController).",
-        "Inspect attendee note #3 carrying an Indirect Prompt Injection and test read_guest_notes with untrustedContentHint ON/OFF.",
-        "Run stage_ticket_order: verify Reject commits nothing and only an explicit human Confirm resolves the order."
+        "Flip the Developer Controls hints (live re-registration via AbortController).",
+        "Inspect note #3's prompt injection and test read_guest_notes with untrustedContentHint ON/OFF.",
+        "Run stage_ticket_order: verify Reject commits nothing and only Confirm completes the order."
       ],
       "builds": [],
       "notes": [
-        "Demo 02 inspired by Google's Smart Home security demo and redesigned with Stitch. All tickets are fictional ($0). Show live re-registration via AbortController, the guestbook prompt injection targeting set_stage_lights, and the explicit human confirmation gate."
+        "Demo 02 based on Chrome's Smart Home demo. All passes are fictional ($0). Show live re-registration via AbortController, the guestbook payload targeting set_stage_lights, and the human confirmation gate."
       ]
     },
     {
       "id": "annotations",
       "kind": "code",
       "title": "Annotations +<br>Pending Promise.",
-      "subtitle": "consequentialHint advises the client; your code enforces the final click.",
-      "builds": ["The rule lives in the app"],
+      "subtitle": "consequentialHint warns the client; your code enforces the final click.",
+      "builds": ["Validation lives in the app"],
       "stepCallouts": [
-        "Declare consequentialHint: true (and untrustedContentHint on UGC tools).",
-        "Keep the returned Promise pending until a real human click resolves or rejects."
+        "Set consequentialHint: true (and untrustedContentHint on third-party content).",
+        "Keep the Promise pending until a human clicks Confirm or Reject."
       ],
       "notes": [
-        "The demo registers stage_ticket_order with consequentialHint: true so the extension displays its mandatory red warning.",
-        "When your workflow also requires an in-page review, returning a Promise settled only by the human Confirm/Reject button (and handling AbortSignal) guarantees no agent can bypass approval."
+        "stage_ticket_order sets consequentialHint: true so the extension shows its red warning.",
+        "When a flow needs in-page approval, returning a Promise settled only by the human click—and wired to AbortSignal—stops any agent from skipping review."
       ],
       "codeDemo": "consent-cart",
       "code": "const annotations = {\n  consequentialHint: true\n};\n\nasync function requestReview(args) {\n  const prepared = prepare(args);\n  if (prepared.error) return prepared;\n  return new Promise(resolve => {\n    finishReview = resolve;\n  });\n}",
@@ -424,91 +424,91 @@
     },
     {
       "id": "cross-origin",
-      "title": "Cross-Origin Security<br>& Defense-in-Depth.",
-      "subtitle": "Origin isolation, Permissions-Policy, and agent guardrails.",
+      "title": "Cross-Origin Security<br>& Layered Defense.",
+      "subtitle": "Origin isolation, Permissions-Policy, and agent controls.",
       "diagram": [
         {
           "title": "1. Permissions-Policy",
-          "body": "Cross-origin iframes are blocked by default; parents must opt in via &lt;iframe allow=\"tools\"&gt;.",
+          "body": "Cross-origin iframes are blocked; parents opt in with &lt;iframe allow=\"tools\"&gt;.",
           "color": "yellow"
         },
         {
           "title": "2. exposedTo + fromOrigins",
-          "body": "Iframes allowlist origins in registerTool(..., { exposedTo }) and parents pass fromOrigins in getTools().",
+          "body": "Iframes allowlist origins in exposedTo; parents request them in getTools({ fromOrigins }).",
           "color": "blue",
           "step": 1
         },
         {
-          "title": "3. Agent Guardrails",
-          "body": "Token limits, Spotlighting, injection classifiers (Model Armor), and User Alignment Critics.",
+          "title": "3. Agent controls",
+          "body": "Token limits, Spotlighting, classifiers (Model Armor), and Alignment Critics.",
           "color": "green",
           "step": 2
         }
       ],
-      "builds": ["Explicit exposure", "Defense-in-depth"],
+      "builds": ["Explicit exposure", "Layered defense"],
       "notes": [
-        "Cross-origin iframes cannot register or inspect tools by default. The embedding page must delegate via allow=\"tools\".",
-        "Inside the iframe, registerTool(tool, { exposedTo: ['https://trusted.com'] }) gates visibility, and callers must explicitly request it via getTools({ fromOrigins }).",
-        "On the agent side, Chrome's agent security guide layers deterministic limits, Spotlighting, Model Armor classifiers, and alignment critics."
+        "Cross-origin iframes cannot register or read tools by default. The parent page must delegate via allow=\"tools\".",
+        "The iframe restricts visibility with registerTool(tool, { exposedTo: ['https://trusted.com'] }), and the parent lists that origin in getTools({ fromOrigins }).",
+        "On the agent side, Chrome's security guide layers token limits, Spotlighting, classifiers like Model Armor, and Alignment Critics."
       ]
     },
     {
       "id": "devtools-webmcp",
       "eyebrow": "Native Debugging",
       "title": "Chrome DevTools:<br>Application → WebMCP.",
-      "subtitle": "Inspect schemas, security hints, and invocations live.",
+      "subtitle": "Inspect schemas, hints, and invocations live.",
       "media": [
         {
           "src": "assets/webmcp/devtools-webmcp-pane.png",
           "badge": "Application → WebMCP",
           "tone": "tone-ok",
-          "caption": "Dual pane: Available Tools + chronological Invoked Tools log."
+          "caption": "Dual pane: Available Tools and Invoked Tools history."
         },
         {
           "src": "assets/webmcp/devtools-available-tools.png",
           "badge": "Manual Run tool",
           "tone": "tone-ok",
-          "caption": "Inspect details, arguments, and trigger Run tool without waiting on an LLM."
+          "caption": "Inspect arguments and trigger Run tool without waiting on an LLM."
         },
         {
           "src": "assets/webmcp/devtools-manual-test.png",
           "badge": "Invocation log",
           "tone": "tone-warn",
-          "caption": "Chronological status log (Completed, Error, Cancelled) in real time."
+          "caption": "Live status log: Completed, Error, and Cancelled."
         }
       ],
       "points": [
         {
-          "title": "Zero black boxes",
-          "body": "Inspect exact arguments predicted by the agent and the payload your tool returned.",
+          "title": "Live inspection",
+          "body": "See the arguments the agent sent and what your tool returned.",
           "color": "blue"
         },
         {
           "title": "DevTools MCP",
-          "body": "chrome-devtools-mcp --categoryExperimentalWebmcp connects dev agents directly.",
+          "body": "chrome-devtools-mcp --categoryExperimentalWebmcp connects dev agents.",
           "color": "green",
           "step": 1
         }
       ],
-      "builds": ["Automation with DevTools MCP"],
+      "builds": ["DevTools MCP automation"],
       "notes": [
-        "Open Chrome DevTools → Application → WebMCP to audit every imperative and declarative tool, inspect security hints, and run manual tests with Run tool.",
-        "For agent-assisted development, pass --categoryExperimentalWebmcp to chrome-devtools-mcp to enable list_webmcp_tools and execute_webmcp_tool."
+        "In Chrome DevTools → Application → WebMCP you see every JS and HTML tool, its annotations, and a manual Run tool button to test arguments directly.",
+        "With Chrome DevTools MCP, --categoryExperimentalWebmcp exposes list_webmcp_tools and execute_webmcp_tool to coding agents."
       ]
     },
     {
       "id": "debugging",
       "kind": "code",
       "title": "debugging annotation<br>(Chrome 156+).",
-      "subtitle": "Separate developer diagnostics from end-user actions.",
+      "subtitle": "Keep dev diagnostics separate from user actions.",
       "builds": ["Development audience"],
       "stepCallouts": [
-        "Expose a read-only state snapshot to inspect internal state machines.",
-        "Set readOnlyHint: true and debugging: true so consumer agents can filter it out."
+        "Return a read-only snapshot of internal app state.",
+        "Set readOnlyHint: true and debugging: true so consumer agents can hide it."
       ],
       "notes": [
-        "inspect_state returns a structured snapshot of internal app state (including our finite state machines) to speed up troubleshooting.",
-        "Available from Chrome 156, debugging: true marks tools built for DevTools or test harnesses—and Chrome 159 adds optional outputSchema validation."
+        "inspect_state returns a snapshot of internal state—including state machines—so you can inspect behavior without console logs.",
+        "Since Chrome 156, debugging: true marks tools meant for DevTools or test harnesses; Chrome 159 adds optional outputSchema."
       ],
       "codeDemo": "tool-observatory",
       "code": "const debugTool = {\n  name: \"inspect_state\",\n  description: \"Inspect local state\",\n  inputSchema: {\n    type: \"object\", properties: {}\n  },\n  annotations: {\n    readOnlyHint: true,\n    debugging: true\n  },\n  execute: inspectState\n};",
@@ -518,46 +518,46 @@
     {
       "id": "demo-observatory",
       "title": "Observatory: Budgets,<br>Errors & Evals.",
-      "subtitle": "Audit character budgets, SyntaxError vs INVALID_QUERY, and webmcp-evals.",
+      "subtitle": "Check character budgets, SyntaxError vs INVALID_QUERY, and webmcp-evals.",
       "demoTitle": "Tool Observatory, Budgets & Evals",
       "steps": [
-        "Review Google Character Budget meters (name /30, desc /500, output /1500) and the debugging: true toggle.",
-        "Compare {\"query\":\"browser\"} (valid + outputSchema) vs {\"query\":\"\"} (INVALID_QUERY) vs malformed JSON (SyntaxError).",
-        "Open the webmcp-evals Blueprint tab and compare live inside Chrome DevTools → Application → WebMCP."
+        "Check character budget meters (name /30, desc /500, output /1500) and the debugging: true toggle.",
+        "Compare {\"query\":\"browser\"} (OK) vs {\"query\":\"\"} (INVALID_QUERY) vs broken JSON (SyntaxError).",
+        "Open the webmcp-evals Blueprint tab and compare it with DevTools → Application → WebMCP."
       ],
       "builds": [],
       "notes": [
-        "Demo 03 redesigned with Stitch. Show how to audit tool contracts before shipping: live character budget meters, syntax vs. recoverable errors, debugging: true filtering, and a ready-to-run webmcp-evals blueprint."
+        "Demo 03 for auditing tool contracts before shipping: live character budget meters, SyntaxError vs. INVALID_QUERY, debugging: true filtering, and a webmcp-evals template."
       ]
     },
     {
       "id": "evals",
       "eyebrow": "Official Video · Evals",
       "title": "Unit tests vs.<br>webmcp-evals CLI.",
-      "subtitle": "Agents are probabilistic: evaluate trajectories across N runs.",
+      "subtitle": "LLMs vary across runs: test trajectories, not one happy path.",
       "meme": {
         "src": "assets/webmcp/meme-nondeterministic-evals.jpg",
         "alt": "Proud engineer holding a green unit test trophy while behind them an AI robot rolls a giant 20-sided die branching into three checkmarks, a flame, and a rubber duck",
         "top": "“My unit tests pass 100%” · The LLM agent in production:",
-        "bottom": "npx webmcp-evals --runs 5 → measures pass rates & real trajectories."
+        "bottom": "npx webmcp-evals --runs 5 → measures pass rates and trajectories."
       },
       "points": [
         {
           "title": "Local mode (EDD)",
-          "body": "Mock tool schemas in JSON first to iterate fast (Evals-Driven Development).",
+          "body": "Test mock JSON tool schemas before building the UI (Evals-Driven Dev).",
           "color": "blue"
         },
         {
           "title": "Browser mode (N runs)",
-          "body": "Run real journeys 5+ times to verify tool selection, arguments, and trajectories.",
+          "body": "Run real flows 5+ times to check tool choice and arguments.",
           "color": "green",
           "step": 1
         }
       ],
       "builds": ["Browser mode & trajectories"],
       "notes": [
-        "As Maud explains in Chrome's evals video: classic unit tests prove your JS runs deterministically, but LLMs are non-deterministic. Sometimes they pick the right tool; sometimes you get a rubber duck.",
-        "The open-source webmcp-evals CLI offers Local mode (Evals-Driven Development on mock schemas) and Browser mode (repeated live runs reporting pass rates and step-by-step agent trajectories)."
+        "As Maud Nalpas shows in Chrome's evals video: unit tests verify deterministic JS, but LLMs are probabilistic. Sometimes they pick the exact tool; sometimes you get a rubber duck.",
+        "webmcp-evals has two modes: Local mode (iterate on mock JSON schemas) and Browser mode (run your real page repeatedly and inspect pass rates and step-by-step trajectories)."
       ]
     },
     {
@@ -567,14 +567,14 @@
       "subtitle": "Render the UI first; register only when document.modelContext exists.",
       "builds": ["Conditional registration", "Framework support"],
       "stepCallouts": [
-        "Render ordinary HTML controls before checking experimental WebMCP support.",
-        "Feature-detect document.modelContext?.registerTool and clean up via AbortSignal.",
-        "Experimental hooks already exist for React, Angular, and Vue."
+        "Render normal HTML controls before checking experimental WebMCP support.",
+        "Check document.modelContext?.registerTool and clean up via AbortSignal.",
+        "Experimental integrations already exist for React, Angular, and Vue."
       ],
       "notes": [
-        "Your site must stay 100% usable for humans without WebMCP. Always render standard UI controls first.",
-        "Feature-detect document.modelContext?.registerTool, catch registration failures gracefully, and use AbortController to unregister on unmount.",
-        "In frameworks, official docs link experimental support in React (use-webmcp-tool), Angular (Signal Forms), and Vue (@vueuse/core useWebMCP)."
+        "Your site must work without WebMCP. Render the normal UI first.",
+        "Check whether document.modelContext?.registerTool exists, catch registration errors without breaking the page, and unregister via AbortController on unmount.",
+        "For frameworks, Chrome's docs link experimental support for React (use-webmcp-tool), Angular (Signal Forms), and Vue (@vueuse/core useWebMCP)."
       ],
       "codeDemo": "reading-route",
       "code": "render();\n\nif (document.modelContext?.registerTool) {\n  try {\n    await document.modelContext\n      .registerTool(tool);\n  } catch (error) {\n    status(error.message, true);\n  }\n}",
@@ -583,9 +583,9 @@
     },
     {
       "id": "questions",
-      "eyebrow": "Official Resources & Q&A",
+      "eyebrow": "Resources & Q&A",
       "title": "Which function in your app<br>would you expose first?",
-      "subtitle": "Local interactive demos + official Chrome WebMCP documentation & repositories.",
+      "subtitle": "Interactive demos, official Chrome docs, and repositories.",
       "links": [
         { "label": "Demo 01 · reading-route", "href": "../demos/reading-route.html" },
         { "label": "Demo 02 · consent-cart (Security)", "href": "../demos/consent-cart.html" },
@@ -599,7 +599,7 @@
       ],
       "builds": [],
       "notes": [
-        "Keep 90 seconds for Q&A and share the repo. Quick home-testing checklist: Chrome 155+ with chrome://flags/#enable-webmcp-testing, serve over http://localhost:8080 (npm run serve), and load the up-to-date GoogleChromeLabs/webmcp-extension."
+        "90 seconds for Q&A. Checklist to try it today: Chrome 155+ with chrome://flags/#enable-webmcp-testing, open the demos over HTTPS or http://localhost:8080 (npm run serve), and load GoogleChromeLabs/webmcp-extension."
       ]
     }
   ]
