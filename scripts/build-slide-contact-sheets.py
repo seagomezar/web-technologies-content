@@ -6,7 +6,7 @@ root=Path(__file__).resolve().parents[1]
 font=ImageFont.truetype(str(root/'slides/assets/roboto-mono-400.ttf'),18)
 for lang in ('en','es'):
     slides=sorted((root/f'review/slides-{lang}').glob('slide-*.png'))
-    assert len(slides)==20
+    assert len(slides)==24
     for name,files,columns,width in [
         (f'deck-contact-sheet-{lang}.jpg',slides,4,400),
         (f'code-contact-sheet-{lang}.jpg',sorted((root/'review').glob(f'code-*-{lang}.png')),2,800)

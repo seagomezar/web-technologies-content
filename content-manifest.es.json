@@ -4,16 +4,16 @@
     "rank": 1,
     "color": "#c3ecf6",
     "title": "WebMCP: herramientas de página para agentes del navegador",
-    "subtitle": "document.modelContext, estado de UI compartido y confirmación humana",
-    "stage": "Prueba para desarrolladores · document.modelContext",
-    "angle": "Expone las funciones existentes de la página como herramientas tipadas para que los agentes interactúen mediante callbacks validados en lugar de raspar el DOM.",
-    "value": "Demuestra cómo una sola función de la aplicación puede atender tanto eventos estándar de la interfaz como llamadas estructuradas del agente.",
-    "format": "Guía de arquitectura + presentación de 30 minutos + 3 demos interactivos de WebMCP",
+    "subtitle": "document.modelContext, formularios declarativos, security hints y evals",
+    "stage": "Origin Trial · document.modelContext",
+    "angle": "Expone funciones y formularios HTML existentes como herramientas WebMCP tipadas con security hints, spotlighting, presupuestos de caracteres y evals.",
+    "value": "Demuestra cómo una sola capa de aplicación atiende con seguridad clics humanos, formularios declarativos y llamadas estructuradas de agentes.",
+    "format": "Guía de arquitectura + charla de 30 minutos (24 diapositivas) + 3 demos interactivos de WebMCP",
     "outline": [
-      "Vincula los botones de la interfaz y registerTool() a la misma función de actualización de estado.",
-      "Valida las entradas con JSON Schema y devuelve códigos de error estructurados con retryable.",
-      "Mantén las acciones con impacto en una Promise pendiente hasta que el usuario confirme en la interfaz.",
-      "Separa las herramientas de diagnóstico de solo lectura usando debugging: true."
+      "Vincula botones UI, formularios declarativos y registerTool() a una sola capa de estado.",
+      "Valida entradas con JSON Schema, presupuestos de caracteres y códigos de error recuperables (retryable).",
+      "Aplica readOnlyHint, consequentialHint, untrustedContentHint y compuertas de confirmación humana.",
+      "Inspecciona herramientas en Chrome DevTools y evalúa agentes no determinísticos con webmcp-evals."
     ],
     "rows": [
       14,
@@ -22,32 +22,36 @@
     ],
     "sources": [
       "https://developer.chrome.com/docs/ai/webmcp",
+      "https://developer.chrome.com/docs/ai/webmcp/imperative-api",
+      "https://developer.chrome.com/docs/ai/webmcp/declarative-api",
+      "https://developer.chrome.com/docs/ai/webmcp/secure-tools",
+      "https://developer.chrome.com/docs/agents/security",
+      "https://developer.chrome.com/docs/devtools/application/webmcp",
       "https://github.com/GoogleChromeLabs/webmcp-extension",
-      "https://github.com/webmachinelearning/webmcp-types",
-      "https://github.com/webmachinelearning/webmcp/pull/253",
-      "https://github.com/webmachinelearning/webmcp/issues/176"
+      "https://github.com/GoogleChromeLabs/webmcp-tools/tree/main/demos/smart-home",
+      "https://github.com/GoogleChromeLabs/webmcp-tools/tree/main/webmcp-evals"
     ],
     "demos": [
       {
         "id": "reading-route",
-        "title": "Lista de lectura · Blog posts por leer",
-        "hook": "Registra una herramienta de página que modifica la misma lista de lectura que usan los botones de la interfaz.",
-        "action": "Pídele al agente o usa los botones de la interfaz para agregar el artículo sobre modelos pequeños a tu lista por leer.",
-        "lesson": "Los controles de la interfaz y las herramientas WebMCP deben compartir una sola capa de validación y estado."
+        "title": "Lista de lectura · Estado compartido",
+        "hook": "Sincronización bidireccional entre clics humanos, formularios HTML declarativos (<form toolname>) y herramientas imperativas en document.modelContext.",
+        "action": "Pídele al agente o usa los botones de la UI y el formulario declarativo de filtro para gestionar tu lista de lectura.",
+        "lesson": "Los controles UI, formularios declarativos y herramientas WebMCP imperativas deben compartir una sola capa de validación y estado."
       },
       {
         "id": "consent-cart",
-        "title": "Compuerta de confirmación del usuario",
-        "hook": "Pausa la Promise de ejecución de la herramienta hasta que el usuario pulse Confirmar o Rechazar.",
-        "action": "Prepara una solicitud, pulsa Rechazar para verificar que nada se confirma y luego prepara otra y pulsa Confirmar.",
-        "lesson": "consequentialHint es solo metadato; la confirmación debe imponerse en el código de la aplicación."
+        "title": "Seguridad WebMCP y Compuerta Humana",
+        "hook": "Alterna en vivo los 3 security hints oficiales (readOnlyHint, consequentialHint, untrustedContentHint), prueba Indirect Prompt Injection e impone confirmación humana en la página.",
+        "action": "Alterna hints en Controles de Seguridad, inspecciona la nota inyectada del muro y prueba Rechazar frente a Confirmar en un pedido de entradas.",
+        "lesson": "Las anotaciones son pistas para agentes confiables; combina spotlighting con confirmación impuesta en código."
       },
       {
         "id": "tool-observatory",
-        "title": "Inspector de esquemas y errores",
-        "hook": "Inspecciona los JSON Schemas registrados, las anotaciones debugging y las respuestas de error.",
-        "action": "Ejecuta una consulta válida, compara una consulta vacía frente a JSON mal formado y activa las herramientas debugging.",
-        "lesson": "Distingue los errores de sintaxis JSON de los errores recuperables de la aplicación."
+        "title": "Observatorio de Tools, Budgets y Evals",
+        "hook": "Inspecciona JSON Schemas (input/output), presupuestos oficiales de caracteres de Google, filtro debugging: true, errores recuperables y plantillas webmcp-evals.",
+        "action": "Inspecciona presupuestos de caracteres, ejecuta entradas válidas/vacías/inválidas, alterna herramientas debugging y explora webmcp-evals.",
+        "lesson": "Mantén tus contratos dentro de los presupuestos de caracteres recomendados y combina tests unitarios con evals no determinísticos."
       }
     ]
   },

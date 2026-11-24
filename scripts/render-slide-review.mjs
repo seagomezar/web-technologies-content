@@ -13,6 +13,11 @@ try{
     const count=await page.evaluate(()=>TALK.slides.length);
     for(let index=0;index<count;index++){
       await page.evaluate(index=>deck.navigate(index,TALK.slides[index].builds.length,false),index);
+      const hasFrame=await page.locator('.demo-embed-frame').count();
+      if(hasFrame){
+        await page.locator('.demo-embed-frame').waitFor({state:'visible'});
+        await page.waitForTimeout(350);
+      }
       await page.screenshot({path:resolve(folder,`slide-${String(index+1).padStart(2,'0')}.png`)});
     }
     console.log(`Rendered ${count} ${lang} slides offline.`);

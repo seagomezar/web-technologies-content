@@ -18,7 +18,7 @@ try{
   for(const lang of ['en','es']){
     await page.goto(`${base}/slides/index.html?lang=${lang}&session=code-${lang}`);await page.evaluate(()=>document.fonts.ready);
     const examples=await page.evaluate(()=>TALK.slides.flatMap((slide,index)=>slide.kind==='code'?[{...slide,index}]:[]));
-    assert.equal(examples.length,6);assert.equal(await page.evaluate(()=>TALK.slides.length),20);assert.equal(await page.evaluate(()=>TALK.slides.reduce((n,s)=>n+s.minutes,0)),30);
+    assert.equal(examples.length,7);assert.equal(await page.evaluate(()=>TALK.slides.length),24);assert.equal(await page.evaluate(()=>TALK.slides.reduce((n,s)=>n+s.minutes,0)),30);
     for(const size of [{width:1600,height:900},{width:1280,height:720},{width:900,height:1100}]){
       await page.setViewportSize(size);
       for(const slide of examples){
@@ -40,9 +40,15 @@ try{
         if(size.width===1600)await page.screenshot({path:resolve(root,`review/code-${slide.id}-${lang}.png`)});
       }
     }
-    record(`${lang}: six code examples retain exact copyable text and fit the panel at every build on three screen sizes`);
+    record(`${lang}: seven code examples retain exact copyable text and fit the panel at every build on three screen sizes`);
 
     const byId=Object.fromEntries(examples.map(s=>[s.id,s]));
+    assert.match(byId['declarative-api'].code,/toolname="filter_catalog"/);
+    assert.match(byId['declarative-api'].code,/tooldescription=/);
+    assert.match(byId['declarative-api'].code,/toolautosubmit/);
+    assert.match(byId['declarative-api'].code,/toolparamdescription=/);
+    assert.match(byId['declarative-api'].code,/e\.agentInvoked/);
+    assert.match(byId['declarative-api'].code,/e\.respondWith/);
     const schema=await new AsyncFunction(byId.types.code+'\nreturn schema;')();
     const captured=[],articles=[{id:'models'},{id:'ownership'}],add=({articleId})=>({status:'added',articleId});
     await new AsyncFunction('document','schema','articles','add',byId['tool-design'].code)({modelContext:{registerTool:async tool=>captured.push(tool)}},schema,articles,add);
@@ -72,7 +78,7 @@ try{
   assert.deepEqual(network,[]);record('English and Spanish code slides, regular-weight local fonts and clicker highlights work offline');
 
   try {
-    canary=await chromium.launch({channel:'chrome-canary',args:['--enable-experimental-web-platform-features']}).catch(()=>chromium.launch({executablePath:'/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary',args:['--enable-experimental-web-platform-features']}));
+    canary=await chromium.launch({channel:'chrome-canary',args:['--enable-experimental-web-platform-features','--enable-features=WebMCPTesting']}).catch(()=>chromium.launch({executablePath:'/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary',args:['--enable-experimental-web-platform-features','--enable-features=WebMCPTesting']})).catch(()=>chromium.launch({channel:'chrome',args:['--enable-experimental-web-platform-features','--enable-features=WebMCPTesting']}));
     const native=await canary.newPage();
     for(const lang of ['en','es']){
       await native.goto(`${base}/slides/index.html?lang=${lang}`);

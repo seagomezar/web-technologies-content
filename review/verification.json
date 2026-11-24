@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-11-16T03:24:51.085Z",
+  "checkedAt": "2026-11-24T19:50:37.228Z",
   "checks": [
     {
       "name": "Gallery exposes seven proposals and 21 distinct demo links",
@@ -75,6 +75,16 @@
       "status": "pass"
     },
     {
+      "name": "Native WebMCP registers, executes, and updates visible state in real Canary",
+      "status": "pass",
+      "detail": "Temporary test profile with experimental web platform features; no installed-profile settings changed."
+    },
+    {
+      "name": "Native WebMCP review waits for rejection or confirmation and exposes the debugging annotation",
+      "status": "pass",
+      "detail": "Fictional local tickets only; no real transaction or model invocation."
+    },
+    {
       "name": "No uncaught page errors across the tested workflows",
       "status": "pass"
     },
@@ -87,7 +97,7 @@
     "Contract-double tests verify adapter wiring and UI behavior, not model quality.",
     "No model download, hosted inference, or remote agent execution is requested by this test suite."
   ],
-  "browser": "157.0.8103.51",
+  "browser": "157.0.8103.80",
   "nativeAvailability": {
     "LanguageModel": "unavailable",
     "Summarizer": "unavailable",
@@ -96,6 +106,131 @@
     "Proofreader": "not exposed",
     "SemanticEmbedder": "not exposed"
   },
-  "canary": "Canary not installed on this machine; contract doubles verified.",
+  "canary": "157.0.8103.80",
+  "nativeWebMCP": {
+    "registeredTools": [
+      {
+        "name": "add_to_route",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "articleId": {
+              "type": "string",
+              "enum": [
+                "models",
+                "browserdj",
+                "patterns",
+                "ownership"
+              ],
+              "description": "Article ID: \"models\", \"browserdj\", \"patterns\", or \"ownership\"."
+            }
+          },
+          "required": [
+            "articleId"
+          ],
+          "additionalProperties": false
+        },
+        "annotations": {
+          "consequentialHint": false,
+          "debugging": false,
+          "readOnlyHint": false,
+          "untrustedContentHint": false
+        }
+      },
+      {
+        "name": "filter_catalog",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "description": "Keyword to match article title or tags (e.g. models, browserdj, patterns, ownership)."
+            },
+            "maxMinutes": {
+              "type": "string",
+              "anyOf": [
+                {
+                  "type": "string",
+                  "const": "all",
+                  "title": "All durations"
+                },
+                {
+                  "type": "string",
+                  "const": "8",
+                  "title": "≤ 8 min"
+                },
+                {
+                  "type": "string",
+                  "const": "10",
+                  "title": "≤ 10 min"
+                },
+                {
+                  "type": "string",
+                  "const": "15",
+                  "title": "≤ 15 min"
+                }
+              ],
+              "enum": [
+                "all",
+                "8",
+                "10",
+                "15"
+              ],
+              "description": "Maximum reading time in minutes (all, 8, 10, or 15)."
+            }
+          },
+          "required": []
+        }
+      },
+      {
+        "name": "list_reading_route",
+        "inputSchema": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        },
+        "annotations": {
+          "consequentialHint": false,
+          "debugging": false,
+          "readOnlyHint": true,
+          "untrustedContentHint": false
+        }
+      },
+      {
+        "name": "remove_from_route",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "articleId": {
+              "type": "string",
+              "enum": [
+                "models",
+                "browserdj",
+                "patterns",
+                "ownership"
+              ],
+              "description": "Article ID to remove from the reading list."
+            }
+          },
+          "required": [
+            "articleId"
+          ],
+          "additionalProperties": false
+        },
+        "annotations": {
+          "consequentialHint": false,
+          "debugging": false,
+          "readOnlyHint": false,
+          "untrustedContentHint": false
+        }
+      }
+    ],
+    "routeExecution": "{\"status\":\"added\",\"article\":\"Small models, thoughtful design\",\"totalMinutes\":9,\"route\":[\"models\"]}",
+    "reviewRejection": true,
+    "reviewConfirmation": true,
+    "debuggingAnnotation": true,
+    "actualModelInference": false
+  },
   "status": "passed"
 }

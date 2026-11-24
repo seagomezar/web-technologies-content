@@ -4,16 +4,16 @@
     "rank": 1,
     "color": "#c3ecf6",
     "title": "WebMCP: Page Tools for Browser Agents",
-    "subtitle": "document.modelContext, shared UI state, and human confirmation",
-    "stage": "Developer Trial · document.modelContext",
-    "angle": "Expose existing page functions as typed tools so browser agents interact through validated callbacks instead of brittle DOM scraping.",
-    "value": "Demonstrates how a single application function can serve both standard UI events and structured agent tool calls.",
-    "format": "Architecture guide + 30-minute talk deck + 3 interactive WebMCP demos",
+    "subtitle": "document.modelContext, declarative forms, security hints, and evals",
+    "stage": "Origin Trial · document.modelContext",
+    "angle": "Expose existing page functions and HTML forms as typed WebMCP tools with security hints, spotlighting, character budgets, and evals.",
+    "value": "Demonstrates how a single application layer serves human UI clicks, declarative forms, and structured agent calls safely.",
+    "format": "Architecture guide + 30-minute talk deck (24 slides) + 3 interactive WebMCP demos",
     "outline": [
-      "Bind UI buttons and registerTool() to the same state-update function.",
-      "Validate inputs with JSON Schema and return structured error codes with retryable.",
-      "Hold consequential actions in a pending Promise until the user confirms in the UI.",
-      "Separate read-only developer diagnostics using debugging: true."
+      "Bind UI buttons, declarative forms, and registerTool() to one state layer.",
+      "Validate inputs with JSON Schema, character budgets, and retryable error codes.",
+      "Apply readOnlyHint, consequentialHint, untrustedContentHint, and human confirmation gates.",
+      "Inspect tools in Chrome DevTools and test non-deterministic agents with webmcp-evals."
     ],
     "rows": [
       14,
@@ -22,32 +22,36 @@
     ],
     "sources": [
       "https://developer.chrome.com/docs/ai/webmcp",
+      "https://developer.chrome.com/docs/ai/webmcp/imperative-api",
+      "https://developer.chrome.com/docs/ai/webmcp/declarative-api",
+      "https://developer.chrome.com/docs/ai/webmcp/secure-tools",
+      "https://developer.chrome.com/docs/agents/security",
+      "https://developer.chrome.com/docs/devtools/application/webmcp",
       "https://github.com/GoogleChromeLabs/webmcp-extension",
-      "https://github.com/webmachinelearning/webmcp-types",
-      "https://github.com/webmachinelearning/webmcp/pull/253",
-      "https://github.com/webmachinelearning/webmcp/issues/176"
+      "https://github.com/GoogleChromeLabs/webmcp-tools/tree/main/demos/smart-home",
+      "https://github.com/GoogleChromeLabs/webmcp-tools/tree/main/webmcp-evals"
     ],
     "demos": [
       {
         "id": "reading-route",
-        "title": "Reading List · Blog posts to read",
-        "hook": "Register a page tool that mutates the same reading list used by UI buttons.",
-        "action": "Ask the agent or use the UI buttons to add the small models article to your reading list.",
-        "lesson": "UI controls and WebMCP tools should share one validation and state layer."
+        "title": "Reading List · Shared State",
+        "hook": "Two-way state sync across human clicks, declarative HTML forms (<form toolname>), and imperative tools on document.modelContext.",
+        "action": "Ask the agent or use the UI buttons and declarative filter form to manage your reading list.",
+        "lesson": "UI controls, declarative forms, and imperative WebMCP tools should share one validation and state layer."
       },
       {
         "id": "consent-cart",
-        "title": "User Confirmation Gate",
-        "hook": "Pause a tool execution Promise until the user clicks Confirm or Reject.",
-        "action": "Stage a request, click Reject to verify nothing commits, then stage again and click Confirm.",
-        "lesson": "consequentialHint is metadata only; confirmation must be enforced in application code."
+        "title": "WebMCP Security & Human Consent Sandbox",
+        "hook": "Toggle the 3 official security hints live (readOnlyHint, consequentialHint, untrustedContentHint), test Indirect Prompt Injection, and enforce an in-page confirmation gate.",
+        "action": "Toggle hints in Developer Controls, inspect the injected guest note, and test Reject vs. Confirm on a ticket order.",
+        "lesson": "Annotations are hints for trusted agents; combine spotlighting with application-enforced confirmation."
       },
       {
         "id": "tool-observatory",
-        "title": "Schema & Error Inspector",
-        "hook": "Inspect registered JSON Schemas, debugging annotations, and error responses.",
-        "action": "Run a valid query, test an empty query vs. malformed JSON, and toggle debugging tools.",
-        "lesson": "Distinguish JSON parsing errors from recoverable application errors."
+        "title": "Tool Observatory, Budgets & Evals",
+        "hook": "Inspect JSON Schemas (input/output), Google official character budgets, debugging: true filtering, recoverable errors, and webmcp-evals blueprints.",
+        "action": "Inspect character budgets, run valid/empty/malformed inputs, toggle debugging tools, and explore webmcp-evals.",
+        "lesson": "Keep contracts within recommended character budgets and pair unit tests with non-deterministic evals."
       }
     ]
   },

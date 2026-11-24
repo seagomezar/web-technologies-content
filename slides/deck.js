@@ -125,8 +125,8 @@
   function parse(){const match=location.hash.match(/^#(\d+)(?:\.(\d+))?$/);const index=Math.max(0,Math.min(slides.length-1,(Number(match?.[1])||1)-1));return {index,step:Math.max(0,Math.min(slides[index].builds.length,Number(match?.[2])||0))};}
   function scale(){document.documentElement.style.setProperty('--scale',Math.min(innerWidth/1600,innerHeight/900));}
   function codeLine(line){
-    const tokens=line.split(/("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|\/\/.*$|\b(?:async|await|const|function|if|return|new|try|catch|true|false)\b)/g);
-    return tokens.map(token=>{const kind=/^["']/.test(token)?'string':token.startsWith('//')?'comment':/^(async|await|const|function|if|return|new|try|catch|true|false)$/.test(token)?'keyword':'';return kind?`<span class="code-${kind}">${escape(token)}</span>`:escape(token);}).join('');
+    const tokens=line.split(/("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|\/\/.*$|<!--.*?-->|\b(?:async|await|const|function|if|return|new|try|catch|true|false|form|input|button|toolname|tooldescription|toolautosubmit|toolparamdescription)\b)/g);
+    return tokens.map(token=>{const kind=/^["']/.test(token)?'string':(token.startsWith('//')||token.startsWith('<!--'))?'comment':/^(async|await|const|function|if|return|new|try|catch|true|false|form|input|button|toolname|tooldescription|toolautosubmit|toolparamdescription)$/.test(token)?'keyword':'';return kind?`<span class="code-${kind}">${escape(token)}</span>`:escape(token);}).join('');
   }
   function stepBanner(slide){
     const total=slide.builds.length;
@@ -138,7 +138,31 @@
   function body(slide){
     if(slide.kind==='code'){
       const focus=slide.codeFocus[state.step]||[];
-      return `<div class="code-copy"><h2>${slide.title}</h2><p class="subhead">${slide.subtitle}</p><div class="code-links"><a href="${I18N.url('../demos/'+escape(slide.codeDemo)+'.html')}" target="_blank" rel="noopener">${I18N.lang==='es'?'Abrir demo':'Open demo'} ↗</a><a href="../demos/assets/webmcp.js" target="_blank" rel="noopener">${I18N.lang==='es'?'Código fuente':'Source'} ↗</a></div></div><div class="code-example"><p class="code-label" id="code-label">${escape(slide.codeLabel)}</p><pre class="code-window" role="region" aria-labelledby="code-label"><code lang="${I18N.lang}">${slide.code.split('\n').map((line,i)=>`<span class="code-line${focus.includes(i+1)?' is-focused':''}" data-line="${i+1}">${codeLine(line)}</span>`).join('\n')}</code></pre>${stepBanner(slide)}</div>`;
+      const dense=slide.code.split('\n').length>11?' is-compact':'';
+      return `<div class="code-copy"><h2>${slide.title}</h2><p class="subhead">${slide.subtitle}</p><div class="code-links"><a href="${I18N.url('../demos/'+escape(slide.codeDemo)+'.html')}" target="_blank" rel="noopener">${I18N.lang==='es'?'Abrir demo':'Open demo'} ↗</a><a href="../demos/assets/webmcp.js" target="_blank" rel="noopener">${I18N.lang==='es'?'Código fuente':'Source'} ↗</a></div></div><div class="code-example"><p class="code-label" id="code-label">${escape(slide.codeLabel)}</p><pre class="code-window${dense}" role="region" aria-labelledby="code-label"><code lang="${I18N.lang}">${slide.code.split('\n').map((line,i)=>`<span class="code-line${focus.includes(i+1)?' is-focused':''}" data-line="${i+1}">${codeLine(line)}</span>`).join('\n')}</code></pre>${stepBanner(slide)}</div>`;
+    }
+    if(slide.kind==='meme'){
+      const m=slide.meme||{};
+      const cards=(slide.points||[]).map((p,i)=>{
+        const stepReq=p.step??0;
+        const pending=stepReq>state.step;
+        return `<div class="visual-point ${p.color||'blue'} ${stepReq?'build':''} ${pending?'pending':''}" ${pending?'aria-hidden="true" inert':''}><strong>${escape(p.title)}</strong><span>${escape(p.body)}</span></div>`;
+      }).join('');
+      const splitBar=m.leftLabel&&m.rightLabel?`<div class="meme-split-bar"><span class="meme-pill left">${escape(m.leftLabel)}</span><span class="meme-pill right">${escape(m.rightLabel)}</span></div>`:'';
+      const topBar=m.top?`<div class="meme-caption meme-top">${escape(m.top)}</div>`:'';
+      const bottomBar=m.bottom?`<div class="meme-caption meme-bottom">${escape(m.bottom)}</div>`:'';
+      return `<div class="visual-copy"><p class="eyebrow">${escape(slide.eyebrow||'')}</p><h2>${slide.title}</h2>${slide.subtitle?`<p class="subhead">${slide.subtitle}</p>`:''}<div class="visual-points">${cards}</div></div><div class="visual-stage"><figure class="meme-frame">${topBar}${splitBar}<div class="meme-img-wrap"><img src="${escape(m.src)}" alt="${escape(m.alt||clean(slide.title))}" loading="eager"></div>${bottomBar}</figure></div>`;
+    }
+    if(slide.kind==='media'){
+      const items=slide.media||[];
+      const cards=(slide.points||[]).map(p=>{
+        const stepReq=p.step??0;
+        const pending=stepReq>state.step;
+        return `<div class="visual-point ${p.color||'blue'} ${stepReq?'build':''} ${pending?'pending':''}" ${pending?'aria-hidden="true" inert':''}><strong>${escape(p.title)}</strong><span>${escape(p.body)}</span></div>`;
+      }).join('');
+      const layoutClass=items.length===1?'media-grid-1':items.length===2?'media-grid-2':'media-grid-3';
+      const figs=items.map(it=>`<figure class="media-card ${it.tone||''}"><div class="media-bar"><span class="media-dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="media-badge">${escape(it.badge||'')}</span></div><div class="media-img-wrap"><img src="${escape(it.src)}" alt="${escape(it.alt||it.caption||'')}" loading="eager"></div>${it.caption?`<figcaption>${escape(it.caption)}</figcaption>`:''}</figure>`).join('');
+      return `<div class="visual-copy"><p class="eyebrow">${escape(slide.eyebrow||'')}</p><h2>${slide.title}</h2>${slide.subtitle?`<p class="subhead">${slide.subtitle}</p>`:''}<div class="visual-points">${cards}</div></div><div class="visual-stage"><div class="media-grid ${layoutClass}">${figs}</div></div>`;
     }
     if(slide.kind==='title'){
       const portrait=slide.photo?`<div class="speaker-Visual"><img class="speaker-photo" src="${escape(slide.photo)}" alt="${escape(slide.speaker)}" width="310" height="380" fetchpriority="high">${slide.badge?`<img class="speaker-badge" src="${escape(slide.badge)}" alt="Google Developer Expert · Web Technologies" width="360" height="96">`:''}</div>`:'';
@@ -199,7 +223,7 @@ callTool("add_to_route", {
       const openLabel=I18N.lang==='es'?`Abrir ${slide.demoTitle} ↗`:`Open ${slide.demoTitle} ↗`;
       if(slide.demo==='reading-route'){
         const shortOpen=I18N.lang==='es'?'Abrir demo ↗':'Open demo ↗';
-        return `<div class="demo-embed-header"><div><p class="eyebrow">Demo ${slide.number} · ${escape(slide.demo)}.html</p><h2 class="single-line">${clean(slide.title)}</h2><p class="subhead">${slide.subtitle}</p></div><a class="demo-link" href="${I18N.url('../demos/'+slide.demo+'.html')}" target="_blank" rel="noopener">${escape(shortOpen)}</a></div><div class="demo-embed-wrap"><iframe class="demo-embed-frame" src="${I18N.url('../demos/'+slide.demo+'.html')}" title="${escape(slide.demoTitle)}"></iframe></div>`;
+        return `<div class="demo-embed-header"><div><p class="eyebrow">Demo ${slide.number} · ${escape(slide.demo)}.html</p><h2 class="single-line">${clean(slide.title)}</h2><p class="subhead">${slide.subtitle}</p></div><a class="demo-link" href="${I18N.url('../demos/'+slide.demo+'.html')}" target="_blank" rel="noopener">${escape(shortOpen)}</a></div><div class="demo-embed-wrap"><iframe class="demo-embed-frame" src="${I18N.url('../demos/'+slide.demo+'.html')}" allow="tools" title="${escape(slide.demoTitle)}"></iframe></div>`;
       }
       const steps=slide.steps?.length?`<ol class="demo-steps">${slide.steps.map(s=>`<li>${escape(s)}</li>`).join('')}</ol>`:'';
       return `<div class="demo-header"><div><p class="eyebrow">Demo ${slide.number} · ${escape(slide.demo)}.html</p><h2>${slide.title}</h2><p class="subhead">${slide.subtitle}</p></div><a class="demo-link" href="${I18N.url('../demos/'+slide.demo+'.html')}" target="_blank" rel="noopener">${escape(openLabel)}</a></div>${steps}`;
@@ -234,7 +258,7 @@ callTool("add_to_route", {
     const slide=slides[state.index];
     document.body.style.setProperty('--slide-bg',slide.background||'var(--paper)');
     const stepSuffix=slide.builds.length?` · ${I18N.lang==='es'?'paso':'step'} ${state.step}/${slide.builds.length}`:'';
-    viewport.innerHTML=`<article class="slide" tabindex="-1" aria-label="${state.index+1} de ${slides.length}"><div class="panel-shape" aria-hidden="true"></div><div class="lockup" aria-label="Web @DevFest ${escape(city)}"><span class="brace" aria-hidden="true">{</span><div class="lockup-copy">Web<br><strong>@DevFest</strong><div class="city">${escape(city)}</div></div><span class="brace" aria-hidden="true">}</span></div><div class="slide-content ${slide.kind==='code'?'code-slide':slide.kind==='title'?'title-slide':slide.kind==='demo'&&slide.demo==='reading-route'?'demo-embed-slide':slide.kind==='diagram'||slide.kind==='flow'||slide.kind==='steps'||slide.kind==='demo'||slide.kind==='statement'?'wide':''}">${body(slide)}</div><span class="slide-number">${String(state.index+1).padStart(2,'0')} / ${slides.length}${stepSuffix}</span><img class="gdg-logo" src="assets/gdg-logo.png" alt="Google Developer Groups" width="636" height="192"></article>`;
+    viewport.innerHTML=`<article class="slide" tabindex="-1" aria-label="${state.index+1} de ${slides.length}"><div class="panel-shape" aria-hidden="true"></div><div class="lockup" aria-label="Web @DevFest ${escape(city)}"><span class="brace" aria-hidden="true">{</span><div class="lockup-copy">Web<br><strong>@DevFest</strong><div class="city">${escape(city)}</div></div><span class="brace" aria-hidden="true">}</span></div><div class="slide-content ${slide.kind==='code'?'code-slide':slide.kind==='meme'||slide.kind==='media'?'visual-slide':slide.kind==='title'?'title-slide':slide.kind==='demo'&&slide.demo==='reading-route'?'demo-embed-slide':slide.kind==='diagram'||slide.kind==='flow'||slide.kind==='steps'||slide.kind==='demo'||slide.kind==='statement'?'wide':''}">${body(slide)}</div><span class="slide-number">${String(state.index+1).padStart(2,'0')} / ${slides.length}${stepSuffix}</span><img class="gdg-logo" src="assets/gdg-logo.png" alt="Google Developer Groups" width="636" height="192"></article>`;
     document.title=`${state.index+1}. ${clean(slide.title)} | ${TALK.title}`;
     const progress=document.querySelector('#progress');
     if(progress){
