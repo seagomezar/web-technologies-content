@@ -140,7 +140,9 @@
       const refLink=slide.codeRef?`<a href="${escape(slide.codeRef.href)}" target="_blank" rel="noopener">${escape(slide.codeRef.label)} ↗</a>`:'';
       const linksHtml=(demoLink||refLink)?`<div class="code-links">${demoLink}${refLink}</div>`:'';
       const qrHtml=slide.codeDemo?`<figure class="qr-card qr-card-code"><img src="assets/qr/demo-${escape(slide.codeDemo)}.svg" alt="QR · ${escape(slide.codeDemo)}" width="104" height="104"><figcaption><strong>${I18N.lang==='es'?'Escanea el demo':'Scan the demo'}</strong><span>${escape(slide.codeDemo)}.html</span></figcaption></figure>`:'';
-      return `<div class="code-copy${qrHtml?' has-qr':''}"><h2>${slide.title}</h2><p class="subhead">${slide.subtitle}</p>${linksHtml}${qrHtml}</div><div class="code-example"><p class="code-label" id="code-label">${escape(slide.codeLabel)}</p><pre class="code-window${dense}" role="region" aria-labelledby="code-label"><code lang="${I18N.lang}">${slide.code.split('\n').map((line,i)=>`<span class="code-line${focus.includes(i+1)?' is-focused':''}" data-line="${i+1}">${codeLine(line)}</span>`).join('\n')}</code></pre>${legendHtml}</div>`;
+      const labelHtml=slide.codeLabel?`<p class="code-label" id="code-label">${escape(slide.codeLabel)}</p>`:'';
+      const ariaAttr=slide.codeLabel?'aria-labelledby="code-label"':`aria-label="${escape(clean(slide.title))}"`;
+      return `<div class="code-copy${qrHtml?' has-qr':''}"><h2>${slide.title}</h2><p class="subhead">${slide.subtitle}</p>${linksHtml}${qrHtml}</div><div class="code-example">${labelHtml}<pre class="code-window${dense}" role="region" ${ariaAttr}><code lang="${I18N.lang}">${slide.code.split('\n').map((line,i)=>`<span class="code-line${focus.includes(i+1)?' is-focused':''}" data-line="${i+1}">${codeLine(line)}</span>`).join('\n')}</code></pre>${legendHtml}</div>`;
     }
     const visualExtras=slide=>{
       let html='';

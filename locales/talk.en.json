@@ -197,8 +197,7 @@
       ],
       "codeDemo": "reading-route",
       "code": "// articles = [{ id: \"models\" }, ...] (your catalog)\nawait document.modelContext.registerTool({\n  name: \"add_to_route\",\n  description: \"Add a reading\",\n  inputSchema: schema({\n    articleId: {\n      type: \"string\",\n      enum: articles.map(a => a.id)\n    }\n  }),\n  execute: add\n});",
-      "codeFocus": [[3,4],[1,5,6,7,8,9,10],[11]],
-      "codeLabel": "demos/assets/webmcp.js · reading-route"
+      "codeFocus": [[3,4],[1,5,6,7,8,9,10],[11]]
     },
     {
       "id": "declarative-api",
@@ -226,8 +225,7 @@
       ],
       "codeDemo": "reading-route",
       "code": "<form toolname=\"filter_catalog\"\n  tooldescription=\"Filter articles\"\n  toolautosubmit>\n  <input name=\"query\"\n    toolparamdescription=\"Search keyword\">\n</form>\n// On submit:\nif (e.agentInvoked) {\n  e.preventDefault();\n  e.respondWith(Promise.resolve(res));\n}",
-      "codeFocus": [[1,2],[3],[4,5],[8,9,10,11]],
-      "codeLabel": "demos/assets/webmcp.js · Declarative API"
+      "codeFocus": [[1,2],[3],[4,5],[8,9,10,11]]
     },
     {
       "id": "demo-route",
@@ -263,8 +261,7 @@
       ],
       "codeDemo": "error-recovery",
       "code": "// Inside execute: add (slide 7)\nfunction add({ articleId }) {\n  const article = articles.find(a => a.id === articleId);\n  if (!article) {\n    return {\n      code: \"UNKNOWN_ARTICLE\",\n      error: \"Use: models, browserdj, patterns\",\n      retryable: true\n    };\n  }\n  return saveToRoute(article);\n}",
-      "codeFocus": [[1,2,3],[4,5,6,7,8,9,10],[7,8,11]],
-      "codeLabel": "demos/assets/webmcp.js · error-recovery"
+      "codeFocus": [[1,2,3],[4,5,6,7,8,9,10],[7,8,11]]
     },
     {
       "id": "types",
