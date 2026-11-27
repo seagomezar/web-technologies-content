@@ -1055,6 +1055,440 @@
   }
 
   // =========================================================================
+  // DEMO 02: error-recovery (Dynamic Catalog Without Enum & LLM Retry Loop)
+  // =========================================================================
+  if (id === 'error-recovery') {
+    const copy = es ? {
+      pageTitle: 'Errores útiles y autocorrección',
+      pageHook: 'Catálogo dinámico sin enum en el inputSchema: compara un error genérico ("Not found") frente a UNKNOWN_ARTICLE + validOptions + retryable: true y observa cómo el agente se autocorrige solo.',
+      pageEyebrow: 'Demo 02 · Errores estructurados y reintento del LLM',
+      apiActive: '● WebMCP activo · 1 tool (sin enum)',
+      simActive: '⚙ Modo simulación · Activar WebMCP',
+      promptsLabel: 'Prompts para probar con el agente (extensión o CLI):',
+      prompt1Tag: 'Autocorrección (2 turnos)',
+      prompt1Text: 'Usa add_article para agregar el artículo sobre "modelos pequeños" a mi lista de lectura',
+      prompt2Tag: 'Inexistente (GTA6)',
+      prompt2Text: 'Usa add_article para agregar el artículo sobre GTA6 a mi lista de lectura',
+      modeTitle: 'Estrategia de error de add_article (en vivo)',
+      modeGuided: '✅ Error guiado (code + validOptions + retryable: true)',
+      modeNaive: '❌ Error genérico ({ error: "Not found" })',
+      modeGuidedDesc: 'Si el ID no coincide, devuelve código estable, lista de IDs reales y retryable: true para que el LLM reintente solo.',
+      modeNaiveDesc: 'Devuelve un simple "Not found" sin pistas ni retryable: el agente suele rendirse y pedirle el ID al usuario.',
+      timelineTitle: '1. Turnos del agente en vivo',
+      btnTryGta: 'Probar "gta6"',
+      btnSimTwoTurns: 'Simular 2 turnos',
+      btnReset: 'Limpiar',
+      emptyTurns: 'Aún no hay llamadas a add_article. Copia uno de los prompts de arriba o pulsa los botones de prueba.',
+      turnLabel: n => `Turno #${n}`,
+      badgeGuidedErr: '⚠️ UNKNOWN_ARTICLE · retryable: true',
+      badgeNaiveErr: '❌ Error genérico (sin guía)',
+      badgeRecovered: '✅ Autocorrección en Turno 2',
+      badgeAdded: '✓ Agregado',
+      badgeDup: 'ℹ️ Ya estaba en la lista',
+      inputLabel: 'Argumentos recibidos:',
+      outputLabel: 'Respuesta devuelta al LLM:',
+      listTitle: '2. Lista de lectura y catálogo dinámico',
+      noEnumPill: 'inputSchema: { articleId: string } · SIN enum',
+      countLabel: 'artículos agregados',
+      listEmpty: 'Lista vacía. Cuando el LLM corrija el ID en el turno 2, aparecerá aquí al instante.',
+      recoveredBadge: '✓ Recuperado tras error',
+      catalogHeading: 'IDs internos reales (ocultos al schema)',
+      catalogNote: 'El LLM no conoce estos IDs en el primer turno; debe descubrirlos mediante tu respuesta de error.',
+      telemetryTitle: 'TELEMETRÍA DE ERRORES Y REINTENTOS · document.modelContext',
+      statusNaive: 'Modo ingenuo activo: add_article devuelve "Not found".',
+      statusGuided: 'Modo guiado activo: add_article devuelve UNKNOWN_ARTICLE + validOptions + retryable: true.'
+    } : {
+      pageTitle: 'Error Recovery & Self-Correction',
+      pageHook: 'Dynamic catalog with no enum in inputSchema: compare a generic "Not found" error against UNKNOWN_ARTICLE + validOptions + retryable: true and watch the LLM self-correct.',
+      pageEyebrow: 'Demo 02 · Structured Errors & Agent Retry Loop',
+      apiActive: '● WebMCP active · 1 tool (no enum)',
+      simActive: '⚙ Simulation mode · Enable WebMCP',
+      promptsLabel: 'Prompts to test with the agent (extension or CLI):',
+      prompt1Tag: 'Self-correction (2 turns)',
+      prompt1Text: 'Use add_article to add the "small models" article to my reading list',
+      prompt2Tag: 'Nonexistent (GTA6)',
+      prompt2Text: 'Use add_article to add the GTA6 article to my reading list',
+      modeTitle: 'add_article Error Strategy (live switch)',
+      modeGuided: '✅ Guided error (code + validOptions + retryable: true)',
+      modeNaive: '❌ Generic error ({ error: "Not found" })',
+      modeGuidedDesc: 'On unknown ID, returns a stable code, valid catalog IDs, and retryable: true so the LLM retries automatically.',
+      modeNaiveDesc: 'Returns a bare "Not found" with no hints or retryable flag: the agent usually gives up and asks the user.',
+      timelineTitle: '1. Live Agent Turn Trace',
+      btnTryGta: 'Test "gta6"',
+      btnSimTwoTurns: 'Simulate 2 turns',
+      btnReset: 'Reset',
+      emptyTurns: 'No calls to add_article yet. Copy one of the prompts above or click the rehearsal buttons.',
+      turnLabel: n => `Turn #${n}`,
+      badgeGuidedErr: '⚠️ UNKNOWN_ARTICLE · retryable: true',
+      badgeNaiveErr: '❌ Generic error (no guidance)',
+      badgeRecovered: '✅ Self-corrected on Turn 2',
+      badgeAdded: '✓ Added',
+      badgeDup: 'ℹ️ Already in list',
+      inputLabel: 'Arguments received:',
+      outputLabel: 'Payload returned to LLM:',
+      listTitle: '2. Reading List & Dynamic Catalog',
+      noEnumPill: 'inputSchema: { articleId: string } · NO enum',
+      countLabel: 'saved articles',
+      listEmpty: 'Reading list is empty. Once the LLM retries with the exact ID, it appears here live.',
+      recoveredBadge: '✓ Recovered after error',
+      catalogHeading: 'Real internal IDs (not in schema)',
+      catalogNote: 'The LLM does not see these IDs on Turn 1; it discovers them from your structured error.',
+      telemetryTitle: 'ERROR & RETRY TELEMETRY · document.modelContext',
+      statusNaive: 'Naive mode active: add_article returns "Not found".',
+      statusGuided: 'Guided mode active: add_article returns UNKNOWN_ARTICLE + validOptions + retryable: true.'
+    };
+
+    if ($('#title')) $('#title').textContent = copy.pageTitle;
+    if ($('#hook')) $('#hook').textContent = copy.pageHook;
+    if ($('#topic')) $('#topic').textContent = copy.pageEyebrow;
+    document.title = `${copy.pageTitle} | ${es ? 'Laboratorio de IA en Chrome y WebMCP' : 'Web AI Lab'}`;
+
+    const catalog = [
+      { id: 'art-slm-2026', title: es ? 'Modelos pequeños, diseño cuidadoso' : 'Small models, thoughtful design', minutes: 9 },
+      { id: 'art-browserdj-2026', title: es ? 'Dentro de BrowserDJ' : 'Inside BrowserDJ', minutes: 12 },
+      { id: 'art-webmcp-2026', title: es ? 'De prompts a patrones WebMCP' : 'From prompts to WebMCP patterns', minutes: 7 },
+      { id: 'art-ownership-2026', title: es ? 'Responsabilidad más allá del código' : 'Ownership beyond the code', minutes: 8 }
+    ];
+
+    let errorMode = 'guided';
+    const saved = [];
+    const recoveredIds = new Set();
+    const turns = [];
+    const telemetry = [];
+    let lastWasRetryableError = false;
+    const webmcpActive = hasWebMCP();
+
+    const recoveryMachine = createMachine({
+      id: 'error-recovery',
+      initial: 'idle',
+      host: app,
+      context: { mode: 'guided', turns: 0, recovered: 0 },
+      states: {
+        idle: {
+          on: {
+            ERROR_NAIVE: { target: 'error', assign: ctx => ({ turns: ctx.turns + 1 }) },
+            ERROR_GUIDED: { target: 'awaiting_review', assign: ctx => ({ turns: ctx.turns + 1 }) },
+            ADDED: { target: 'confirmed', assign: ctx => ({ turns: ctx.turns + 1 }) },
+            RECOVERED: { target: 'verified', assign: ctx => ({ turns: ctx.turns + 1, recovered: ctx.recovered + 1 }) },
+            RESET: { target: 'idle', assign: () => ({ turns: 0, recovered: 0 }) }
+          }
+        },
+        error: {
+          on: {
+            ERROR_NAIVE: { target: 'error', assign: ctx => ({ turns: ctx.turns + 1 }) },
+            ERROR_GUIDED: { target: 'awaiting_review', assign: ctx => ({ turns: ctx.turns + 1 }) },
+            ADDED: { target: 'confirmed', assign: ctx => ({ turns: ctx.turns + 1 }) },
+            RECOVERED: { target: 'verified', assign: ctx => ({ turns: ctx.turns + 1, recovered: ctx.recovered + 1 }) },
+            RESET: { target: 'idle', assign: () => ({ turns: 0, recovered: 0 }) }
+          }
+        },
+        awaiting_review: {
+          on: {
+            ERROR_NAIVE: { target: 'error', assign: ctx => ({ turns: ctx.turns + 1 }) },
+            ERROR_GUIDED: { target: 'awaiting_review', assign: ctx => ({ turns: ctx.turns + 1 }) },
+            ADDED: { target: 'confirmed', assign: ctx => ({ turns: ctx.turns + 1 }) },
+            RECOVERED: { target: 'verified', assign: ctx => ({ turns: ctx.turns + 1, recovered: ctx.recovered + 1 }) },
+            RESET: { target: 'idle', assign: () => ({ turns: 0, recovered: 0 }) }
+          }
+        },
+        confirmed: {
+          on: {
+            ERROR_NAIVE: { target: 'error', assign: ctx => ({ turns: ctx.turns + 1 }) },
+            ERROR_GUIDED: { target: 'awaiting_review', assign: ctx => ({ turns: ctx.turns + 1 }) },
+            ADDED: { target: 'confirmed', assign: ctx => ({ turns: ctx.turns + 1 }) },
+            RECOVERED: { target: 'verified', assign: ctx => ({ turns: ctx.turns + 1, recovered: ctx.recovered + 1 }) },
+            RESET: { target: 'idle', assign: () => ({ turns: 0, recovered: 0 }) }
+          }
+        },
+        verified: {
+          on: {
+            ERROR_NAIVE: { target: 'error', assign: ctx => ({ turns: ctx.turns + 1 }) },
+            ERROR_GUIDED: { target: 'awaiting_review', assign: ctx => ({ turns: ctx.turns + 1 }) },
+            ADDED: { target: 'confirmed', assign: ctx => ({ turns: ctx.turns + 1 }) },
+            RECOVERED: { target: 'verified', assign: ctx => ({ turns: ctx.turns + 1, recovered: ctx.recovered + 1 }) },
+            RESET: { target: 'idle', assign: () => ({ turns: 0, recovered: 0 }) }
+          }
+        }
+      }
+    });
+
+    app.classList.add('wm-workbench', 'er-workbench');
+    app.innerHTML = `
+      ${fileWarningHtml()}
+      <section class="wm-cues-bar full" aria-label="${esc(copy.promptsLabel)}">
+        <div class="wm-cues-head">
+          ${geminiSvg}
+          <strong>${esc(copy.promptsLabel)}</strong>
+          <button type="button" id="webmcp-env-pill" class="guide-env-pill ${webmcpActive ? 'is-active' : 'is-sim'}">
+            ${esc(webmcpActive ? copy.apiActive : copy.simActive)}
+          </button>
+        </div>
+        <div class="er-prompt-row">
+          <button type="button" class="secondary wm-copy-chip er-prompt-chip" data-copy-prompt="${esc(copy.prompt1Text)}">
+            <span class="er-chip-tag">${esc(copy.prompt1Tag)}</span>
+            <span>«${esc(copy.prompt1Text)}»</span>
+            <span class="copy-chip-state">⧉</span>
+          </button>
+          <button type="button" class="secondary wm-copy-chip er-prompt-chip" data-copy-prompt="${esc(copy.prompt2Text)}">
+            <span class="er-chip-tag tag-warn">${esc(copy.prompt2Tag)}</span>
+            <span>«${esc(copy.prompt2Text)}»</span>
+            <span class="copy-chip-state">⧉</span>
+          </button>
+        </div>
+      </section>
+
+      <section class="er-mode-bar full" aria-label="${esc(copy.modeTitle)}">
+        <div class="er-mode-head">
+          <strong>${esc(copy.modeTitle)}</strong>
+          <span class="wm-decl-pill" data-original>${esc(copy.noEnumPill)}</span>
+        </div>
+        <div class="er-mode-buttons" role="group" aria-label="${esc(copy.modeTitle)}">
+          <button type="button" id="er-mode-guided" class="er-mode-btn is-active" aria-pressed="true">${esc(copy.modeGuided)}</button>
+          <button type="button" id="er-mode-naive" class="er-mode-btn" aria-pressed="false">${esc(copy.modeNaive)}</button>
+        </div>
+        <p id="er-mode-desc" class="small er-mode-desc">${esc(copy.modeGuidedDesc)}</p>
+      </section>
+
+      <section class="panel reading-panel wm-card">
+        <div class="panel-head-row">
+          <h2>${esc(copy.timelineTitle)}</h2>
+          <div class="er-rehearsal-actions">
+            <button type="button" id="er-try-gta" class="secondary">${esc(copy.btnTryGta)}</button>
+            <button type="button" id="er-sim-two" class="secondary">${esc(copy.btnSimTwoTurns)}</button>
+            <button type="button" id="er-reset" class="secondary">${esc(copy.btnReset)}</button>
+          </div>
+        </div>
+        <div id="er-turns" class="er-turns-list" aria-live="polite"></div>
+      </section>
+
+      <section class="panel reading-panel wm-card">
+        <div class="panel-head-row">
+          <h2>${esc(copy.listTitle)}</h2>
+          <div class="reading-metric-pill"><span id="er-count" class="metric-num">0</span> <span>${esc(copy.countLabel)}</span></div>
+        </div>
+        <div id="er-saved" class="reading-trail-list" aria-live="polite"></div>
+        <div class="er-catalog-box">
+          <div class="er-catalog-head">
+            <strong>${esc(copy.catalogHeading)}</strong>
+            <p class="small">${esc(copy.catalogNote)}</p>
+          </div>
+          <ul class="er-catalog-list">
+            ${catalog.map(a => `<li><code>${esc(a.id)}</code><span>${esc(a.title)} (${a.minutes} min)</span></li>`).join('')}
+          </ul>
+        </div>
+      </section>
+
+      <section class="wm-telemetry-bar full" aria-label="${esc(copy.telemetryTitle)}">
+        <div class="wm-telemetry-head">
+          <span data-original>${esc(copy.telemetryTitle)}</span>
+          <span class="wm-telemetry-spec" data-original>add_article({ articleId: string })</span>
+        </div>
+        <pre id="er-telemetry" class="wm-telemetry-log" tabindex="0"></pre>
+      </section>
+    `;
+
+    wireCopyChips(app);
+    bindMachine($('#webmcp-env-pill'), webmcpEnv);
+
+    const isEmbedded = document.body.classList.contains('is-embedded') || searchParams().get('embed') === '1';
+    const { openModal } = buildOnboardingModal(!isEmbedded);
+    $('#webmcp-env-pill').addEventListener('click', () => {
+      if (webmcpEnv.getState() !== 'native_active') openModal();
+    });
+
+    function pushLog(tag, message) {
+      const ts = new Date().toTimeString().slice(0, 8);
+      telemetry.unshift(`[${ts}] [${tag}] ${message}`);
+      if (telemetry.length > 10) telemetry.pop();
+      const box = $('#er-telemetry');
+      if (box) box.textContent = telemetry.join('\n');
+    }
+
+    function render() {
+      const guidedBtn = $('#er-mode-guided');
+      const naiveBtn = $('#er-mode-naive');
+      const isGuided = errorMode === 'guided';
+      guidedBtn.classList.toggle('is-active', isGuided);
+      guidedBtn.setAttribute('aria-pressed', String(isGuided));
+      naiveBtn.classList.toggle('is-active', !isGuided);
+      naiveBtn.setAttribute('aria-pressed', String(!isGuided));
+      $('#er-mode-desc').textContent = isGuided ? copy.modeGuidedDesc : copy.modeNaiveDesc;
+
+      if (turns.length === 0) {
+        $('#er-turns').innerHTML = `<div class="reading-empty-state"><p>${esc(copy.emptyTurns)}</p></div>`;
+      } else {
+        $('#er-turns').innerHTML = turns.map(t => `
+          <article class="er-turn-card tone-${esc(t.tone)}">
+            <div class="er-turn-head">
+              <strong>${esc(copy.turnLabel(t.turn))}</strong>
+              <span class="er-turn-badge tone-${esc(t.tone)}">${esc(t.badge)}</span>
+            </div>
+            <div class="er-turn-io">
+              <span class="er-io-label">${esc(copy.inputLabel)}</span>
+              <code>add_article(${esc(JSON.stringify(t.input))})</code>
+              <span class="er-io-label">${esc(copy.outputLabel)}</span>
+              <pre class="er-turn-json">${esc(JSON.stringify(t.output, null, 2))}</pre>
+            </div>
+          </article>
+        `).join('');
+      }
+
+      $('#er-count').textContent = String(saved.length);
+      if (saved.length === 0) {
+        $('#er-saved').innerHTML = `<div class="reading-empty-state"><p>${esc(copy.listEmpty)}</p></div>`;
+      } else {
+        $('#er-saved').innerHTML = saved.map((artId, idx) => {
+          const item = catalog.find(a => a.id === artId);
+          const wasRecovered = recoveredIds.has(artId);
+          return `
+            <div class="item row reading-route-item is-just-added">
+              <div class="route-item-info">
+                <span class="route-item-index">${idx + 1}</span>
+                <div>
+                  <strong class="route-item-title">${esc(item.title)}</strong>
+                  <div class="route-item-subrow">
+                    <code>${esc(item.id)}</code>
+                    ${wasRecovered ? `<span class="route-new-badge">${esc(copy.recoveredBadge)}</span>` : ''}
+                  </div>
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+    }
+
+    function addArticle(args) {
+      const rawId = typeof args?.articleId === 'string' ? args.articleId.trim() : '';
+      const match = catalog.find(a => a.id === rawId);
+      const turnNum = turns.length + 1;
+
+      if (!match) {
+        if (errorMode === 'naive') {
+          const payload = { error: 'Not found' };
+          lastWasRetryableError = false;
+          turns.unshift({ turn: turnNum, tone: 'err', badge: copy.badgeNaiveErr, input: args ?? {}, output: payload });
+          recoveryMachine.send('ERROR_NAIVE');
+          pushLog('NAIVE-ERR', `add_article(${JSON.stringify(args)}) -> { error: "Not found" }`);
+          flashAgentActivity(es ? `❌ Error genérico para "${rawId || '(vacío)'}"` : `❌ Generic error for "${rawId || '(empty)'}"`, 'warn', 2400);
+          status(es ? 'Error genérico devuelto ("Not found").' : 'Generic error returned ("Not found").', true);
+          render();
+          return payload;
+        }
+
+        const payload = {
+          code: rawId ? 'UNKNOWN_ARTICLE' : 'INVALID_ARGUMENT',
+          error: rawId
+            ? (es
+              ? `No existe el articleId "${rawId}". Elige el id exacto en validOptions y reintenta la llamada.`
+              : `Unknown articleId "${rawId}". Pick an exact id from validOptions and retry the call.`)
+            : (es
+              ? 'articleId está vacío. Elige un id exacto de validOptions y reintenta.'
+              : 'articleId is empty. Pick an exact id from validOptions and retry.'),
+          retryable: true,
+          validOptions: catalog.map(a => ({ id: a.id, title: a.title }))
+        };
+        lastWasRetryableError = true;
+        turns.unshift({ turn: turnNum, tone: 'warn', badge: copy.badgeGuidedErr, input: args ?? {}, output: payload });
+        recoveryMachine.send('ERROR_GUIDED');
+        pushLog('GUIDED-ERR', `add_article({ articleId: "${rawId}" }) -> ${payload.code} (retryable: true)`);
+        flashAgentActivity(es ? `⚠️ ${payload.code} (retryable: true)` : `⚠️ ${payload.code} (retryable: true)`, 'warn', 2600);
+        status('Tool returned a structured error.', true);
+        render();
+        return payload;
+      }
+
+      if (saved.includes(match.id)) {
+        const payload = { status: 'already-added', articleId: match.id, title: match.title, route: [...saved] };
+        turns.unshift({ turn: turnNum, tone: 'ok', badge: copy.badgeDup, input: args, output: payload });
+        lastWasRetryableError = false;
+        pushLog('TOOL', `add_article({ articleId: "${match.id}" }) -> already-added`);
+        render();
+        return payload;
+      }
+
+      const recovered = lastWasRetryableError;
+      lastWasRetryableError = false;
+      saved.push(match.id);
+      if (recovered) recoveredIds.add(match.id);
+      const payload = {
+        status: 'added',
+        recoveredAfterRetry: recovered,
+        articleId: match.id,
+        title: match.title,
+        totalItems: saved.length
+      };
+      turns.unshift({
+        turn: turnNum,
+        tone: 'ok',
+        badge: recovered ? copy.badgeRecovered : copy.badgeAdded,
+        input: args,
+        output: payload
+      });
+      recoveryMachine.send(recovered ? 'RECOVERED' : 'ADDED');
+      pushLog(recovered ? 'RECOVERED' : 'TOOL', `add_article({ articleId: "${match.id}" }) -> added${recovered ? ' (self-corrected!)' : ''}`);
+      flashAgentActivity(
+        recovered
+          ? (es ? `✅ Autocorrección: ${match.id} agregado` : `✅ Self-corrected: ${match.id} added`)
+          : (es ? `✓ ${match.id} agregado` : `✓ ${match.id} added`),
+        'ok',
+        2600
+      );
+      status('Tool executed.');
+      render();
+      return payload;
+    }
+
+    $('#er-mode-guided').addEventListener('click', () => {
+      errorMode = 'guided';
+      status(copy.statusGuided);
+      pushLog('MODE', 'Switched to GUIDED error mode (code + validOptions + retryable: true)');
+      render();
+    });
+    $('#er-mode-naive').addEventListener('click', () => {
+      errorMode = 'naive';
+      status(copy.statusNaive);
+      pushLog('MODE', 'Switched to NAIVE error mode ({ error: "Not found" })');
+      render();
+    });
+    $('#er-try-gta').addEventListener('click', () => addArticle({ articleId: 'gta6' }));
+    $('#er-sim-two').addEventListener('click', () => {
+      errorMode = 'guided';
+      addArticle({ articleId: 'modelos-pequenos' });
+      addArticle({ articleId: 'art-slm-2026' });
+    });
+    $('#er-reset').addEventListener('click', () => {
+      saved.length = 0;
+      recoveredIds.clear();
+      turns.length = 0;
+      lastWasRetryableError = false;
+      recoveryMachine.send('RESET');
+      pushLog('RESET', 'Cleared turns and reading list');
+      status('Ready.');
+      render();
+    });
+
+    window.errorRecoveryAdd = args => addArticle(args);
+    render();
+    pushLog('INIT', '1 dynamic tool ready: add_article({ articleId: string }) — NO enum');
+
+    registerBatch([
+      card(
+        'add_article',
+        'Add a dynamic blog article to the user reading list by its catalog articleId.',
+        schema({
+          articleId: {
+            type: 'string',
+            description: 'Exact catalog articleId string (e.g. an article slug or code).'
+          }
+        }),
+        args => addArticle(args),
+        { readOnlyHint: false, consequentialHint: false, untrustedContentHint: false }
+      )
+    ]);
+  }
+
+  // =========================================================================
   // DEMO 02: consent-cart (WebMCP Security & Human Consent Sandbox)
   // =========================================================================
   if (id === 'consent-cart') {

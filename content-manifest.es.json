@@ -8,7 +8,7 @@
     "stage": "Origin Trial · document.modelContext",
     "angle": "Expone funciones y formularios HTML existentes como herramientas WebMCP tipadas con security hints, spotlighting, presupuestos de caracteres y evals.",
     "value": "Demuestra cómo una sola capa de aplicación atiende con seguridad clics humanos, formularios declarativos y llamadas estructuradas de agentes.",
-    "format": "Guía de arquitectura + charla de 30 minutos (24 diapositivas) + 3 demos interactivos de WebMCP",
+    "format": "Guía de arquitectura + charla de 30 minutos (20 diapositivas) + 4 demos interactivos de WebMCP",
     "outline": [
       "Vincula botones UI, formularios declarativos y registerTool() a una sola capa de estado.",
       "Valida entradas con JSON Schema, presupuestos de caracteres y códigos de error recuperables (retryable).",
@@ -38,6 +38,13 @@
         "hook": "Sincronización bidireccional entre clics humanos, formularios HTML declarativos (<form toolname>) y herramientas imperativas en document.modelContext.",
         "action": "Pídele al agente o usa los botones de la UI y el formulario declarativo de filtro para gestionar tu lista de lectura.",
         "lesson": "Los controles UI, formularios declarativos y herramientas WebMCP imperativas deben compartir una sola capa de validación y estado."
+      },
+      {
+        "id": "error-recovery",
+        "title": "Errores útiles y autocorrección",
+        "hook": "Compara un error genérico \"Not found\" frente a UNKNOWN_ARTICLE + validOptions + retryable: true en un catálogo dinámico sin enum.",
+        "action": "Alterna entre error genérico y guiado y pídele al agente agregar \"modelos pequeños\" o \"GTA6\" para ver la recuperación Turno 1 → Turno 2.",
+        "lesson": "Cuando un catálogo no puede usar enum, devolver pistas válidas y retryable: true permite que el LLM se autocorrija en vez de rendirse."
       },
       {
         "id": "consent-cart",

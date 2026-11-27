@@ -48,7 +48,7 @@ try {
     await page.goto(`${base}/index.html?lang=${lang}`);
     await page.evaluate(() => document.fonts.ready);
     assert.equal(await page.locator('.topic-card').count(), 7);
-    assert.equal(await page.locator('.topic-card ol a').count(), 21);
+    assert.equal(await page.locator('.topic-card ol a').count(), 22);
     const wsLink = await page.locator('a[href*="slides-trustable-ai/index.html"]').first().getAttribute('href');
     assert(wsLink && wsLink.includes(`lang=${lang}`), `Gallery workshop link missing lang=${lang}`);
     const lastAction = await page.locator('.intro .actions a').last().getAttribute('href');

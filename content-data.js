@@ -5,7 +5,7 @@ window.CONTENT_TOPICS = [
     subtitle: 'document.modelContext, declarative forms, security hints, and evals', stage: 'Origin Trial · document.modelContext',
     angle: 'Expose existing page functions and HTML forms as typed WebMCP tools with security hints, spotlighting, character budgets, and evals.',
     value: 'Demonstrates how a single application layer serves human UI clicks, declarative forms, and structured agent calls safely.',
-    format: 'Architecture guide + 30-minute talk deck (24 slides) + 3 interactive WebMCP demos',
+    format: 'Architecture guide + 30-minute talk deck (20 slides) + 4 interactive WebMCP demos',
     outline: ['Bind UI buttons, declarative forms, and registerTool() to one state layer.', 'Validate inputs with JSON Schema, character budgets, and retryable error codes.', 'Apply readOnlyHint, consequentialHint, untrustedContentHint, and human confirmation gates.', 'Inspect tools in Chrome DevTools and test non-deterministic agents with webmcp-evals.'],
     rows: [14, 23, 27],
     sources: [
@@ -21,6 +21,7 @@ window.CONTENT_TOPICS = [
     ],
     demos: [
       {id:'reading-route', title:'Reading List · Shared State', hook:'Two-way state sync across human clicks, declarative HTML forms (<form toolname>), and imperative tools on document.modelContext.', action:'Ask the agent or use the UI buttons and declarative filter form to manage your reading list.', lesson:'UI controls, declarative forms, and imperative WebMCP tools should share one validation and state layer.'},
+      {id:'error-recovery', title:'Error Recovery & Self-Correction', hook:'Compare a bare "Not found" error against structured UNKNOWN_ARTICLE + validOptions + retryable: true on a dynamic catalog without enum.', action:'Switch between Naive and Guided errors and ask the agent to add "small models" or "GTA6" to watch Turn 1 → Turn 2 recovery.', lesson:'When catalogs cannot use an enum, returning valid hints and retryable: true lets the LLM self-correct instead of giving up.'},
       {id:'consent-cart', title:'WebMCP Security & Human Consent Sandbox', hook:'Toggle the 3 official security hints live (readOnlyHint, consequentialHint, untrustedContentHint), test Indirect Prompt Injection, and enforce an in-page confirmation gate.', action:'Toggle hints in Developer Controls, inspect the injected guest note, and test Reject vs. Confirm on a ticket order.', lesson:'Annotations are hints for trusted agents; combine spotlighting with application-enforced confirmation.'},
       {id:'tool-observatory', title:'Tool Observatory, Budgets & Evals', hook:'Inspect JSON Schemas (input/output), Google official character budgets, debugging: true filtering, recoverable errors, and webmcp-evals blueprints.', action:'Inspect character budgets, run valid/empty/malformed inputs, toggle debugging tools, and explore webmcp-evals.', lesson:'Keep contracts within recommended character budgets and pair unit tests with non-deterministic evals.'}
     ]

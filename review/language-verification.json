@@ -1,16 +1,16 @@
 {
-  "checkedAt": "2026-11-24T20:29:50.997Z",
+  "checkedAt": "2026-11-27T19:18:15.882Z",
   "languages": [
     "en",
     "es"
   ],
   "checks": [
     {
-      "name": "Every proposal field, outline, and all 21 demo descriptions have authored Spanish translations",
+      "name": "Every proposal field, outline, and all 22 demo descriptions have authored Spanish translations",
       "status": "pass"
     },
     {
-      "name": "en: gallery and all 21 demos load at desktop and mobile sizes with working language links",
+      "name": "en: gallery and all 22 demos load at desktop and mobile sizes with working language links",
       "status": "pass"
     },
     {
@@ -18,11 +18,11 @@
       "status": "pass"
     },
     {
-      "name": "en: all 24 slides fit, all notes match builds, presenter script and previews use the same language",
+      "name": "en: all 20 slides fit, all notes match builds, presenter script and previews use the same language",
       "status": "pass"
     },
     {
-      "name": "es: gallery and all 21 demos load at desktop and mobile sizes with working language links",
+      "name": "es: gallery and all 22 demos load at desktop and mobile sizes with working language links",
       "status": "pass"
     },
     {
@@ -30,7 +30,7 @@
       "status": "pass"
     },
     {
-      "name": "es: all 24 slides fit, all notes match builds, presenter script and previews use the same language",
+      "name": "es: all 20 slides fit, all notes match builds, presenter script and previews use the same language",
       "status": "pass"
     },
     {

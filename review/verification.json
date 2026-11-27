@@ -1,20 +1,24 @@
 {
-  "checkedAt": "2026-11-24T20:29:28.771Z",
+  "checkedAt": "2026-11-27T19:18:07.731Z",
   "checks": [
     {
-      "name": "Gallery exposes seven proposals and 21 distinct demo links",
+      "name": "Gallery exposes seven proposals and 22 distinct demo links",
       "status": "pass"
     },
     {
-      "name": "All 21 HTML demos load without page exceptions or desktop overflow",
+      "name": "All 22 HTML demos load without page exceptions or desktop overflow",
       "status": "pass"
     },
     {
-      "name": "All 21 demos fit a 390px viewport",
+      "name": "All 22 demos fit a 390px viewport",
       "status": "pass"
     },
     {
       "name": "Reading route shares state, prevents duplicates, removes items, and rejects unknown IDs",
+      "status": "pass"
+    },
+    {
+      "name": "Error recovery distinguishes naive vs guided retryable errors and records self-correction",
       "status": "pass"
     },
     {
@@ -97,7 +101,7 @@
     "Contract-double tests verify adapter wiring and UI behavior, not model quality.",
     "No model download, hosted inference, or remote agent execution is requested by this test suite."
   ],
-  "browser": "157.0.8103.80",
+  "browser": "158.0.8127.38",
   "nativeAvailability": {
     "LanguageModel": "unavailable",
     "Summarizer": "unavailable",
@@ -106,7 +110,7 @@
     "Proofreader": "not exposed",
     "SemanticEmbedder": "not exposed"
   },
-  "canary": "157.0.8103.80",
+  "canary": "158.0.8127.38",
   "nativeWebMCP": {
     "registeredTools": [
       {
@@ -180,7 +184,8 @@
             }
           },
           "required": []
-        }
+        },
+        "annotations": null
       },
       {
         "name": "list_reading_route",

@@ -1,12 +1,12 @@
 {
-  "checkedAt": "2026-11-24T20:29:42.740Z",
+  "checkedAt": "2026-11-27T19:18:25.206Z",
   "checks": [
     {
-      "name": "en: seven code examples retain exact copyable text and fit the panel at every build on three screen sizes",
+      "name": "en: four code examples retain exact copyable text and fit the panel at every build on three screen sizes",
       "status": "pass"
     },
     {
-      "name": "en: displayed code executes with its stated helpers, returns useful errors, waits for review, and preserves controls on unsupported or failed registration",
+      "name": "en: displayed code executes cleanly with strict schemas and structured retryable errors",
       "status": "pass"
     },
     {
@@ -14,11 +14,11 @@
       "status": "pass"
     },
     {
-      "name": "es: seven code examples retain exact copyable text and fit the panel at every build on three screen sizes",
+      "name": "es: four code examples retain exact copyable text and fit the panel at every build on three screen sizes",
       "status": "pass"
     },
     {
-      "name": "es: displayed code executes with its stated helpers, returns useful errors, waits for review, and preserves controls on unsupported or failed registration",
+      "name": "es: displayed code executes cleanly with strict schemas and structured retryable errors",
       "status": "pass"
     },
     {
@@ -42,6 +42,6 @@
     "The slides contain focused excerpts; surrounding application helpers, rejection and cancellation handling are in the linked demo source.",
     "Native WebMCP checks use a temporary Canary profile and deterministic application callbacks; no model or external agent is invoked."
   ],
-  "nativeBrowser": "157.0.8103.80",
+  "nativeBrowser": "158.0.8127.38",
   "status": "passed"
 }
