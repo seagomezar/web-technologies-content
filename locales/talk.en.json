@@ -442,13 +442,14 @@
     },
     {
       "id": "questions",
-      "eyebrow": "Interactive demos & documentation",
+      "eyebrow": "Demos, video & documentation",
       "title": "Which function would you expose first?",
-      "subtitle": "Scan any demo to try it right now and bookmark Chrome's official guides.",
+      "subtitle": "Scan any demo or the YouTube walkthrough and bookmark Chrome's official guides.",
       "demoCards": [
         { "title": "Demo 01 · reading-route", "sub": "Imperative + Declarative", "href": "../demos/reading-route.html", "qr": "assets/qr/demo-reading-route.svg", "tone": "blue" },
         { "title": "Demo 02 · error-recovery", "sub": "Errors & Retry Loop", "href": "../demos/error-recovery.html", "qr": "assets/qr/demo-error-recovery.svg", "tone": "yellow" },
-        { "title": "Demo 03 · consent-cart", "sub": "3 Hints + Injection", "href": "../demos/consent-cart.html", "qr": "assets/qr/demo-consent-cart.svg", "tone": "green" }
+        { "title": "Demo 03 · consent-cart", "sub": "3 Hints + Injection", "href": "../demos/consent-cart.html", "qr": "assets/qr/demo-consent-cart.svg", "tone": "green" },
+        { "title": "▶ YouTube Video", "sub": "WebMCP in Chrome guide", "href": "https://www.youtube.com/watch?v=tQ_-e2Hu3jA", "qr": "assets/qr/video-youtube-webmcp.svg", "tone": "red" }
       ],
       "links": [
         { "label": "WebMCP Docs (goo.gle/webmcp-docs)", "href": "https://developer.chrome.com/docs/ai/webmcp" },
@@ -459,7 +460,7 @@
       ],
       "builds": [],
       "notes": [
-        "Here are all three interactive demos with scannable QR codes plus Chrome's official docs so you can try this week: enable chrome://flags/#enable-webmcp-testing in Chrome 155+ and serve over HTTPS or localhost. Before we wrap up, I have one last gift for you…"
+        "Here are all three interactive demos plus my YouTube video walking through WebMCP in Chrome with scannable QR codes and Chrome's official docs: enable chrome://flags/#enable-webmcp-testing in Chrome 155+ and serve over HTTPS or localhost. Before we wrap up, I have one last gift for you…"
       ]
     },
     {
@@ -522,10 +523,11 @@
       "title": "Thank you, Bogotá!",
       "subtitle": "Let's keep building a web ready for both people and agents. Scan to connect:",
       "socials": [
-        { "label": "Website", "handle": "www.sebastian-gomez.com", "href": "https://www.sebastian-gomez.com/", "qr": "assets/qr/social-website.svg", "tone": "blue" },
+        { "label": "Website", "handle": "sebastian-gomez.com", "href": "https://www.sebastian-gomez.com/", "qr": "assets/qr/social-website.svg", "tone": "blue" },
         { "label": "LinkedIn", "handle": "sebastian-gomez-software", "href": "https://www.linkedin.com/in/sebastian-gomez-software/", "qr": "assets/qr/social-linkedin.svg", "tone": "yellow" },
         { "label": "X", "handle": "@sebasgojs", "href": "https://x.com/sebasgojs", "qr": "assets/qr/social-x.svg", "tone": "green" },
-        { "label": "GitHub", "handle": "github.com/seagomezar", "href": "https://github.com/seagomezar", "qr": "assets/qr/social-github.svg", "tone": "red" }
+        { "label": "GitHub", "handle": "seagomezar", "href": "https://github.com/seagomezar", "qr": "assets/qr/social-github.svg", "tone": "blue" },
+        { "label": "▶ YouTube", "handle": "WebMCP Video", "href": "https://www.youtube.com/watch?v=tQ_-e2Hu3jA", "qr": "assets/qr/video-youtube-webmcp.svg", "tone": "red" }
       ],
       "photo": "assets/sebastian-gomez.jpg",
       "badge": "assets/gde-web-badge.svg",
@@ -536,7 +538,7 @@
       "speakerSiteUrl": "https://www.sebastian-gomez.com/",
       "builds": [],
       "notes": [
-        "Thank you so much, Bogotá! Here are QR codes for my website, LinkedIn, X, and GitHub—let's connect. And before we wrap up… we have a prize question for the audience!"
+        "Thank you so much, Bogotá! Here are QR codes for my website, LinkedIn, X, GitHub, and the YouTube walkthrough on WebMCP—let's connect. And before we wrap up… we have a prize question for the audience!"
       ]
     },
     {

@@ -174,10 +174,11 @@ TALK.slides.push(
     'Además puedes usar el botón Run tool para disparar tus herramientas a mano con distintos argumentos —incluso probar errores como UNKNOWN_ARTICLE— sin depender de un LLM ni gastar tokens.'
   ]},
 
-  {id:'questions',kind:'statement',eyebrow:'Demos interactivos y documentación',title:'¿Qué función expondrías primero?',subtitle:'Escanea cualquier demo para probarlo ahora y guarda los enlaces oficiales de Chrome.',demoCards:[
+  {id:'questions',kind:'statement',eyebrow:'Demos, video y documentación',title:'¿Qué función expondrías primero?',subtitle:'Escanea cualquier demo o el video de YouTube y guarda los enlaces oficiales de Chrome.',demoCards:[
     {title:'Demo 01 · reading-route',sub:'Imperativo + Declarativo',href:'../demos/reading-route.html',qr:'assets/qr/demo-reading-route.svg',tone:'blue'},
     {title:'Demo 02 · error-recovery',sub:'Errores y Reintento',href:'../demos/error-recovery.html',qr:'assets/qr/demo-error-recovery.svg',tone:'yellow'},
-    {title:'Demo 03 · consent-cart',sub:'3 Hints + Inyección',href:'../demos/consent-cart.html',qr:'assets/qr/demo-consent-cart.svg',tone:'green'}
+    {title:'Demo 03 · consent-cart',sub:'3 Hints + Inyección',href:'../demos/consent-cart.html',qr:'assets/qr/demo-consent-cart.svg',tone:'green'},
+    {title:'▶ Video YouTube',sub:'WebMCP en Chrome (guía)',href:'https://www.youtube.com/watch?v=tQ_-e2Hu3jA',qr:'assets/qr/video-youtube-webmcp.svg',tone:'red'}
   ],links:[
     {label:'WebMCP Docs (goo.gle/webmcp-docs)',href:'https://developer.chrome.com/docs/ai/webmcp'},
     {label:'Herramientas seguras (Chrome)',href:'https://developer.chrome.com/docs/ai/webmcp/secure-tools'},
@@ -185,7 +186,7 @@ TALK.slides.push(
     {label:'WebMCP Extension (GitHub)',href:'https://github.com/GoogleChromeLabs/webmcp-extension'},
     {label:'Smart Home Demo (GitHub)',href:'https://github.com/GoogleChromeLabs/webmcp-tools/tree/main/demos/smart-home'}
   ],minutes:1,builds:[],notes:[
-    'Aquí quedan los 3 demos interactivos con su código QR para que los escanees y pruebes esta misma semana, junto a la documentación oficial de Chrome: recuerda activar chrome://flags/#enable-webmcp-testing en Chrome 155+ y correr sobre HTTPS o localhost. Pero antes de cerrar, tengo un último regalo para ustedes…'
+    'Aquí quedan los 3 demos interactivos y mi video en YouTube explicando WebMCP paso a paso con su código QR para que los escanees y pruebes esta misma semana, junto a la documentación oficial de Chrome: recuerda activar chrome://flags/#enable-webmcp-testing en Chrome 155+ y correr sobre HTTPS o localhost. Pero antes de cerrar, tengo un último regalo para ustedes…'
   ]},
 
   {id:'prompt-gift',kind:'meme',eyebrow:'Regalo para los asistentes',title:'¿Para qué aprender código<br>si la IA lo escribe?',subtitle:'Audita tu sitio con este prompt y decide qué tools aprobar.',minutes:0.5,meme:{
@@ -218,12 +219,13 @@ TALK.slides.push(
   ]},
 
   {id:'closing',kind:'closing',eyebrow:'¡GRACIAS! · WEBMCP @ DEVFEST BOGOTÁ',title:'¡Gracias, Bogotá!',subtitle:'Sigamos construyendo una web lista para personas y agentes. Escanea para conectar:',socials:[
-    {label:'Sitio Web',handle:'www.sebastian-gomez.com',href:'https://www.sebastian-gomez.com/',qr:'assets/qr/social-website.svg',tone:'blue'},
+    {label:'Sitio Web',handle:'sebastian-gomez.com',href:'https://www.sebastian-gomez.com/',qr:'assets/qr/social-website.svg',tone:'blue'},
     {label:'LinkedIn',handle:'sebastian-gomez-software',href:'https://www.linkedin.com/in/sebastian-gomez-software/',qr:'assets/qr/social-linkedin.svg',tone:'yellow'},
     {label:'X',handle:'@sebasgojs',href:'https://x.com/sebasgojs',qr:'assets/qr/social-x.svg',tone:'green'},
-    {label:'GitHub',handle:'github.com/seagomezar',href:'https://github.com/seagomezar',qr:'assets/qr/social-github.svg',tone:'red'}
+    {label:'GitHub',handle:'seagomezar',href:'https://github.com/seagomezar',qr:'assets/qr/social-github.svg',tone:'blue'},
+    {label:'▶ YouTube',handle:'Video WebMCP',href:'https://www.youtube.com/watch?v=tQ_-e2Hu3jA',qr:'assets/qr/video-youtube-webmcp.svg',tone:'red'}
   ],photo:'assets/sebastian-gomez.jpg',badge:'assets/gde-web-badge.svg',speakerName:'Sebastián Gómez',speakerRole:'Google Developer Expert · Web Technologies',speakerTitle:'Engineering Manager en Twilio',speakerSite:'www.sebastian-gomez.com',speakerSiteUrl:'https://www.sebastian-gomez.com/',minutes:0.5,builds:[],notes:[
-    '¡Muchas gracias, Bogotá! Aquí quedan los códigos QR de mi sitio web, LinkedIn, X y GitHub para que conectemos. Y antes de cerrar… ¡tenemos una pregunta con premio para el público!'
+    '¡Muchas gracias, Bogotá! Aquí quedan los códigos QR de mi sitio web, LinkedIn, X, GitHub y el video de YouTube sobre WebMCP para que conectemos y repasen el tema. Y antes de cerrar… ¡tenemos una pregunta con premio para el público!'
   ]},
 
   {id:'audience-quiz',kind:'quiz',eyebrow:'🏆 PREGUNTA PARA EL PÚBLICO · ¡CON PREMIO!',title:'Tu tool lee comentarios escritos por usuarios en tu web. ¿Qué hint de WebMCP aísla ese texto contra un Prompt Injection?',subtitle:'Levanta la mano y responde — quien acierte se lleva premio.',options:[
